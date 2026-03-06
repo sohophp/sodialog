@@ -1,0 +1,263 @@
+.sod-dialog {
+  border: 0;
+  padding: 0;
+  margin: auto;
+  background: transparent;
+  max-width: none;
+  max-height: none;
+  overflow: visible;
+}
+
+.sod-dialog::backdrop {
+  background: rgb(0 0 0 / 50%);
+}
+
+.sod-panel {
+  background: #fff;
+  color: #212529;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 25%);
+  min-width: min(520px, calc(100vw - 2rem));
+  max-width: min(520px, calc(100vw - 2rem));
+  animation: sod-modal-in 180ms ease-out;
+}
+
+.sod-panel.is-closing {
+  animation: sod-modal-out 180ms ease-in forwards;
+}
+
+.sod-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1rem 0.75rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.sod-title {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.sod-close {
+  border: 0;
+  background: transparent;
+  color: #6c757d;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.sod-body {
+  padding: 1rem;
+}
+
+.sod-body p {
+  margin: 0 0 0.5rem;
+}
+
+.sod-body ul {
+  margin: 0.5rem 0 0;
+  padding-left: 1.2rem;
+}
+
+.sod-footer {
+  padding: 0.75rem 1rem 1rem;
+  border-top: 1px solid #dee2e6;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.sod-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  border: 1px solid transparent;
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.sod-btn:focus-visible {
+  outline: 2px solid #86b7fe;
+  outline-offset: 1px;
+}
+
+.sod-btn-primary {
+  background: #0d6efd;
+  color: #fff;
+  border-color: #0d6efd;
+}
+
+.sod-btn-primary:hover {
+  background: #0b5ed7;
+  border-color: #0a58ca;
+}
+
+.sod-btn-outline {
+  background: transparent;
+  color: #6c757d;
+  border-color: #6c757d;
+}
+
+.sod-btn-outline:hover {
+  color: #fff;
+  background: #6c757d;
+}
+
+.sod-offcanvas {
+  width: 100vw;
+  height: 100vh;
+}
+
+.sod-offcanvas .sod-panel {
+  position: fixed;
+  margin: 0;
+  min-width: 0;
+  max-width: none;
+  border-radius: 0;
+  width: min(360px, 90vw);
+  height: 100vh;
+  animation: sod-slide-in-end 180ms ease-out;
+}
+
+.sod-offcanvas .sod-panel.is-closing {
+  animation: sod-slide-out-end 180ms ease-in forwards;
+}
+
+.sod-offcanvas .sod-panel.sod-placement-start {
+  left: 0;
+  top: 0;
+  animation-name: sod-slide-in-start;
+}
+
+.sod-offcanvas .sod-panel.sod-placement-start.is-closing {
+  animation-name: sod-slide-out-start;
+}
+
+.sod-offcanvas .sod-panel.sod-placement-end {
+  right: 0;
+  top: 0;
+}
+
+.sod-offcanvas .sod-panel.sod-placement-top {
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 300px;
+  animation-name: sod-slide-in-top;
+}
+
+.sod-offcanvas .sod-panel.sod-placement-top.is-closing {
+  animation-name: sod-slide-out-top;
+}
+
+.sod-offcanvas .sod-panel.sod-placement-bottom {
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  height: 300px;
+  animation-name: sod-slide-in-bottom;
+}
+
+.sod-offcanvas .sod-panel.sod-placement-bottom.is-closing {
+  animation-name: sod-slide-out-bottom;
+}
+
+@keyframes sod-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes sod-modal-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+}
+
+@keyframes sod-slide-in-start {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes sod-slide-out-start {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes sod-slide-in-end {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes sod-slide-out-end {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes sod-slide-in-top {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes sod-slide-out-top {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes sod-slide-in-bottom {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes sod-slide-out-bottom {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}

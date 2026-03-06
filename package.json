@@ -1,0 +1,47 @@
+{
+  "name": "sodialog",
+  "version": "0.1.0",
+  "description": "A reusable HTML5 dialog-based modal and offcanvas library.",
+  "keywords": [
+    "dialog",
+    "modal",
+    "offcanvas",
+    "typescript",
+    "html5"
+  ],
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/sodialog.es.js",
+  "module": "./dist/sodialog.es.js",
+  "types": "./dist/types/lib.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/lib.d.ts",
+      "import": "./dist/sodialog.es.js",
+      "default": "./dist/sodialog.es.js"
+    },
+    "./style.css": "./dist/sodialog.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run build:types && vite build",
+    "build:types": "tsc -p tsconfig.build.json",
+    "build:demo": "vite build --mode demo",
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "prepublishOnly": "npm run lint && npm run build"
+  },
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.0.2",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.56.1",
+    "vite": "^7.3.1"
+  }
+}
