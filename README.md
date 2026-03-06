@@ -15,7 +15,14 @@ import { openModal, openOffcanvas } from 'sodialog'
 import 'sodialog/style.css'
 
 openModal({
+  id: 'order-delete',
   title: '提示',
+  position: 'center',
+  animation: 'fade',
+  useModal: true,
+  draggable: true,
+  dragHandle: 'header',
+  autoFitSize: true,
   content: '<p>这是 Modal</p>',
   confirmText: '确定',
   cancelText: '取消',
@@ -24,6 +31,7 @@ openModal({
 openOffcanvas({
   title: '侧边栏',
   placement: 'end',
+  animation: 'slide',
   content: '<p>这是 Offcanvas</p>',
 })
 ```
@@ -34,18 +42,51 @@ openOffcanvas({
 
 - `title: string`
 - `content: string | Node`
+- `id?: string`（默认自动生成。传入后同 ID Modal 不重复创建，再次调用会唤起已有实例）
+- `onCreated?: (handle) => void`（仅新建时触发，可读取自动生成的 `handle.id`）
+- `onReused?: (handle) => void`（仅复用已有同 ID 实例时触发）
+- `handle.refit(): void`（手动触发一次尺寸重算）
+- `position?: 'center' | 'top' | 'bottom'` (默认 `center`)
+- `animation?: 'slide' | 'fade' | 'zoom'` (默认 `fade`)
+- `useModal?: boolean` (默认 `true`，`true` 使用 `showModal()`，`false` 使用 `show()`)
+- `draggable?: boolean` (默认 `false`)
+- `dragHandle?: 'header' | 'title' | 'body' | 'panel' | string` (默认 `header`，也可传 CSS 选择器)
+- `autoFitSize?: boolean` (默认 `true`，会根据 body 内容变化自动扩/缩尺寸，例如图片加载完成后)
+- `scrollMode?: 'body' | 'hybrid' | 'viewport' | 'none'` (默认 `body`)
+- `hybridSwitchRatio?: number` (默认 `1.35`，仅 `scrollMode: 'hybrid'` 时生效，最小值 `1`)
+- `autoFitUseScrollbar?: boolean` (兼容旧参数。`false` 等价于 `scrollMode: 'viewport'`)
+- `refitOnContentChange?: boolean` (默认 `true`，内容变化/图片加载后自动触发尺寸重算)
+- `autoFitMinWidth?: number` (默认 `280`)
+- `autoFitMinHeight?: number` (默认 `160`)
 - `confirmText?: string`
 - `cancelText?: string`
+- `confirmAction?: 'hide' | 'destroy'`（默认 `hide`；显式传入 `id` 时默认 `destroy`）
 - `closeOnBackdrop?: boolean` (默认 `true`)
 - `closeOnEsc?: boolean` (默认 `true`)
 - `onConfirm?: () => void`
 - `onCancel?: () => void`
+
+说明：
+
+- `hybrid` 表示先使用 body 内滚动；当内容高度远超可视区阈值时自动切到外层 viewport 滚动
+- `取消/关闭` 语义是 `dialog.close()`（隐藏）
+- `confirmAction: 'destroy'` 语义是 `dialog.remove()`（销毁）
 
 ### `openOffcanvas(options)`
 
 在 `openModal` 参数基础上新增：
 
 - `placement?: 'start' | 'end' | 'top' | 'bottom'` (默认 `end`)
+- `animation?: 'slide' | 'fade' | 'zoom'` (默认 `slide`)
+
+示例（类似 Bootstrap Offcanvas 多位置）：
+
+```ts
+openOffcanvas({ title: 'Left', placement: 'start', animation: 'slide', content: '<p>Left</p>' })
+openOffcanvas({ title: 'Right', placement: 'end', animation: 'slide', content: '<p>Right</p>' })
+openOffcanvas({ title: 'Top', placement: 'top', animation: 'fade', content: '<p>Top</p>' })
+openOffcanvas({ title: 'Bottom', placement: 'bottom', animation: 'zoom', content: '<p>Bottom</p>' })
+```
 
 ### `SoDialog.open(options)`
 
@@ -58,6 +99,17 @@ npm run dev
 npm run lint
 npm run build
 ```
+
+Demo 中已包含：
+
+- 预设默认值：`center`、`zoom`、`medium`、`showModal`、不可拖动、自动适配
+- `Modal ID` 留空自动生成，输入后可复用唤醒同 ID
+- Modal 内切换不同尺寸图片，验证 `autoFitSize` 自动扩缩
+- 包含超大图（`xlarge`）、超长单词、超宽表格的溢出测试
+- Modal 内容按钮打开子窗口（支持 ID 复用唤起）
+- 子窗口包含多种表单元素（input/select/checkbox/textarea）演示
+- 新增 Markdown 编辑器子窗口（工具栏插入、实时预览）
+- 编辑器支持“仅编辑 / 编辑 + 预览”模式切换
 
 ## 发布到 NPM
 

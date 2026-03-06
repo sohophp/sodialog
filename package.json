@@ -1,6 +1,6 @@
 {
   "name": "sodialog",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A reusable HTML5 dialog-based modal and offcanvas library.",
   "keywords": [
     "dialog",
@@ -27,7 +27,7 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "npm run build:types && vite build",
+    "build": "vite build && npm run build:types",
     "build:types": "tsc -p tsconfig.build.json",
     "build:demo": "vite build --mode demo",
     "preview": "vite preview",

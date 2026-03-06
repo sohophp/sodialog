@@ -13,17 +13,98 @@
 }
 
 .sod-panel {
+  box-sizing: border-box;
   background: #fff;
   color: #212529;
   border-radius: 0.5rem;
   box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 25%);
   min-width: min(520px, calc(100vw - 2rem));
   max-width: min(520px, calc(100vw - 2rem));
-  animation: sod-modal-in 180ms ease-out;
 }
 
-.sod-panel.is-closing {
-  animation: sod-modal-out 180ms ease-in forwards;
+.sod-modal .sod-panel {
+  position: relative;
+  margin: 0;
+}
+
+.sod-modal[open] {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sod-modal[open].sod-modal-viewport-scroll {
+  align-items: flex-start;
+  overflow: auto;
+  padding: 1rem 0;
+}
+
+.sod-modal .sod-panel.sod-modal-pos-center {
+  align-self: center;
+}
+
+.sod-modal .sod-panel.sod-modal-pos-top {
+  align-self: flex-start;
+  margin-top: 1rem;
+}
+
+.sod-modal .sod-panel.sod-modal-pos-bottom {
+  align-self: flex-end;
+  margin-bottom: 1rem;
+}
+
+.sod-modal .sod-panel.sod-modal-autofit {
+  min-width: 0;
+  width: auto;
+  height: auto;
+  max-width: calc(100vw - 2rem);
+  max-height: calc(100vh - 2rem);
+  display: flex;
+  flex-direction: column;
+}
+
+.sod-modal .sod-panel.sod-modal-draggable {
+  touch-action: none;
+}
+
+.sod-modal .sod-panel.sod-is-dragging {
+  animation: none !important;
+  transition: none !important;
+}
+
+.sod-modal .sod-panel .sod-drag-handle {
+  cursor: move;
+  user-select: none;
+}
+
+.sod-modal .sod-panel .sod-drag-handle.is-dragging {
+  cursor: grabbing;
+}
+
+.sod-modal .sod-panel.sod-modal-anim-fade {
+  animation: sod-fade-in 180ms ease-out;
+}
+
+.sod-modal .sod-panel.sod-modal-anim-fade.is-closing {
+  animation: sod-fade-out 180ms ease-in forwards;
+}
+
+.sod-modal .sod-panel.sod-modal-anim-zoom {
+  animation: sod-modal-zoom-in 180ms ease-out;
+}
+
+.sod-modal .sod-panel.sod-modal-anim-zoom.is-closing {
+  animation: sod-modal-zoom-out 180ms ease-in forwards;
+}
+
+.sod-modal .sod-panel.sod-modal-anim-slide {
+  animation: sod-modal-slide-in 180ms ease-out;
+}
+
+.sod-modal .sod-panel.sod-modal-anim-slide.is-closing {
+  animation: sod-modal-slide-out 180ms ease-in forwards;
 }
 
 .sod-header {
@@ -49,7 +130,35 @@
 }
 
 .sod-body {
+  box-sizing: border-box;
   padding: 1rem;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.sod-body > * {
+  max-width: 100%;
+}
+
+.sod-body input,
+.sod-body select,
+.sod-body textarea,
+.sod-body button {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.sod-body img,
+.sod-body video,
+.sod-body canvas,
+.sod-body iframe,
+.sod-body table {
+  max-width: 100%;
+}
+
+.sod-modal .sod-panel.sod-modal-autofit .sod-body {
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .sod-body p {
@@ -109,7 +218,7 @@
   background: #6c757d;
 }
 
-.sod-offcanvas {
+.sod-offcanvas[open] {
   width: 100vw;
   height: 100vh;
 }
@@ -122,21 +231,11 @@
   border-radius: 0;
   width: min(360px, 90vw);
   height: 100vh;
-  animation: sod-slide-in-end 180ms ease-out;
-}
-
-.sod-offcanvas .sod-panel.is-closing {
-  animation: sod-slide-out-end 180ms ease-in forwards;
 }
 
 .sod-offcanvas .sod-panel.sod-placement-start {
   left: 0;
   top: 0;
-  animation-name: sod-slide-in-start;
-}
-
-.sod-offcanvas .sod-panel.sod-placement-start.is-closing {
-  animation-name: sod-slide-out-start;
 }
 
 .sod-offcanvas .sod-panel.sod-placement-end {
@@ -149,11 +248,6 @@
   left: 0;
   width: 100vw;
   height: 300px;
-  animation-name: sod-slide-in-top;
-}
-
-.sod-offcanvas .sod-panel.sod-placement-top.is-closing {
-  animation-name: sod-slide-out-top;
 }
 
 .sod-offcanvas .sod-panel.sod-placement-bottom {
@@ -161,32 +255,97 @@
   left: 0;
   width: 100vw;
   height: 300px;
-  animation-name: sod-slide-in-bottom;
 }
 
-.sod-offcanvas .sod-panel.sod-placement-bottom.is-closing {
-  animation-name: sod-slide-out-bottom;
+.sod-offcanvas .sod-panel.sod-anim-slide.sod-placement-start {
+  animation: sod-slide-in-start 180ms ease-out;
 }
 
-@keyframes sod-modal-in {
+.sod-offcanvas .sod-panel.sod-anim-slide.sod-placement-start.is-closing {
+  animation: sod-slide-out-start 180ms ease-in forwards;
+}
+
+.sod-offcanvas .sod-panel.sod-anim-slide.sod-placement-end {
+  animation: sod-slide-in-end 180ms ease-out;
+}
+
+.sod-offcanvas .sod-panel.sod-anim-slide.sod-placement-end.is-closing {
+  animation: sod-slide-out-end 180ms ease-in forwards;
+}
+
+.sod-offcanvas .sod-panel.sod-anim-slide.sod-placement-top {
+  animation: sod-slide-in-top 180ms ease-out;
+}
+
+.sod-offcanvas .sod-panel.sod-anim-slide.sod-placement-top.is-closing {
+  animation: sod-slide-out-top 180ms ease-in forwards;
+}
+
+.sod-offcanvas .sod-panel.sod-anim-slide.sod-placement-bottom {
+  animation: sod-slide-in-bottom 180ms ease-out;
+}
+
+.sod-offcanvas .sod-panel.sod-anim-slide.sod-placement-bottom.is-closing {
+  animation: sod-slide-out-bottom 180ms ease-in forwards;
+}
+
+.sod-offcanvas .sod-panel.sod-anim-fade {
+  animation: sod-fade-in 180ms ease-out;
+}
+
+.sod-offcanvas .sod-panel.sod-anim-fade.is-closing {
+  animation: sod-fade-out 180ms ease-in forwards;
+}
+
+.sod-offcanvas .sod-panel.sod-anim-zoom {
+  animation: sod-zoom-in 180ms ease-out;
+}
+
+.sod-offcanvas .sod-panel.sod-anim-zoom.is-closing {
+  animation: sod-zoom-out 180ms ease-in forwards;
+}
+
+@keyframes sod-modal-zoom-in {
   from {
     opacity: 0;
-    transform: translateY(-12px) scale(0.98);
+    transform: scale(0.96);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: scale(1);
   }
 }
 
-@keyframes sod-modal-out {
+@keyframes sod-modal-zoom-out {
   from {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: scale(1);
   }
   to {
     opacity: 0;
-    transform: translateY(-8px) scale(0.98);
+    transform: scale(0.96);
+  }
+}
+
+@keyframes sod-modal-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes sod-modal-slide-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-12px);
   }
 }
 
@@ -259,5 +418,45 @@
   }
   to {
     transform: translateY(100%);
+  }
+}
+
+@keyframes sod-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes sod-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes sod-zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes sod-zoom-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.96);
   }
 }
