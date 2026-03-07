@@ -107,4 +107,3 @@ if (repositoryUrl) {
 changelogLines.push('')
 
 writeFileSync('CHANGELOG.md', changelogLines.join('\n'))
-process.stdout.write(`CHANGELOG.md updated with ${entries.length} version entries.\n`)
