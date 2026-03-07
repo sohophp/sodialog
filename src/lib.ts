@@ -2002,13 +2002,27 @@ export class SoToast {
         className: options.className,
         attrs: options.attrs,
       })
-      existed.options.onClose = normalizedOptions.onClose
-      existed.options.onShown = normalizedOptions.onShown
-      existed.options.onLifecycle = normalizedOptions.onLifecycle
-      existed.options.onBeforeOpen = normalizedOptions.onBeforeOpen
-      existed.options.onAfterOpen = normalizedOptions.onAfterOpen
-      existed.options.onBeforeClose = normalizedOptions.onBeforeClose
-      existed.options.onAfterClose = normalizedOptions.onAfterClose
+      if (options.onClose !== undefined) {
+        existed.options.onClose = normalizedOptions.onClose
+      }
+      if (options.onShown !== undefined) {
+        existed.options.onShown = normalizedOptions.onShown
+      }
+      if (options.onLifecycle !== undefined) {
+        existed.options.onLifecycle = normalizedOptions.onLifecycle
+      }
+      if (options.onBeforeOpen !== undefined) {
+        existed.options.onBeforeOpen = normalizedOptions.onBeforeOpen
+      }
+      if (options.onAfterOpen !== undefined) {
+        existed.options.onAfterOpen = normalizedOptions.onAfterOpen
+      }
+      if (options.onBeforeClose !== undefined) {
+        existed.options.onBeforeClose = normalizedOptions.onBeforeClose
+      }
+      if (options.onAfterClose !== undefined) {
+        existed.options.onAfterClose = normalizedOptions.onAfterClose
+      }
       this.emitToastLifecycle(existed, 'before-open', 'reused')
       this.emitToastLifecycle(existed, 'after-open', 'reused')
       return existed.handle
