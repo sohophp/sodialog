@@ -127,8 +127,13 @@ Demo 中已包含：
 
 发布前准备：
 
-1. 在 GitHub 仓库 `Settings -> Secrets and variables -> Actions` 添加 `NPM_TOKEN`
-2. `NPM_TOKEN` 可通过本机执行 `npm token create` 生成
+1. 在 npm 包页面启用 Trusted Publishing，并绑定 GitHub 仓库与该工作流
+2. 确保工作流权限包含 `id-token: write`（本仓库已配置）
+
+可选方案（不推荐）：
+
+1. 使用 `NPM_TOKEN` secret 方式发布
+2. token 必须是 npm Automation token，否则会触发 `EOTP`
 
 推荐发布命令：
 
