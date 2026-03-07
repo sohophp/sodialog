@@ -1,6 +1,6 @@
 {
   "name": "sodialog",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "description": "A reusable HTML5 dialog-based modal and offcanvas library.",
   "keywords": [
     "dialog",
