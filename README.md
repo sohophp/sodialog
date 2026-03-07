@@ -117,4 +117,27 @@ Demo 中已包含：
 2. 检查包名可用性
 3. 发布：`npm publish --access public`
 
+### Git Tag 自动发布（GitHub Actions）
+
+仓库已内置工作流 `.github/workflows/npm-publish.yml`，当推送版本标签（如 `v0.1.4`）时会自动：
+
+1. 校验 tag 版本与 `package.json` 版本一致
+2. 执行 `npm ci`、`npm run lint`、`npm run build`
+3. 发布到 npm（若该版本已存在则自动跳过）
+
+发布前准备：
+
+1. 在 GitHub 仓库 `Settings -> Secrets and variables -> Actions` 添加 `NPM_TOKEN`
+2. `NPM_TOKEN` 可通过本机执行 `npm token create` 生成
+
+推荐发布命令：
+
+```bash
+npm version patch --no-git-tag-version
+git add -A
+git commit -m "release: vX.Y.Z"
+git tag -a vX.Y.Z -m "vX.Y.Z"
+git push --follow-tags
+```
+
 > 当前样式均使用 `sod-` 前缀命名，避免污染全局 `body/:root/*`。
