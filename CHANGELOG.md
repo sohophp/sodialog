@@ -6,6 +6,14 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 
 ## [Unreleased]
 
+## [0.1.12] - 2026-03-07
+
+### Commits
+- feat: enhance footer API and multi drag handles
+- fix: satisfy lint in changelog generator
+- docs: add changelog generation and auto-update workflow
+- docs: align npm token guidance with granular tokens
+
 ## [0.1.11] - 2026-03-07
 
 ### Commits
@@ -62,7 +70,8 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 - release: prepare v0.1.1
 - feat: build reusable SoDialog npm library
 
-[Unreleased]: https://github.com/sohophp/sodialog/compare/v0.1.11...HEAD
+[Unreleased]: https://github.com/sohophp/sodialog/compare/v0.1.12...HEAD
+[0.1.12]: https://github.com/sohophp/sodialog/releases/tag/v0.1.12
 [0.1.11]: https://github.com/sohophp/sodialog/releases/tag/v0.1.11
 [0.1.10]: https://github.com/sohophp/sodialog/releases/tag/v0.1.10
 [0.1.9]: https://github.com/sohophp/sodialog/releases/tag/v0.1.9
