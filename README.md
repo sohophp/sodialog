@@ -130,12 +130,7 @@ Demo 中已包含：
 1. 在 npm 包页面启用 Trusted Publishing，并绑定 GitHub 仓库与该工作流
 2. 确保工作流权限包含 `id-token: write`（本仓库已配置）
 
-可选方案（不推荐）：
-
-1. 使用 `NPM_TOKEN` secret 方式发布
-2. token 必须是 npm Automation token，否则会触发 `EOTP`
-
-说明：当前工作流优先使用 `NPM_TOKEN`；仅当未配置 `NPM_TOKEN` 时，才会走 Trusted Publishing 回退路径。
+说明：当前工作流仅使用 Trusted Publishing（OIDC），不依赖 `NPM_TOKEN`。
 若 Trusted Publishing 未在 npm 包设置中完成绑定，发布阶段可能出现 `E404`。
 
 推荐发布命令：

@@ -12,8 +12,6 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    env:
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
     steps:
       - name: Checkout
@@ -60,12 +58,6 @@ jobs:
             echo "skip_publish=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Publish to npm (Automation Token)
-        if: steps.version_check.outputs.skip_publish == 'false' && env.NPM_TOKEN != ''
-        run: npm publish --access public --provenance
-        env:
-          NODE_AUTH_TOKEN: ${{ env.NPM_TOKEN }}
-
-      - name: Publish to npm (Trusted Publishing fallback)
-        if: steps.version_check.outputs.skip_publish == 'false' && env.NPM_TOKEN == ''
+      - name: Publish to npm (Trusted Publishing)
+        if: steps.version_check.outputs.skip_publish == 'false'
         run: npm publish --access public --provenance
