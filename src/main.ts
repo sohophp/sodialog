@@ -48,6 +48,16 @@ app.innerHTML = `
       <a class="btn secondary" href="https://github.com/sohophp/sodialog" target="_blank" rel="noreferrer">GitHub 仓库</a>
       <a class="btn secondary" href="https://github.com/sohophp/sodialog/blob/master/CHANGELOG.md" target="_blank" rel="noreferrer">更新日志</a>
     </div>
+
+    <div class="hero-panel">
+      <div class="hero-panel-logo-wrap" aria-hidden="true">
+        <img class="hero-panel-logo" src="./logo.ico" alt="" width="54" height="54" />
+      </div>
+      <div class="hero-panel-copy">
+        <strong>SoDialog Docs Home</strong>
+        <span>当前文档页已集成 API、开发流程、发布流程和原版可交互 Demo。</span>
+      </div>
+    </div>
   </header>
 
   <main class="content">

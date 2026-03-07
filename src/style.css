@@ -204,6 +204,50 @@ body {
   flex-wrap: wrap;
 }
 
+.hero-panel {
+  margin-top: 1rem;
+  border: 1px solid rgb(24 32 31 / 16%);
+  border-radius: 14px;
+  background: linear-gradient(120deg, rgb(255 255 255 / 68%), rgb(255 255 255 / 42%));
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.8rem 0.9rem;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-panel-logo-wrap {
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #fff, #fbe1d8);
+  border: 1px solid rgb(220 79 36 / 34%);
+  box-shadow: 0 10px 20px rgb(175 47 15 / 20%);
+}
+
+.hero-panel-logo {
+  width: 54px;
+  height: 54px;
+  border-radius: 11px;
+}
+
+.hero-panel-copy {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.hero-panel-copy strong {
+  font: 700 0.98rem/1.2 'Space Grotesk', 'Noto Sans SC', sans-serif;
+}
+
+.hero-panel-copy span {
+  color: #38504c;
+  font-size: 0.88rem;
+}
+
 .btn {
   border: 1px solid transparent;
   border-radius: 11px;
@@ -216,6 +260,7 @@ body {
 
 .btn:hover {
   transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgb(0 0 0 / 10%);
 }
 
 .btn.primary {
@@ -246,6 +291,12 @@ body {
   padding: 1.1rem;
   background: var(--card);
   box-shadow: 0 8px 22px rgb(0 0 0 / 7%);
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgb(0 0 0 / 10%);
 }
 
 .card h2 {
@@ -434,6 +485,10 @@ h3 code {
   .hero h1 {
     margin-top: 0.8rem;
   }
+
+  .hero-panel {
+    align-items: flex-start;
+  }
 }
 
 @media (width <= 560px) {
@@ -459,6 +514,11 @@ h3 code {
   .copy-btn {
     top: 0.44rem;
     right: 0.44rem;
+  }
+
+  .hero-panel {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .demo-frame {
