@@ -36,10 +36,6 @@ body {
   padding: 2rem 0 3rem;
 }
 
-main section {
-  scroll-margin-top: 120px;
-}
-
 .page-bg {
   position: fixed;
   inset: 0;
@@ -104,6 +100,7 @@ main section {
   position: relative;
   z-index: 1;
   display: flex;
+  justify-content: space-between;
   align-items: center;
   gap: 1rem;
   flex-wrap: wrap;
@@ -144,10 +141,27 @@ main section {
   padding: 0.46rem 0.8rem;
 }
 
-.section-nav a.is-active {
-  color: #fff;
-  border-color: var(--brand-strong);
-  background: linear-gradient(120deg, var(--brand), var(--brand-strong));
+.quick-nav {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.quick-nav a {
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 0.84rem;
+  font-weight: 600;
+  border: 1px solid var(--line);
+  padding: 0.32rem 0.58rem;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 65%);
+}
+
+.quick-nav a:hover {
+  color: var(--brand);
+  border-color: rgb(220 79 36 / 45%);
+  background: rgb(220 79 36 / 10%);
 }
 
 .hero h1 {
@@ -269,38 +283,6 @@ main section {
   margin-top: 1.25rem;
   display: grid;
   gap: 1rem;
-}
-
-.section-nav {
-  position: sticky;
-  top: 12px;
-  z-index: 30;
-  margin-top: 0.95rem;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: rgb(255 255 255 / 82%);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 8px 24px rgb(23 27 26 / 10%);
-  padding: 0.35rem;
-  display: flex;
-  gap: 0.42rem;
-  flex-wrap: wrap;
-}
-
-.section-nav a {
-  color: #253130;
-  text-decoration: none;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  font: 600 0.82rem/1 'Space Grotesk', 'Noto Sans SC', sans-serif;
-  padding: 0.45rem 0.7rem;
-  transition: all 0.16s ease;
-}
-
-.section-nav a:hover {
-  color: var(--brand);
-  border-color: rgb(220 79 36 / 35%);
-  background: rgb(220 79 36 / 10%);
 }
 
 .card {
@@ -516,9 +498,12 @@ h3 code {
     gap: 0.32rem;
   }
 
-  .section-nav {
-    border-radius: 14px;
-    top: 8px;
+  .quick-nav {
+    gap: 0.5rem;
+  }
+
+  .quick-nav a {
+    font-size: 0.84rem;
   }
 
   .btn {
