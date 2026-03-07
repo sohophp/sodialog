@@ -198,6 +198,11 @@ Demo 中已包含：
 
 1. 在 npm 包页面启用 Trusted Publishing，并绑定 GitHub 仓库与该工作流
 2. 确保工作流权限包含 `id-token: write`（本仓库已配置）
+3. 本地先做版本校验（tag 必须和 `package.json` 一致）
+
+```bash
+npm run release:check -- vX.Y.Z
+```
 
 说明：当前工作流优先使用 `NPM_AUTOMATION_TOKEN` 发布；未配置时回退到 Trusted Publishing（OIDC）。
 
@@ -208,6 +213,7 @@ Demo 中已包含：
 
 ```bash
 npm version patch --no-git-tag-version
+npm run release:check -- vX.Y.Z
 git add -A
 git commit -m "release: vX.Y.Z"
 git tag -a vX.Y.Z -m "vX.Y.Z"

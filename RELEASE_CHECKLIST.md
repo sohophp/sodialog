@@ -6,6 +6,7 @@
 - [x] 梳理本次变更要点（建议写到发布说明）
 
 ## 2) 本地质量检查
+- [x] `npm run release:check -- vX.Y.Z` 通过（tag 与 `package.json` 版本一致）
 - [x] `npm run lint` 通过
 - [x] `npm run build` 通过
 - [ ] 手工验证关键场景：
