@@ -58,6 +58,12 @@ jobs:
             echo "skip_publish=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Publish to npm (Trusted Publishing)
-        if: steps.version_check.outputs.skip_publish == 'false'
+      - name: Publish to npm (Automation Token)
+        if: steps.version_check.outputs.skip_publish == 'false' && secrets.NPM_TOKEN != ''
+        run: npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish to npm (Trusted Publishing fallback)
+        if: steps.version_check.outputs.skip_publish == 'false' && secrets.NPM_TOKEN == ''
         run: npm publish --access public --provenance

@@ -135,6 +135,9 @@ Demo 中已包含：
 1. 使用 `NPM_TOKEN` secret 方式发布
 2. token 必须是 npm Automation token，否则会触发 `EOTP`
 
+说明：当前工作流优先使用 `NPM_TOKEN`；仅当未配置 `NPM_TOKEN` 时，才会走 Trusted Publishing 回退路径。
+若 Trusted Publishing 未在 npm 包设置中完成绑定，发布阶段可能出现 `E404`。
+
 推荐发布命令：
 
 ```bash
