@@ -22,6 +22,16 @@ body {
   min-height: 100%;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 body {
   position: relative;
   background: radial-gradient(circle at 20% 5%, #fff5df 0, transparent 44%),
@@ -302,6 +312,10 @@ body {
   box-shadow: 0 12px 26px rgb(0 0 0 / 10%);
 }
 
+main section:target {
+  animation: anchor-focus 0.7s ease-out;
+}
+
 .card h2 {
   margin: 0 0 0.8rem;
   font: 700 1.24rem/1.2 'Space Grotesk', 'Noto Sans SC', sans-serif;
@@ -468,6 +482,23 @@ h3 code {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes anchor-focus {
+  0% {
+    box-shadow: 0 0 0 0 rgb(220 79 36 / 0%);
+    border-color: var(--line);
+  }
+
+  40% {
+    box-shadow: 0 0 0 3px rgb(220 79 36 / 20%);
+    border-color: rgb(220 79 36 / 40%);
+  }
+
+  100% {
+    box-shadow: 0 8px 22px rgb(0 0 0 / 7%);
+    border-color: var(--line);
   }
 }
 
