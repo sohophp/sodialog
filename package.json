@@ -1,6 +1,6 @@
 {
   "name": "sodialog",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "A reusable HTML5 dialog-based modal and offcanvas library.",
   "keywords": [
     "dialog",
@@ -9,6 +9,14 @@
     "typescript",
     "html5"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sohophp/sodialog"
+  },
+  "homepage": "https://github.com/sohophp/sodialog",
+  "bugs": {
+    "url": "https://github.com/sohophp/sodialog/issues"
+  },
   "license": "MIT",
   "type": "module",
   "main": "./dist/sodialog.es.js",
