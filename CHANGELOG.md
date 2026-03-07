@@ -6,6 +6,27 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 
 ## [Unreleased]
 
+## [0.1.14] - 2026-03-07
+
+### Commits
+- feat(toast): add duplicate strategies and window-blur timer pause
+- feat(demo): add interactive toast controls and migration showcase
+- feat(toast): add queue, placement migration, and progress countdown
+- docs(toast): add implementation planning document
+- style(docs): smooth anchor scroll and target focus animation
+- style(docs): replace pill nav links with squared tabs
+- revert(docs): restore original hero navigation
+- fix(docs): keep only one section navigation
+- feat(docs): add sticky section nav and active scroll highlighting
+- style(docs): enhance hero branding and visual polish
+- feat(docs): add local logo and refresh docs homepage style
+- fix(pages): add favicon.ico for docs and demo pages
+- fix(pages): use lowercase repo base path
+- docs: embed legacy demo into docs homepage
+- docs: clarify GitHub Pages source uses GitHub Actions
+- docs: build GitHub Pages homepage for docs and usage
+- docs(changelog): update for v0.1.13
+
 ## [0.1.13] - 2026-03-07
 
 ### Commits
@@ -75,7 +96,8 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 - release: prepare v0.1.1
 - feat: build reusable SoDialog npm library
 
-[Unreleased]: https://github.com/sohophp/sodialog/compare/v0.1.13...HEAD
+[Unreleased]: https://github.com/sohophp/sodialog/compare/v0.1.14...HEAD
+[0.1.14]: https://github.com/sohophp/sodialog/releases/tag/v0.1.14
 [0.1.13]: https://github.com/sohophp/sodialog/releases/tag/v0.1.13
 [0.1.12]: https://github.com/sohophp/sodialog/releases/tag/v0.1.12
 [0.1.11]: https://github.com/sohophp/sodialog/releases/tag/v0.1.11
