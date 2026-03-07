@@ -60,7 +60,7 @@ jobs:
             echo "skip_publish=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Publish to npm (Automation Token)
+      - name: Publish to npm (Granular Access Token)
         if: steps.version_check.outputs.skip_publish == 'false' && env.NPM_AUTOMATION_TOKEN != ''
         run: npm publish --access public --provenance
         env:

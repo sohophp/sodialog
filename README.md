@@ -132,7 +132,7 @@ Demo 中已包含：
 
 说明：当前工作流优先使用 `NPM_AUTOMATION_TOKEN` 发布；未配置时回退到 Trusted Publishing（OIDC）。
 
-- 若使用 token 路径，`NPM_AUTOMATION_TOKEN` 必须是 npm Automation Token。
+- 若使用 token 路径，`NPM_AUTOMATION_TOKEN` 请使用 npm Granular access token（Write 权限），并启用 `Bypass 2FA`，否则 CI 发布会报 `EOTP`。
 - 若使用 Trusted Publishing 路径，需先在 npm 包设置里完成仓库和 workflow 绑定，否则发布阶段可能出现 `E404`。
 
 推荐发布命令：
