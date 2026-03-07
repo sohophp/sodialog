@@ -18,6 +18,7 @@ app.innerHTML = `
       <span class="tag">SoDialog Documentation</span>
       <nav class="quick-nav">
         <a href="#quick-start">快速开始</a>
+        <a href="#live-demo">原版 Demo</a>
         <a href="#api">API</a>
         <a href="#dev-flow">开发流程</a>
         <a href="#release-flow">发布流程</a>
@@ -92,6 +93,17 @@ openOffcanvas({
             <li>适合做侧栏配置、详情抽屉</li>
           </ul>
         </article>
+      </div>
+    </section>
+
+    <section id="live-demo" class="card reveal">
+      <h2>原版 Demo 演示</h2>
+      <p>文档页内嵌了原有完整交互 Demo。你可以在下方直接操作，也可以新窗口打开。</p>
+      <div class="demo-actions">
+        <a class="btn secondary" href="./demo.html" target="_blank" rel="noreferrer">新窗口打开 Demo</a>
+      </div>
+      <div class="demo-frame-wrap">
+        <iframe class="demo-frame" src="./demo.html" title="SoDialog Legacy Demo"></iframe>
       </div>
     </section>
 
