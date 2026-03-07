@@ -159,6 +159,7 @@ npm run docs:changelog
 - 本地构建主页：`npm run build:demo`
 - 产物目录：`dist-pages/`
 - 线上部署：`.github/workflows/pages.yml`（推送到 `master` 自动部署）
+- 仓库设置：`Settings -> Pages -> Source` 选择 `GitHub Actions`
 
 默认线上地址：`https://sohophp.github.io/SoDialog/`
 
