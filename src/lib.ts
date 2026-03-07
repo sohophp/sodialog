@@ -109,6 +109,24 @@ export interface SoDialogOffcanvasOptions extends SoDialogBaseOptions {
   animation?: SoOffcanvasAnimation
 }
 
+export interface SoDialogConfirmOptions
+  extends Omit<SoDialogModalOptions, 'kind' | 'title' | 'content' | 'onConfirm' | 'onCancel' | 'onCreated' | 'onReused'> {
+  title?: string
+  content?: string | Node
+  onConfirm?: () => void
+  onCancel?: () => void
+}
+
+export type SoPromptInputType = 'text' | 'password' | 'email' | 'search' | 'url' | 'tel'
+
+export interface SoDialogPromptOptions extends SoDialogConfirmOptions {
+  defaultValue?: string
+  placeholder?: string
+  inputType?: SoPromptInputType
+  trimResult?: boolean
+  validate?: (value: string) => string | boolean | void
+}
+
 export type SoDialogOptions = SoDialogModalOptions | SoDialogOffcanvasOptions
 
 export interface SoDialogHandle {
@@ -1127,6 +1145,174 @@ export class SoDialog {
   static openOffcanvas(options: Omit<SoDialogOffcanvasOptions, 'kind'>): SoDialogHandle {
     return this.open({ ...options, kind: 'offcanvas' })
   }
+
+  static confirm(options: SoDialogConfirmOptions = {}): Promise<boolean> {
+    const {
+      title = '提示',
+      content = '<p>确认继续执行该操作吗？</p>',
+      confirmText = '确认',
+      cancelText = '取消',
+      onConfirm,
+      onCancel,
+      onAfterClose,
+      ...rest
+    } = options
+
+    return new Promise<boolean>((resolve) => {
+      let settled = false
+      const settle = (result: boolean) => {
+        if (settled) {
+          return
+        }
+        settled = true
+        resolve(result)
+      }
+
+      this.openModal({
+        ...rest,
+        title,
+        content,
+        confirmText,
+        cancelText,
+        onConfirm: () => {
+          onConfirm?.()
+          settle(true)
+        },
+        onCancel: () => {
+          onCancel?.()
+          settle(false)
+        },
+        onAfterClose: (context) => {
+          onAfterClose?.(context)
+          settle(false)
+        },
+      })
+    })
+  }
+
+  static prompt(options: SoDialogPromptOptions = {}): Promise<string | null> {
+    const {
+      title = '请输入',
+      content,
+      defaultValue = '',
+      placeholder,
+      inputType = 'text',
+      trimResult = true,
+      validate,
+      confirmText = '确认',
+      cancelText = '取消',
+      onConfirm,
+      onCancel,
+      onAfterOpen,
+      onAfterClose,
+      ...rest
+    } = options
+
+    return new Promise<string | null>((resolve) => {
+      let settled = false
+      let submittedValue: string | null = null
+
+      const settle = (result: string | null) => {
+        if (settled) {
+          return
+        }
+        settled = true
+        resolve(result)
+      }
+
+      const wrapper = document.createElement('div')
+      wrapper.className = 'sod-prompt-wrap'
+
+      if (content !== undefined) {
+        const intro = document.createElement('div')
+        intro.className = 'sod-prompt-intro'
+        appendContent(intro, content)
+        wrapper.append(intro)
+      }
+
+      const input = document.createElement('input')
+      input.type = inputType
+      input.className = 'sod-prompt-input'
+      input.value = defaultValue
+      if (placeholder) {
+        input.placeholder = placeholder
+      }
+
+      const error = document.createElement('p')
+      error.className = 'sod-prompt-error'
+      error.hidden = true
+
+      const setError = (message: string | null) => {
+        if (!message) {
+          error.hidden = true
+          error.textContent = ''
+          return
+        }
+        error.hidden = false
+        error.textContent = message
+      }
+
+      wrapper.append(input, error)
+
+      this.openModal({
+        ...rest,
+        title,
+        content: wrapper,
+        footerButtons: [
+          {
+            id: 'cancel',
+            label: cancelText,
+            role: 'cancel',
+            variant: 'outline',
+            action: 'hide',
+            onClick: () => {
+              submittedValue = null
+              onCancel?.()
+            },
+          },
+          {
+            id: 'confirm',
+            label: confirmText,
+            role: 'confirm',
+            variant: 'primary',
+            action: 'hide',
+            onClick: () => {
+              const rawValue = input.value
+              const nextValue = trimResult ? rawValue.trim() : rawValue
+
+              if (validate) {
+                const validationResult = validate(nextValue)
+                if (validationResult === false) {
+                  setError('输入不符合要求。')
+                  return false
+                }
+                if (typeof validationResult === 'string') {
+                  setError(validationResult)
+                  return false
+                }
+              }
+
+              setError(null)
+              submittedValue = nextValue
+              onConfirm?.()
+              return true
+            },
+          },
+        ],
+        onAfterOpen: (context) => {
+          onAfterOpen?.(context)
+          window.setTimeout(() => {
+            input.focus()
+            input.select()
+          }, 0)
+        },
+        onAfterClose: (context) => {
+          onAfterClose?.(context)
+          settle(submittedValue)
+        },
+      })
+    })
+  }
 }
 
 export class SoToast {
@@ -1938,6 +2124,14 @@ export function openModal(options: SoDialogModalOptions): SoDialogHandle {
 
 export function openOffcanvas(options: Omit<SoDialogOffcanvasOptions, 'kind'>): SoDialogHandle {
   return SoDialog.openOffcanvas(options)
+}
+
+export function confirmModal(options: SoDialogConfirmOptions = {}): Promise<boolean> {
+  return SoDialog.confirm(options)
+}
+
+export function promptModal(options: SoDialogPromptOptions = {}): Promise<string | null> {
+  return SoDialog.prompt(options)
 }
 
 export function toast(options: SoToastOptions): SoToastHandle {

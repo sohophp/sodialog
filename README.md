@@ -7,6 +7,7 @@
 - [安装](#安装)
 - [使用](#使用)
 - [API](#api)
+- [Promise API](#promise-api)
 - [Toast 常见示例](#toast-常见示例)
 - [开发](#开发)
 - [GitHub Pages 首页](#github-pages-首页)
@@ -22,7 +23,7 @@ npm install sodialog
 ## 使用
 
 ```ts
-import { openModal, openOffcanvas, toast } from 'sodialog'
+import { openModal, openOffcanvas, confirmModal, promptModal, toast } from 'sodialog'
 import 'sodialog/style.css'
 
 openModal({
@@ -54,6 +55,20 @@ toast({
   duration: 2500,
   maxVisible: 3,
 })
+
+const ok = await confirmModal({
+  title: '删除确认',
+  content: '<p>确定删除当前记录吗？</p>',
+})
+
+if (ok) {
+  const name = await promptModal({
+    title: '请输入备注',
+    placeholder: '操作备注',
+    validate: (value) => (value.length < 2 ? '至少输入 2 个字符' : true),
+  })
+  console.log('prompt result:', name)
+}
 ```
 
 ## API
@@ -167,6 +182,22 @@ openOffcanvas({ title: 'Bottom', placement: 'bottom', animation: 'zoom', content
 ### `SoDialog.open(options)`
 
 通用入口，`options.kind` 可为 `modal` 或 `offcanvas`。
+
+## Promise API
+
+### `SoDialog.confirm(options)` / `confirmModal(options)`
+
+- 返回 `Promise<boolean>`
+- 确认按钮 resolve `true`
+- 取消、Esc、点击遮罩、关闭按钮 resolve `false`
+
+### `SoDialog.prompt(options)` / `promptModal(options)`
+
+- 返回 `Promise<string | null>`
+- 确认返回输入值，取消返回 `null`
+- 支持 `defaultValue`、`placeholder`、`inputType`
+- 支持 `trimResult`（默认 `true`）
+- 支持 `validate(value)`，返回 `string`/`false` 可阻止关闭并显示错误
 
 ### `toast(options)` / `SoToast.show(options)`
 
