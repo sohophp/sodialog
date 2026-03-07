@@ -5,8 +5,24 @@ export type SoOffcanvasPlacement = 'start' | 'end' | 'top' | 'bottom'
 export type SoOffcanvasAnimation = 'slide' | 'fade' | 'zoom'
 export type SoModalPosition = 'center' | 'top' | 'bottom'
 export type SoModalAnimation = 'slide' | 'fade' | 'zoom'
-export type SoModalDragHandle = 'header' | 'title' | 'body' | 'panel' | string
+export type SoModalDragHandleTarget = 'header' | 'title' | 'body' | 'panel' | string
+export type SoModalDragHandle = SoModalDragHandleTarget | SoModalDragHandleTarget[]
 export type SoModalScrollMode = 'body' | 'viewport' | 'none' | 'hybrid'
+export type SoFooterButtonVariant = 'primary' | 'outline' | 'danger' | 'success' | 'ghost' | 'link'
+export type SoFooterAlign = 'start' | 'center' | 'end' | 'between'
+export type SoFooterButtonAction = 'none' | 'hide' | 'destroy'
+
+export interface SoDialogFooterButton {
+  id?: string
+  label: string | Node
+  role?: 'confirm' | 'cancel' | 'custom'
+  variant?: SoFooterButtonVariant
+  className?: string
+  action?: SoFooterButtonAction
+  disabled?: boolean
+  attrs?: Record<string, string>
+  onClick?: (context: SoDialogFooterActionContext) => void | boolean | Promise<void | boolean>
+}
 
 export interface SoDialogBaseOptions {
   title: string
@@ -18,6 +34,10 @@ export interface SoDialogBaseOptions {
   closeOnEsc?: boolean
   onConfirm?: () => void
   onCancel?: () => void
+  footerButtons?: SoDialogFooterButton[]
+  hideFooter?: boolean
+  footerAlign?: SoFooterAlign
+  onAction?: SoDialogActionListener
 }
 
 export interface SoDialogModalOptions extends SoDialogBaseOptions {
@@ -51,8 +71,22 @@ export interface SoDialogHandle {
   dialog: HTMLDialogElement
   close: () => void
   refit: () => void
+  setFooterButtons: (buttons: SoDialogFooterButton[]) => void
+  updateFooterButton: (id: string, updates: Partial<SoDialogFooterButton>) => boolean
+  onAction: (listener: SoDialogActionListener) => () => void
   id?: string
 }
+
+export interface SoDialogFooterActionContext {
+  action: string
+  button: SoDialogFooterButton
+  buttonElement: HTMLButtonElement
+  dialog: HTMLDialogElement
+  event: MouseEvent
+  handle: SoDialogHandle
+}
+
+export type SoDialogActionListener = (context: SoDialogFooterActionContext) => void
 
 function appendContent(container: HTMLElement, content: string | Node): void {
   if (typeof content === 'string') {
@@ -78,39 +112,108 @@ function closeDialog(dialog: HTMLDialogElement, action: 'hide' | 'destroy' = 'hi
   }
 }
 
-function resolveDragHandle(panel: HTMLElement, dragHandle: SoModalDragHandle | undefined): HTMLElement | null {
-  const key = dragHandle ?? 'header'
-
-  if (key === 'panel') {
-    return panel
-  }
-  if (key === 'header') {
-    return panel.querySelector<HTMLElement>('.sod-header')
-  }
-  if (key === 'title') {
-    return panel.querySelector<HTMLElement>('.sod-title')
-  }
-  if (key === 'body') {
-    return panel.querySelector<HTMLElement>('.sod-body')
+function resolveFooterAction(
+  button: SoDialogFooterButton,
+  fallbackConfirmAction: 'hide' | 'destroy',
+): SoFooterButtonAction {
+  if (button.action) {
+    return button.action
   }
 
-  const resolved = panel.querySelector<HTMLElement>(key)
-  return resolved ?? panel.querySelector<HTMLElement>('.sod-header')
+  if (button.role === 'confirm') {
+    return fallbackConfirmAction
+  }
+
+  if (button.role === 'cancel') {
+    return 'hide'
+  }
+
+  return 'none'
+}
+
+function resolveFooterButtonClass(variant: SoFooterButtonVariant | undefined): string {
+  if (variant === 'danger') {
+    return 'sod-btn-danger'
+  }
+  if (variant === 'success') {
+    return 'sod-btn-success'
+  }
+  if (variant === 'ghost') {
+    return 'sod-btn-ghost'
+  }
+  if (variant === 'link') {
+    return 'sod-btn-link'
+  }
+  if (variant === 'outline') {
+    return 'sod-btn-outline'
+  }
+
+  return 'sod-btn-primary'
+}
+
+function resolveDragHandles(panel: HTMLElement, dragHandle: SoModalDragHandle | undefined): HTMLElement[] {
+  const keys = Array.isArray(dragHandle)
+    ? dragHandle.length > 0
+      ? dragHandle
+      : ['header']
+    : [dragHandle ?? 'header']
+  const handles: HTMLElement[] = []
+
+  const pushUnique = (element: HTMLElement | null) => {
+    if (!element) {
+      return
+    }
+    if (!handles.includes(element)) {
+      handles.push(element)
+    }
+  }
+
+  for (const key of keys) {
+    if (key === 'panel') {
+      pushUnique(panel)
+      continue
+    }
+    if (key === 'header') {
+      pushUnique(panel.querySelector<HTMLElement>('.sod-header'))
+      continue
+    }
+    if (key === 'title') {
+      pushUnique(panel.querySelector<HTMLElement>('.sod-title'))
+      continue
+    }
+    if (key === 'body') {
+      pushUnique(panel.querySelector<HTMLElement>('.sod-body'))
+      continue
+    }
+
+    panel.querySelectorAll<HTMLElement>(key).forEach((element) => {
+      pushUnique(element)
+    })
+  }
+
+  if (handles.length === 0) {
+    pushUnique(panel.querySelector<HTMLElement>('.sod-header'))
+  }
+
+  return handles
 }
 
 function enableModalDrag(panel: HTMLElement, dragHandle: SoModalDragHandle | undefined): void {
-  const handle = resolveDragHandle(panel, dragHandle)
-  if (!handle) {
+  const handles = resolveDragHandles(panel, dragHandle)
+  if (handles.length === 0) {
     return
   }
 
   panel.classList.add('sod-modal-draggable')
-  handle.classList.add('sod-drag-handle')
+  handles.forEach((handle) => {
+    handle.classList.add('sod-drag-handle')
+  })
 
   let dragging = false
   let offsetX = 0
   let offsetY = 0
   let activePointerId: number | null = null
+  let activeHandle: HTMLElement | null = null
   let rafId = 0
   let pendingLeft = 0
   let pendingTop = 0
@@ -157,7 +260,9 @@ function enableModalDrag(panel: HTMLElement, dragHandle: SoModalDragHandle | und
 
   const onPointerUp = () => {
     dragging = false
-    handle.classList.remove('is-dragging')
+    handles.forEach((handle) => {
+      handle.classList.remove('is-dragging')
+    })
     panel.classList.remove('sod-is-dragging')
     panel.style.willChange = ''
     document.body.style.userSelect = previousBodyUserSelect
@@ -167,55 +272,64 @@ function enableModalDrag(panel: HTMLElement, dragHandle: SoModalDragHandle | und
       rafId = 0
     }
 
-    if (activePointerId !== null && handle.hasPointerCapture && handle.hasPointerCapture(activePointerId)) {
-      handle.releasePointerCapture(activePointerId)
+    if (
+      activePointerId !== null &&
+      activeHandle !== null &&
+      activeHandle.hasPointerCapture &&
+      activeHandle.hasPointerCapture(activePointerId)
+    ) {
+      activeHandle.releasePointerCapture(activePointerId)
     }
     activePointerId = null
+    activeHandle = null
     window.removeEventListener('pointermove', onPointerMove)
     window.removeEventListener('pointerup', onPointerUp)
     window.removeEventListener('pointercancel', onPointerUp)
   }
 
-  handle.addEventListener('pointerdown', (event: PointerEvent) => {
-    if (event.button !== 0) {
-      return
-    }
+  handles.forEach((handle) => {
+    handle.addEventListener('pointerdown', (event: PointerEvent) => {
+      if (event.button !== 0) {
+        return
+      }
 
-    const target = event.target as HTMLElement | null
-    if (target?.closest('button, input, select, textarea, a')) {
-      return
-    }
+      const target = event.target as HTMLElement | null
+      if (target?.closest('button, input, select, textarea, a')) {
+        return
+      }
 
-    event.preventDefault()
-    panel.classList.add('sod-is-dragging')
-    panel.style.animation = 'none'
-    panel.style.transition = 'none'
-    panel.style.transform = 'none'
+      event.preventDefault()
+      panel.classList.add('sod-is-dragging')
+      panel.style.animation = 'none'
+      panel.style.transition = 'none'
+      panel.style.transform = 'none'
 
-    const rect = panel.getBoundingClientRect()
-    offsetX = event.clientX - rect.left
-    offsetY = event.clientY - rect.top
-    dragging = true
-    activePointerId = event.pointerId
+      const rect = panel.getBoundingClientRect()
+      offsetX = event.clientX - rect.left
+      offsetY = event.clientY - rect.top
+      dragging = true
+      activePointerId = event.pointerId
+      activeHandle = handle
 
-    handle.setPointerCapture(event.pointerId)
+      handle.setPointerCapture(event.pointerId)
 
-    panel.style.position = 'fixed'
-    panel.style.left = `${rect.left}px`
-    panel.style.top = `${rect.top}px`
-    panel.style.width = `${Math.round(rect.width)}px`
-    panel.style.height = `${Math.round(rect.height)}px`
-    panel.style.inset = 'auto'
-    panel.style.right = 'auto'
-    panel.style.bottom = 'auto'
-    panel.style.margin = '0'
-    panel.style.willChange = 'left, top'
-    handle.classList.add('is-dragging')
-    document.body.style.userSelect = 'none'
+      panel.style.position = 'fixed'
+      panel.style.left = `${rect.left}px`
+      panel.style.top = `${rect.top}px`
+      panel.style.width = `${Math.round(rect.width)}px`
+      panel.style.height = `${Math.round(rect.height)}px`
+      panel.style.inset = 'auto'
+      panel.style.right = 'auto'
+      panel.style.bottom = 'auto'
+      panel.style.margin = '0'
+      panel.style.willChange = 'left, top'
+      handle.classList.add('is-dragging')
+      document.body.style.userSelect = 'none'
 
-    window.addEventListener('pointermove', onPointerMove)
-    window.addEventListener('pointerup', onPointerUp)
-    window.addEventListener('pointercancel', onPointerUp)
+      window.addEventListener('pointermove', onPointerMove)
+      window.addEventListener('pointerup', onPointerUp)
+      window.addEventListener('pointercancel', onPointerUp)
+    })
   })
 }
 
@@ -443,6 +557,7 @@ function setupModalAutoFit(
 
 export class SoDialog {
   private static modalRegistry = new Map<string, HTMLDialogElement>()
+  private static handleRegistry = new WeakMap<HTMLDialogElement, () => SoDialogHandle>()
   private static modalIdSeed = 0
 
   private static createAutoModalId(): string {
@@ -450,9 +565,17 @@ export class SoDialog {
     return `sod-modal-${this.modalIdSeed}`
   }
 
-  private static revealExisting(dialog: HTMLDialogElement, useModal: boolean): void {
+  private static revealExisting(dialog: HTMLDialogElement, useModal: boolean): SoDialogHandle {
     if (!dialog.isConnected) {
-      return
+      return {
+        dialog,
+        close: () => closeDialog(dialog),
+        refit: () => dialog.dispatchEvent(new Event('sod:refit')),
+        setFooterButtons: () => undefined,
+        updateFooterButton: () => false,
+        onAction: () => () => undefined,
+        id: dialog.dataset.sodId,
+      }
     }
 
     const panel = dialog.querySelector<HTMLElement>('.sod-panel')
@@ -470,6 +593,21 @@ export class SoDialog {
     dialog.dispatchEvent(new Event('sod:refit'))
 
     panel?.focus()
+
+    const handleFactory = this.handleRegistry.get(dialog)
+    if (handleFactory) {
+      return handleFactory()
+    }
+
+    return {
+      dialog,
+      close: () => closeDialog(dialog),
+      refit: () => dialog.dispatchEvent(new Event('sod:refit')),
+      setFooterButtons: () => undefined,
+      updateFooterButton: () => false,
+      onAction: () => () => undefined,
+      id: dialog.dataset.sodId,
+    }
   }
 
   static open(options: SoDialogOptions): SoDialogHandle {
@@ -494,13 +632,11 @@ export class SoDialog {
         const existed = this.modalRegistry.get(modalId)
 
         if (existed && existed.isConnected) {
-          this.revealExisting(existed, useModal)
+          const reusedHandle = this.revealExisting(existed, useModal)
 
-          const reusedHandle: SoDialogHandle = {
-            dialog: existed,
-            close: () => closeDialog(existed),
-            refit: () => existed.dispatchEvent(new Event('sod:refit')),
-            id: modalId,
+          if (options.onAction) {
+            const detach = reusedHandle.onAction(options.onAction)
+            existed.addEventListener('close', detach, { once: true })
           }
 
           if ('onReused' in options) {
@@ -565,26 +701,151 @@ export class SoDialog {
 
     const footer = document.createElement('footer')
     footer.className = 'sod-footer'
+    footer.dataset.align = options.footerAlign ?? 'end'
 
-    const cancelButton = document.createElement('button')
-    cancelButton.type = 'button'
-    cancelButton.className = 'sod-btn sod-btn-outline'
-    cancelButton.textContent = options.cancelText ?? '取消'
-    cancelButton.addEventListener('click', () => {
-      options.onCancel?.()
-      closeDialog(dialog)
-    })
+    const actionListeners = new Set<SoDialogActionListener>()
+    if (options.onAction) {
+      actionListeners.add(options.onAction)
+    }
 
-    const confirmButton = document.createElement('button')
-    confirmButton.type = 'button'
-    confirmButton.className = 'sod-btn sod-btn-primary'
-    confirmButton.textContent = options.confirmText ?? '确认'
-    confirmButton.addEventListener('click', () => {
-      options.onConfirm?.()
-      closeDialog(dialog, confirmAction)
-    })
+    const addActionListener = (listener: SoDialogActionListener): (() => void) => {
+      actionListeners.add(listener)
+      return () => {
+        actionListeners.delete(listener)
+      }
+    }
 
-    footer.append(cancelButton, confirmButton)
+    let footerButtons: SoDialogFooterButton[] = options.footerButtons
+      ? [...options.footerButtons]
+      : [
+          {
+            id: 'cancel',
+            label: options.cancelText ?? '取消',
+            role: 'cancel',
+            variant: 'outline',
+          },
+          {
+            id: 'confirm',
+            label: options.confirmText ?? '确认',
+            role: 'confirm',
+            variant: 'primary',
+          },
+        ]
+
+    const createHandle = (): SoDialogHandle => {
+      return {
+        dialog,
+        close: () => closeDialog(dialog),
+        refit: () => dialog.dispatchEvent(new Event('sod:refit')),
+        setFooterButtons: (buttons: SoDialogFooterButton[]) => {
+          footerButtons = [...buttons]
+          renderFooterButtons()
+          dialog.dispatchEvent(new Event('sod:refit'))
+        },
+        updateFooterButton: (id: string, updates: Partial<SoDialogFooterButton>) => {
+          const buttonIndex = footerButtons.findIndex((item) => item.id === id)
+          if (buttonIndex < 0) {
+            return false
+          }
+
+          footerButtons[buttonIndex] = { ...footerButtons[buttonIndex], ...updates }
+          renderFooterButtons()
+          dialog.dispatchEvent(new Event('sod:refit'))
+          return true
+        },
+        onAction: (listener: SoDialogActionListener) => addActionListener(listener),
+        id: modalId,
+      }
+    }
+
+    const renderButtonLabel = (buttonElement: HTMLButtonElement, label: string | Node) => {
+      if (typeof label === 'string') {
+        buttonElement.textContent = label
+        return
+      }
+
+      buttonElement.append(label)
+    }
+
+    const renderFooterButtons = () => {
+      footer.replaceChildren()
+
+      if (options.hideFooter || footerButtons.length === 0) {
+        footer.hidden = true
+        return
+      }
+
+      footer.hidden = false
+
+      for (const button of footerButtons) {
+        const buttonElement = document.createElement('button')
+        buttonElement.type = 'button'
+        buttonElement.className = `sod-btn ${resolveFooterButtonClass(button.variant)}`
+
+        if (button.className?.trim()) {
+          buttonElement.className = `${buttonElement.className} ${button.className.trim()}`
+        }
+
+        if (button.id?.trim()) {
+          buttonElement.dataset.action = button.id.trim()
+        }
+
+        if (button.disabled) {
+          buttonElement.disabled = true
+        }
+
+        if (button.attrs) {
+          Object.entries(button.attrs).forEach(([attrKey, attrValue]) => {
+            buttonElement.setAttribute(attrKey, attrValue)
+          })
+        }
+
+        renderButtonLabel(buttonElement, button.label)
+
+        buttonElement.addEventListener('click', (event) => {
+          void (async () => {
+            const handle = createHandle()
+            const action = button.id ?? button.role ?? 'custom'
+            const context: SoDialogFooterActionContext = {
+              action,
+              button,
+              buttonElement,
+              dialog,
+              event,
+              handle,
+            }
+
+            const clickResult = await button.onClick?.(context)
+            if (clickResult === false) {
+              return
+            }
+
+            if (button.role === 'cancel') {
+              options.onCancel?.()
+            }
+            if (button.role === 'confirm') {
+              options.onConfirm?.()
+            }
+
+            actionListeners.forEach((listener) => {
+              listener(context)
+            })
+
+            const footerAction = resolveFooterAction(button, confirmAction)
+            if (footerAction === 'hide') {
+              closeDialog(dialog, 'hide')
+            }
+            if (footerAction === 'destroy') {
+              closeDialog(dialog, 'destroy')
+            }
+          })()
+        })
+
+        footer.append(buttonElement)
+      }
+    }
+
+    renderFooterButtons()
     panel.append(header, body, footer)
 
     if (modalAutoFitEnabled) {
@@ -617,10 +878,12 @@ export class SoDialog {
 
       if (!keepInstance || destroyRequested) {
         cleanups.forEach((cleanup) => cleanup())
+        actionListeners.clear()
         dialog.remove()
         if (modalId) {
           this.modalRegistry.delete(modalId)
         }
+        this.handleRegistry.delete(dialog)
         delete dialog.dataset.sodDestroy
       }
     })
@@ -638,12 +901,8 @@ export class SoDialog {
       this.modalRegistry.set(modalId, dialog)
     }
 
-    const handle: SoDialogHandle = {
-      dialog,
-      close: () => closeDialog(dialog),
-      refit: () => dialog.dispatchEvent(new Event('sod:refit')),
-      id: modalId,
-    }
+    this.handleRegistry.set(dialog, createHandle)
+    const handle = createHandle()
 
     if (kind === 'modal' && 'onCreated' in options) {
       options.onCreated?.(handle)

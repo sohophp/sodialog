@@ -421,15 +421,15 @@ function renderApp(root: HTMLDivElement) {
   eventLogSection.className = 'event-log'
 
   const eventLogTitle = document.createElement('h2')
-  eventLogTitle.textContent = '事件日志（onCreated / onReused）'
+  eventLogTitle.textContent = '事件日志（onCreated / onReused / onAction）'
 
   const eventLogList = document.createElement('ul')
   eventLogList.className = 'event-log-list'
 
-  const appendLog = (eventName: 'onCreated' | 'onReused', id?: string) => {
+  const appendLog = (eventName: 'onCreated' | 'onReused' | 'onAction', id?: string, detail?: string) => {
     const item = document.createElement('li')
     const time = new Date().toLocaleTimeString('zh-CN', { hour12: false })
-    item.textContent = `${time} | ${eventName} | id: ${id ?? '(undefined)'}`
+    item.textContent = `${time} | ${eventName} | id: ${id ?? '(undefined)'}${detail ? ` | ${detail}` : ''}`
     eventLogList.prepend(item)
 
     while (eventLogList.children.length > 12) {
@@ -584,20 +584,34 @@ function renderApp(root: HTMLDivElement) {
 
   const modalHandleLabel = document.createElement('label')
   modalHandleLabel.className = 'animation-label'
-  modalHandleLabel.textContent = '拖动区域'
+  modalHandleLabel.textContent = '拖动区域（可多选）'
   modalHandleLabel.setAttribute('for', 'modal-drag-handle')
 
   const modalHandleSelect = document.createElement('select')
   modalHandleSelect.id = 'modal-drag-handle'
   modalHandleSelect.className = 'animation-select'
+  modalHandleSelect.multiple = true
+  modalHandleSelect.size = 4
   modalHandleSelect.disabled = true
 
   ;(['header', 'title', 'body', 'panel'] as const).forEach((handle) => {
     const option = document.createElement('option')
     option.value = handle
     option.textContent = handle
+    option.selected = handle === 'header'
     modalHandleSelect.append(option)
   })
+
+  const modalFooterApiLabel = document.createElement('label')
+  modalFooterApiLabel.className = 'check-label'
+
+  const modalFooterApiCheckbox = document.createElement('input')
+  modalFooterApiCheckbox.type = 'checkbox'
+
+  const modalFooterApiText = document.createElement('span')
+  modalFooterApiText.textContent = '启用自定义 Footer API'
+
+  modalFooterApiLabel.append(modalFooterApiCheckbox, modalFooterApiText)
 
   modalDragCheckbox.addEventListener('change', () => {
     modalHandleSelect.disabled = !modalDragCheckbox.checked
@@ -626,6 +640,7 @@ function renderApp(root: HTMLDivElement) {
     modalModeLabel,
     modalDragLabel,
     modalAutoFitLabel,
+    modalFooterApiLabel,
     modalScrollModeLabel,
     modalScrollModeSelect,
     modalHybridRatioLabel,
@@ -642,7 +657,11 @@ function renderApp(root: HTMLDivElement) {
     const animation = modalAnimationSelect.value as DemoAnimation
     const useModal = modalModeCheckbox.checked
     const draggable = modalDragCheckbox.checked
-    const dragHandle = modalHandleSelect.value as DemoDragHandle
+    const dragHandles = Array.from(modalHandleSelect.selectedOptions).map((option) => option.value as DemoDragHandle)
+    const resolvedDragHandles = dragHandles.length > 0 ? dragHandles : (['header'] as DemoDragHandle[])
+    if (draggable && dragHandles.length === 0) {
+      appendLog('onAction', modalId, 'dragHandle fallback: header')
+    }
     const autoFitSize = modalAutoFitCheckbox.checked
     const scrollMode = modalScrollModeSelect.value as DemoScrollMode
     const hybridSwitchRatio = Number(modalHybridRatioInput.value) || 1.35
@@ -650,23 +669,81 @@ function renderApp(root: HTMLDivElement) {
     const imagePreset = modalImageSelect.value as DemoImagePreset
     const contentNode = buildInteractiveModalContent(modalId, imagePreset)
 
-    openModal({
+    const useFooterApiDemo = modalFooterApiCheckbox.checked
+
+    const handle = openModal({
       id: modalId,
       title: '确认删除',
       position,
       animation,
       useModal,
       draggable,
-      dragHandle,
+      dragHandle: draggable ? resolvedDragHandles : undefined,
       autoFitSize,
       scrollMode,
       hybridSwitchRatio,
       content: contentNode,
       cancelText: '取消',
       confirmText: '删除',
+      footerAlign: useFooterApiDemo ? 'between' : 'end',
+      footerButtons: useFooterApiDemo
+        ? [
+            {
+              id: 'help',
+              label: '帮助',
+              variant: 'link',
+              action: 'none',
+              attrs: { title: '显示帮助信息' },
+            },
+            {
+              id: 'cancel',
+              label: '取消',
+              role: 'cancel',
+              variant: 'outline',
+            },
+            {
+              id: 'delete',
+              label: '立即删除',
+              role: 'confirm',
+              variant: 'danger',
+              action: 'none',
+            },
+          ]
+        : undefined,
+      onAction: ({ action, handle }) => {
+        appendLog('onAction', handle.id, `action: ${action}`)
+      },
       onCreated: (handle) => appendLog('onCreated', handle.id),
       onReused: (handle) => appendLog('onReused', handle.id),
     })
+
+    if (useFooterApiDemo) {
+      handle.onAction(({ action, dialog }) => {
+        if (action === 'help') {
+          const hint = document.createElement('p')
+          hint.textContent = '帮助提示：点击“立即删除”后，按钮会动态切换为“已删除”。'
+          dialog.querySelector('.sod-body')?.append(hint)
+          return
+        }
+
+        if (action === 'delete') {
+          handle.updateFooterButton('delete', {
+            label: '已删除',
+            variant: 'success',
+            disabled: true,
+            action: 'none',
+          })
+          handle.setFooterButtons([
+            {
+              id: 'done',
+              label: '完成',
+              role: 'cancel',
+              variant: 'ghost',
+            },
+          ])
+        }
+      })
+    }
   })
 
   actions.append(modalButton)

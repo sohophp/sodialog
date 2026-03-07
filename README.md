@@ -50,7 +50,7 @@ openOffcanvas({
 - `animation?: 'slide' | 'fade' | 'zoom'` (默认 `fade`)
 - `useModal?: boolean` (默认 `true`，`true` 使用 `showModal()`，`false` 使用 `show()`)
 - `draggable?: boolean` (默认 `false`)
-- `dragHandle?: 'header' | 'title' | 'body' | 'panel' | string` (默认 `header`，也可传 CSS 选择器)
+- `dragHandle?: ('header' | 'title' | 'body' | 'panel' | string) | Array<'header' | 'title' | 'body' | 'panel' | string>` (默认 `header`，支持传数组开启多拖动区域，也可传 CSS 选择器)
 - `autoFitSize?: boolean` (默认 `true`，会根据 body 内容变化自动扩/缩尺寸，例如图片加载完成后)
 - `scrollMode?: 'body' | 'hybrid' | 'viewport' | 'none'` (默认 `body`)
 - `hybridSwitchRatio?: number` (默认 `1.35`，仅 `scrollMode: 'hybrid'` 时生效，最小值 `1`)
@@ -60,17 +60,68 @@ openOffcanvas({
 - `autoFitMinHeight?: number` (默认 `160`)
 - `confirmText?: string`
 - `cancelText?: string`
+- `footerButtons?: SoDialogFooterButton[]`（自定义底部按钮。未传时默认“取消 + 确认”）
+- `hideFooter?: boolean`（默认 `false`，可隐藏底部按钮区）
+- `footerAlign?: 'start' | 'center' | 'end' | 'between'`（默认 `end`）
 - `confirmAction?: 'hide' | 'destroy'`（默认 `hide`；显式传入 `id` 时默认 `destroy`）
 - `closeOnBackdrop?: boolean` (默认 `true`)
 - `closeOnEsc?: boolean` (默认 `true`)
 - `onConfirm?: () => void`
 - `onCancel?: () => void`
+- `onAction?: (context) => void`（监听所有 footer 按钮动作）
+- `handle.setFooterButtons(buttons): void`（运行时整体替换 footer 按钮）
+- `handle.updateFooterButton(id, updates): boolean`（按 id 更新某个 footer 按钮）
+- `handle.onAction(listener): () => void`（追加动作监听，返回取消监听函数）
+
+`SoDialogFooterButton` 字段：
+
+- `id?: string`（动作标识，推荐传）
+- `label: string | Node`
+- `role?: 'confirm' | 'cancel' | 'custom'`
+- `variant?: 'primary' | 'outline' | 'danger' | 'success' | 'ghost' | 'link'`
+- `action?: 'none' | 'hide' | 'destroy'`
+- `className?: string`
+- `disabled?: boolean`
+- `attrs?: Record<string, string>`
+- `onClick?: (context) => void | boolean | Promise<void | boolean>`（返回 `false` 可阻止后续默认动作）
 
 说明：
 
 - `hybrid` 表示先使用 body 内滚动；当内容高度远超可视区阈值时自动切到外层 viewport 滚动
 - `取消/关闭` 语义是 `dialog.close()`（隐藏）
 - `confirmAction: 'destroy'` 语义是 `dialog.remove()`（销毁）
+
+示例（自定义 footer 按钮、动作监听、运行时更新）：
+
+```ts
+const handle = openModal({
+  title: '订单操作',
+  content: '<p>请选择一个动作</p>',
+  footerAlign: 'between',
+  footerButtons: [
+    { id: 'help', label: '帮助', variant: 'link', action: 'none' },
+    { id: 'cancel', label: '取消', role: 'cancel', variant: 'outline' },
+    { id: 'delete', label: '删除', variant: 'danger', action: 'destroy' },
+  ],
+  onAction: ({ action }) => {
+    console.log('global action:', action)
+  },
+})
+
+const off = handle.onAction(({ action, dialog }) => {
+  if (action === 'help') {
+    dialog.querySelector('.sod-body')?.insertAdjacentHTML('beforeend', '<p>帮助信息已展开</p>')
+  }
+})
+
+handle.updateFooterButton('delete', { label: '确认删除', disabled: false })
+handle.setFooterButtons([
+  { id: 'close', label: '关闭', role: 'cancel', variant: 'ghost' },
+  { id: 'confirm', label: '提交', role: 'confirm', variant: 'primary' },
+])
+
+off()
+```
 
 ### `openOffcanvas(options)`
 
@@ -116,6 +167,7 @@ npm run docs:changelog
 Demo 中已包含：
 
 - 预设默认值：`center`、`zoom`、`medium`、`showModal`、不可拖动、自动适配
+- 拖动区域支持多选（`header/title/body/panel` 可组合）
 - `Modal ID` 留空自动生成，输入后可复用唤醒同 ID
 - Modal 内切换不同尺寸图片，验证 `autoFitSize` 自动扩缩
 - 包含超大图（`xlarge`）、超长单词、超宽表格的溢出测试
@@ -123,6 +175,10 @@ Demo 中已包含：
 - 子窗口包含多种表单元素（input/select/checkbox/textarea）演示
 - 新增 Markdown 编辑器子窗口（工具栏插入、实时预览）
 - 编辑器支持“仅编辑 / 编辑 + 预览”模式切换
+- Modal 新增“启用自定义 Footer API”开关（可切换默认按钮与自定义按钮）
+- Footer 按钮支持样式变体演示（`link / outline / danger / success / ghost`）
+- Footer 动作统一监听（`onAction`）与事件日志输出
+- 运行时按钮更新演示（`handle.updateFooterButton` / `handle.setFooterButtons`）
 
 ## 发布到 NPM
 
