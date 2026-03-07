@@ -28,7 +28,7 @@ jobs:
         shell: bash
         run: |
           TAG_VERSION="${GITHUB_REF_NAME#v}"
-          PACKAGE_VERSION="$(node -p \"require('./package.json').version\")"
+          PACKAGE_VERSION="$(node -p 'require("./package.json").version')"
 
           if [ "$TAG_VERSION" != "$PACKAGE_VERSION" ]; then
             echo "Tag version ($TAG_VERSION) does not match package.json version ($PACKAGE_VERSION)."
@@ -48,8 +48,8 @@ jobs:
         id: version_check
         shell: bash
         run: |
-          PACKAGE_NAME="$(node -p \"require('./package.json').name\")"
-          PACKAGE_VERSION="$(node -p \"require('./package.json').version\")"
+          PACKAGE_NAME="$(node -p 'require("./package.json").name')"
+          PACKAGE_VERSION="$(node -p 'require("./package.json").version')"
 
           if npm view "${PACKAGE_NAME}@${PACKAGE_VERSION}" version > /dev/null 2>&1; then
             echo "Version ${PACKAGE_NAME}@${PACKAGE_VERSION} already published, skipping."
