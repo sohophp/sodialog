@@ -89,6 +89,11 @@ toast({
 - `onConfirm?: () => void`
 - `onCancel?: () => void`
 - `onAction?: (context) => void`（监听所有 footer 按钮动作）
+- `onBeforeOpen?: (context) => void`
+- `onAfterOpen?: (context) => void`
+- `onBeforeClose?: (context) => void`
+- `onAfterClose?: (context) => void`
+- `onLifecycle?: (context) => void`（统一监听所有生命周期阶段）
 - `handle.setFooterButtons(buttons): void`（运行时整体替换 footer 按钮）
 - `handle.updateFooterButton(id, updates): boolean`（按 id 更新某个 footer 按钮）
 - `handle.onAction(listener): () => void`（追加动作监听，返回取消监听函数）
@@ -176,6 +181,11 @@ openOffcanvas({ title: 'Bottom', placement: 'bottom', animation: 'zoom', content
 - `pauseOnHover?: boolean`（默认 `true`）
 - `pauseOnWindowBlur?: boolean`（默认 `false`，切换窗口时暂停倒计时）
 - `duplicateStrategy?: 'update' | 'ignore' | 'restart-timer' | 'stack'`（默认 `update`）
+- `onBeforeOpen?: (context) => void`
+- `onAfterOpen?: (context) => void`
+- `onBeforeClose?: (context) => void`
+- `onAfterClose?: (context) => void`
+- `onLifecycle?: (context) => void`（统一监听所有生命周期阶段）
 - `onShown?: (handle) => void`
 - `onClose?: (reason, handle) => void`
 
@@ -191,6 +201,16 @@ openOffcanvas({ title: 'Bottom', placement: 'bottom', animation: 'zoom', content
 - 可用 `SoToast.clear(placement?)` 清空指定位置或全部 toast
 - 可用 `SoToast.closeAll()` 清空全部 toast
 - 便捷方法：`SoToast.success/error/info/warning`
+
+### 统一生命周期 context
+
+生命周期回调会收到统一结构：
+
+- `component: 'modal' | 'offcanvas' | 'toast'`
+- `phase: 'before-open' | 'after-open' | 'before-close' | 'after-close'`
+- `id?: string`
+- `reason?: string`
+- `element: HTMLElement`
 
 ### `duplicateStrategy` 行为说明
 

@@ -21,6 +21,40 @@ export type SoToastPlacement =
 export type SoToastVariant = 'default' | 'info' | 'success' | 'warning' | 'danger'
 export type SoToastCloseReason = 'timeout' | 'manual' | 'close-button' | 'container-clear' | 'programmatic'
 export type SoToastDuplicateStrategy = 'update' | 'ignore' | 'restart-timer' | 'stack'
+export type SoLifecycleComponent = 'modal' | 'offcanvas' | 'toast'
+export type SoLifecyclePhase = 'before-open' | 'after-open' | 'before-close' | 'after-close'
+export type SoLifecycleReason =
+  | 'api'
+  | 'reused'
+  | 'close-button'
+  | 'backdrop'
+  | 'esc'
+  | 'cancel'
+  | 'confirm'
+  | 'footer-action'
+  | 'destroy'
+  | 'timeout'
+  | 'container-clear'
+  | 'programmatic'
+  | 'manual'
+
+export interface SoLifecycleContext {
+  component: SoLifecycleComponent
+  phase: SoLifecyclePhase
+  element: HTMLElement
+  id?: string
+  reason?: SoLifecycleReason
+}
+
+export type SoLifecycleHook = (context: SoLifecycleContext) => void
+
+export interface SoLifecycleHooks {
+  onLifecycle?: SoLifecycleHook
+  onBeforeOpen?: SoLifecycleHook
+  onAfterOpen?: SoLifecycleHook
+  onBeforeClose?: SoLifecycleHook
+  onAfterClose?: SoLifecycleHook
+}
 
 export interface SoDialogFooterButton {
   id?: string
@@ -34,7 +68,7 @@ export interface SoDialogFooterButton {
   onClick?: (context: SoDialogFooterActionContext) => void | boolean | Promise<void | boolean>
 }
 
-export interface SoDialogBaseOptions {
+export interface SoDialogBaseOptions extends SoLifecycleHooks {
   title: string
   content: string | Node
   confirmText?: string
@@ -98,7 +132,7 @@ export interface SoDialogFooterActionContext {
 
 export type SoDialogActionListener = (context: SoDialogFooterActionContext) => void
 
-export interface SoToastOptions {
+export interface SoToastOptions extends SoLifecycleHooks {
   id?: string
   title?: string
   content: string | Node
@@ -133,7 +167,18 @@ interface SoToastResolvedOptions
     >,
     Pick<
       SoToastOptions,
-      'title' | 'className' | 'attrs' | 'onShown' | 'onClose' | 'pauseOnWindowBlur' | 'duplicateStrategy'
+      | 'title'
+      | 'className'
+      | 'attrs'
+      | 'onShown'
+      | 'onClose'
+      | 'pauseOnWindowBlur'
+      | 'duplicateStrategy'
+      | 'onLifecycle'
+      | 'onBeforeOpen'
+      | 'onAfterOpen'
+      | 'onBeforeClose'
+      | 'onAfterClose'
     > {
   content: string | Node
   duration: number | false
@@ -186,6 +231,25 @@ function closeDialog(dialog: HTMLDialogElement, action: 'hide' | 'destroy' = 'hi
   if (dialog.open) {
     dialog.close()
   }
+}
+
+function emitLifecycle(hooks: SoLifecycleHooks | undefined, context: SoLifecycleContext): void {
+  hooks?.onLifecycle?.(context)
+
+  if (context.phase === 'before-open') {
+    hooks?.onBeforeOpen?.(context)
+    return
+  }
+  if (context.phase === 'after-open') {
+    hooks?.onAfterOpen?.(context)
+    return
+  }
+  if (context.phase === 'before-close') {
+    hooks?.onBeforeClose?.(context)
+    return
+  }
+
+  hooks?.onAfterClose?.(context)
 }
 
 function resolveFooterAction(
@@ -688,6 +752,13 @@ export class SoDialog {
 
   static open(options: SoDialogOptions): SoDialogHandle {
     const kind: SoPanelKind = options.kind ?? 'modal'
+    const lifecycleHooks: SoLifecycleHooks = {
+      onLifecycle: options.onLifecycle,
+      onBeforeOpen: options.onBeforeOpen,
+      onAfterOpen: options.onAfterOpen,
+      onBeforeClose: options.onBeforeClose,
+      onAfterClose: options.onAfterClose,
+    }
     const useModal = 'useModal' in options ? options.useModal ?? true : true
     const modalOptions = kind === 'modal' ? (options as SoDialogModalOptions) : undefined
     const modalAutoFitEnabled = kind === 'modal' && ('autoFitSize' in options ? options.autoFitSize !== false : true)
@@ -708,6 +779,13 @@ export class SoDialog {
         const existed = this.modalRegistry.get(modalId)
 
         if (existed && existed.isConnected) {
+          emitLifecycle(lifecycleHooks, {
+            component: kind,
+            phase: 'before-open',
+            element: existed,
+            id: modalId,
+            reason: 'reused',
+          })
           const reusedHandle = this.revealExisting(existed, useModal)
 
           if (options.onAction) {
@@ -718,6 +796,14 @@ export class SoDialog {
           if ('onReused' in options) {
             options.onReused?.(reusedHandle)
           }
+
+          emitLifecycle(lifecycleHooks, {
+            component: kind,
+            phase: 'after-open',
+            element: existed,
+            id: modalId,
+            reason: 'reused',
+          })
           return reusedHandle
         }
       }
@@ -733,6 +819,18 @@ export class SoDialog {
       if (isExplicitModalId) {
         dialog.dataset.sodPersistent = 'true'
       }
+    }
+
+    const requestClose = (reason: SoLifecycleReason, action: 'hide' | 'destroy' = 'hide') => {
+      dialog.dataset.sodCloseReason = reason
+      emitLifecycle(lifecycleHooks, {
+        component: kind,
+        phase: 'before-close',
+        element: dialog,
+        id: modalId,
+        reason,
+      })
+      closeDialog(dialog, action)
     }
 
     const panel = document.createElement('section')
@@ -767,7 +865,7 @@ export class SoDialog {
     closeButton.className = 'sod-close'
     closeButton.setAttribute('aria-label', 'Close')
     closeButton.textContent = '×'
-    closeButton.addEventListener('click', () => closeDialog(dialog))
+    closeButton.addEventListener('click', () => requestClose('close-button'))
 
     header.append(title, closeButton)
 
@@ -811,7 +909,7 @@ export class SoDialog {
     const createHandle = (): SoDialogHandle => {
       return {
         dialog,
-        close: () => closeDialog(dialog),
+        close: () => requestClose('api'),
         refit: () => dialog.dispatchEvent(new Event('sod:refit')),
         setFooterButtons: (buttons: SoDialogFooterButton[]) => {
           footerButtons = [...buttons]
@@ -909,10 +1007,10 @@ export class SoDialog {
 
             const footerAction = resolveFooterAction(button, confirmAction)
             if (footerAction === 'hide') {
-              closeDialog(dialog, 'hide')
+              requestClose(button.role === 'confirm' ? 'confirm' : button.role === 'cancel' ? 'cancel' : 'footer-action', 'hide')
             }
             if (footerAction === 'destroy') {
-              closeDialog(dialog, 'destroy')
+              requestClose('destroy', 'destroy')
             }
           })()
         })
@@ -937,18 +1035,37 @@ export class SoDialog {
     if (options.closeOnBackdrop ?? true) {
       dialog.addEventListener('click', (event) => {
         if (event.target === dialog) {
-          closeDialog(dialog)
+          requestClose('backdrop')
         }
       })
     }
 
-    if (!(options.closeOnEsc ?? true)) {
-      dialog.addEventListener('cancel', (event) => {
+    dialog.addEventListener('cancel', (event) => {
+      if (!(options.closeOnEsc ?? true)) {
         event.preventDefault()
+        return
+      }
+
+      dialog.dataset.sodCloseReason = 'esc'
+      emitLifecycle(lifecycleHooks, {
+        component: kind,
+        phase: 'before-close',
+        element: dialog,
+        id: modalId,
+        reason: 'esc',
       })
-    }
+    })
 
     dialog.addEventListener('close', () => {
+      const reason = (dialog.dataset.sodCloseReason as SoLifecycleReason | undefined) ?? 'api'
+      emitLifecycle(lifecycleHooks, {
+        component: kind,
+        phase: 'after-close',
+        element: dialog,
+        id: modalId,
+        reason,
+      })
+
       const keepInstance = dialog.dataset.sodPersistent === 'true'
       const destroyRequested = dialog.dataset.sodDestroy === 'true'
 
@@ -962,6 +1079,15 @@ export class SoDialog {
         this.handleRegistry.delete(dialog)
         delete dialog.dataset.sodDestroy
       }
+
+      delete dialog.dataset.sodCloseReason
+    })
+
+    emitLifecycle(lifecycleHooks, {
+      component: kind,
+      phase: 'before-open',
+      element: dialog,
+      id: modalId,
     })
 
     document.body.append(dialog)
@@ -972,6 +1098,13 @@ export class SoDialog {
     }
 
     dialog.dispatchEvent(new Event('sod:refit'))
+
+    emitLifecycle(lifecycleHooks, {
+      component: kind,
+      phase: 'after-open',
+      element: dialog,
+      id: modalId,
+    })
 
     if (modalId) {
       this.modalRegistry.set(modalId, dialog)
@@ -1046,6 +1179,11 @@ export class SoToast {
       attrs: options.attrs,
       onShown: options.onShown,
       onClose: options.onClose,
+      onLifecycle: options.onLifecycle,
+      onBeforeOpen: options.onBeforeOpen,
+      onAfterOpen: options.onAfterOpen,
+      onBeforeClose: options.onBeforeClose,
+      onAfterClose: options.onAfterClose,
     }
   }
 
@@ -1069,6 +1207,29 @@ export class SoToast {
       return 'alert'
     }
     return 'status'
+  }
+
+  private static emitToastLifecycle(
+    record: SoToastRecord,
+    phase: SoLifecyclePhase,
+    reason?: SoLifecycleReason,
+  ): void {
+    emitLifecycle(
+      {
+        onLifecycle: record.options.onLifecycle,
+        onBeforeOpen: record.options.onBeforeOpen,
+        onAfterOpen: record.options.onAfterOpen,
+        onBeforeClose: record.options.onBeforeClose,
+        onAfterClose: record.options.onAfterClose,
+      },
+      {
+        component: 'toast',
+        phase,
+        element: record.element,
+        id: record.id,
+        reason,
+      },
+    )
   }
 
   private static getPlacementState(placement: SoToastPlacement): SoToastPlacementState {
@@ -1222,6 +1383,7 @@ export class SoToast {
 
   private static mountRecord(state: SoToastPlacementState, record: SoToastRecord): void {
     record.status = 'active'
+    this.emitToastLifecycle(record, 'before-open')
 
     if (record.options.newestOnTop) {
       state.container.prepend(record.element)
@@ -1232,6 +1394,7 @@ export class SoToast {
 
     this.startRecordTimer(record)
     record.options.onShown?.(record.handle)
+    this.emitToastLifecycle(record, 'after-open')
   }
 
   private static queueRecord(state: SoToastPlacementState, record: SoToastRecord): void {
@@ -1538,6 +1701,7 @@ export class SoToast {
 
     this.recordById.delete(record.id)
     record.options.onClose?.(reason, record.handle)
+    this.emitToastLifecycle(record, 'after-close', reason)
 
     if (state) {
       this.drainQueue(state, placement)
@@ -1556,10 +1720,12 @@ export class SoToast {
     const pendingOnly = Boolean(state && this.isRecordPending(state, record) && !this.isRecordActive(state, record))
 
     if (pendingOnly) {
+      this.emitToastLifecycle(record, 'before-close', reason)
       this.finalizeClose(record, reason)
       return
     }
 
+    this.emitToastLifecycle(record, 'before-close', reason)
     record.status = 'closing'
     this.clearRecordTimer(record)
     record.element.classList.add('is-closing')
@@ -1652,6 +1818,13 @@ export class SoToast {
       })
       existed.options.onClose = normalizedOptions.onClose
       existed.options.onShown = normalizedOptions.onShown
+      existed.options.onLifecycle = normalizedOptions.onLifecycle
+      existed.options.onBeforeOpen = normalizedOptions.onBeforeOpen
+      existed.options.onAfterOpen = normalizedOptions.onAfterOpen
+      existed.options.onBeforeClose = normalizedOptions.onBeforeClose
+      existed.options.onAfterClose = normalizedOptions.onAfterClose
+      this.emitToastLifecycle(existed, 'before-open', 'reused')
+      this.emitToastLifecycle(existed, 'after-open', 'reused')
       return existed.handle
     }
 
