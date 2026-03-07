@@ -1,5 +1,5 @@
 import './demo-style.css'
-import { openModal, openOffcanvas } from './lib'
+import { SoToast, openModal, openOffcanvas, type SoToastPlacement, type SoToastVariant } from './lib'
 
 type DemoPlacement = 'start' | 'end' | 'top' | 'bottom'
 type DemoAnimation = 'slide' | 'fade' | 'zoom'
@@ -752,6 +752,205 @@ function renderApp(root: HTMLDivElement) {
   const offcanvasSection = document.createElement('section')
   offcanvasSection.className = 'offcanvas-demo'
 
+  const toastSection = document.createElement('section')
+  toastSection.className = 'offcanvas-demo'
+
+  const toastTitle = document.createElement('h2')
+  toastTitle.textContent = 'Toast 演示（位置 + 时长 + 队列）'
+
+  const toastRow = document.createElement('div')
+  toastRow.className = 'animation-row'
+
+  const toastPlacementLabel = document.createElement('label')
+  toastPlacementLabel.className = 'animation-label'
+  toastPlacementLabel.setAttribute('for', 'toast-placement')
+  toastPlacementLabel.textContent = '位置'
+
+  const toastPlacementSelect = document.createElement('select')
+  toastPlacementSelect.id = 'toast-placement'
+  toastPlacementSelect.className = 'animation-select'
+
+  ;(['top-start', 'top-center', 'top-end', 'bottom-start', 'bottom-center', 'bottom-end'] as const).forEach(
+    (placement) => {
+      const option = document.createElement('option')
+      option.value = placement
+      option.textContent = placement
+      toastPlacementSelect.append(option)
+    },
+  )
+  toastPlacementSelect.value = 'top-end'
+
+  const toastVariantLabel = document.createElement('label')
+  toastVariantLabel.className = 'animation-label'
+  toastVariantLabel.setAttribute('for', 'toast-variant')
+  toastVariantLabel.textContent = '类型'
+
+  const toastVariantSelect = document.createElement('select')
+  toastVariantSelect.id = 'toast-variant'
+  toastVariantSelect.className = 'animation-select'
+
+  ;(['default', 'info', 'success', 'warning', 'danger'] as const).forEach((variant) => {
+    const option = document.createElement('option')
+    option.value = variant
+    option.textContent = variant
+    toastVariantSelect.append(option)
+  })
+  toastVariantSelect.value = 'success'
+
+  const toastDurationLabel = document.createElement('label')
+  toastDurationLabel.className = 'animation-label'
+  toastDurationLabel.setAttribute('for', 'toast-duration')
+  toastDurationLabel.textContent = '时长(ms)'
+
+  const toastDurationInput = document.createElement('input')
+  toastDurationInput.id = 'toast-duration'
+  toastDurationInput.className = 'animation-input'
+  toastDurationInput.type = 'number'
+  toastDurationInput.min = '0'
+  toastDurationInput.step = '100'
+  toastDurationInput.value = '2600'
+
+  const toastIdLabel = document.createElement('label')
+  toastIdLabel.className = 'animation-label'
+  toastIdLabel.setAttribute('for', 'toast-id')
+  toastIdLabel.textContent = '固定 ID'
+
+  const toastIdInput = document.createElement('input')
+  toastIdInput.id = 'toast-id'
+  toastIdInput.className = 'animation-input'
+  toastIdInput.placeholder = '例如 sync-job'
+
+  const toastMaxLabel = document.createElement('label')
+  toastMaxLabel.className = 'animation-label'
+  toastMaxLabel.setAttribute('for', 'toast-max-visible')
+  toastMaxLabel.textContent = '并发上限'
+
+  const toastMaxInput = document.createElement('input')
+  toastMaxInput.id = 'toast-max-visible'
+  toastMaxInput.className = 'animation-input'
+  toastMaxInput.type = 'number'
+  toastMaxInput.min = '1'
+  toastMaxInput.step = '1'
+  toastMaxInput.value = '3'
+
+  const toastStickyLabel = document.createElement('label')
+  toastStickyLabel.className = 'check-label'
+
+  const toastStickyCheckbox = document.createElement('input')
+  toastStickyCheckbox.type = 'checkbox'
+
+  const toastStickyText = document.createElement('span')
+  toastStickyText.textContent = '不自动消失'
+  toastStickyLabel.append(toastStickyCheckbox, toastStickyText)
+
+  const toastProgressLabel = document.createElement('label')
+  toastProgressLabel.className = 'check-label'
+
+  const toastProgressCheckbox = document.createElement('input')
+  toastProgressCheckbox.type = 'checkbox'
+  toastProgressCheckbox.checked = true
+
+  const toastProgressText = document.createElement('span')
+  toastProgressText.textContent = '显示倒计时条'
+  toastProgressLabel.append(toastProgressCheckbox, toastProgressText)
+
+  toastRow.append(
+    toastPlacementLabel,
+    toastPlacementSelect,
+    toastVariantLabel,
+    toastVariantSelect,
+    toastIdLabel,
+    toastIdInput,
+    toastDurationLabel,
+    toastDurationInput,
+    toastMaxLabel,
+    toastMaxInput,
+    toastStickyLabel,
+    toastProgressLabel,
+  )
+
+  const toastActions = document.createElement('div')
+  toastActions.className = 'actions'
+
+  const showToastButton = document.createElement('button')
+  showToastButton.className = 'btn btn-primary'
+  showToastButton.textContent = '弹出 Toast'
+  showToastButton.addEventListener('click', () => {
+    const placement = toastPlacementSelect.value as SoToastPlacement
+    const variant = toastVariantSelect.value as SoToastVariant
+    const duration = toastStickyCheckbox.checked ? false : Number(toastDurationInput.value) || 2600
+    const maxVisible = Math.max(1, Number(toastMaxInput.value) || 3)
+    const fixedId = toastIdInput.value.trim() || undefined
+
+    SoToast.show({
+      id: fixedId,
+      title: `消息 ${variant}`,
+      content: `位置 ${placement}，${duration === false ? '常驻' : `${duration}ms`} 自动消失。`,
+      placement,
+      variant,
+      duration,
+      showProgress: toastProgressCheckbox.checked,
+      maxVisible,
+      onClose: (reason) => {
+        appendLog('onAction', undefined, `toast close: ${reason}`)
+      },
+    })
+  })
+
+  const queueToastButton = document.createElement('button')
+  queueToastButton.className = 'btn btn-dark'
+  queueToastButton.textContent = '批量 6 条（队列）'
+  queueToastButton.addEventListener('click', () => {
+    const placement = toastPlacementSelect.value as SoToastPlacement
+    const variant = toastVariantSelect.value as SoToastVariant
+    const maxVisible = Math.max(1, Number(toastMaxInput.value) || 3)
+
+    for (let index = 1; index <= 6; index += 1) {
+      SoToast.show({
+        title: `队列消息 ${index}`,
+        content: `第 ${index} 条，maxVisible=${maxVisible}`,
+        placement,
+        variant,
+        duration: 1200 + index * 350,
+        showProgress: toastProgressCheckbox.checked,
+        maxVisible,
+      })
+    }
+  })
+
+  const migrateToastButton = document.createElement('button')
+  migrateToastButton.className = 'btn btn-dark'
+  migrateToastButton.textContent = '同 ID 迁移位置'
+  migrateToastButton.addEventListener('click', () => {
+    const placement = toastPlacementSelect.value as SoToastPlacement
+    const variant = toastVariantSelect.value as SoToastVariant
+    const duration = toastStickyCheckbox.checked ? false : Number(toastDurationInput.value) || 2600
+    const fixedId = toastIdInput.value.trim() || 'fixed-migrate-demo'
+    toastIdInput.value = fixedId
+
+    SoToast.show({
+      id: fixedId,
+      title: `迁移演示 ${fixedId}`,
+      content: `相同 id 已迁移到 ${placement}`,
+      placement,
+      variant,
+      duration,
+      showProgress: toastProgressCheckbox.checked,
+      maxVisible: Math.max(1, Number(toastMaxInput.value) || 3),
+    })
+  })
+
+  const clearToastButton = document.createElement('button')
+  clearToastButton.className = 'btn btn-outline'
+  clearToastButton.textContent = '清空当前位置'
+  clearToastButton.addEventListener('click', () => {
+    const placement = toastPlacementSelect.value as SoToastPlacement
+    SoToast.clear(placement)
+  })
+
+  toastActions.append(showToastButton, queueToastButton, migrateToastButton, clearToastButton)
+  toastSection.append(toastTitle, toastRow, toastActions)
+
   const offcanvasTitle = document.createElement('h2')
   offcanvasTitle.textContent = 'Offcanvas 演示（位置 + 动画）'
 
@@ -801,7 +1000,7 @@ function renderApp(root: HTMLDivElement) {
   })
 
   offcanvasSection.append(offcanvasTitle, animationRow, placementActions)
-  container.append(title, subtitle, eventLogSection, modalSection, offcanvasSection)
+  container.append(title, subtitle, eventLogSection, modalSection, toastSection, offcanvasSection)
   root.append(container)
 }
 
