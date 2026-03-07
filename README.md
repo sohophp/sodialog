@@ -34,6 +34,18 @@ openOffcanvas({
   animation: 'slide',
   content: '<p>这是 Offcanvas</p>',
 })
+
+// Toast
+import { toast } from 'sodialog'
+
+toast({
+  title: '保存成功',
+  content: '配置已更新',
+  placement: 'top-end',
+  variant: 'success',
+  duration: 2500,
+  maxVisible: 3,
+})
 ```
 
 ## API
@@ -142,6 +154,35 @@ openOffcanvas({ title: 'Bottom', placement: 'bottom', animation: 'zoom', content
 ### `SoDialog.open(options)`
 
 通用入口，`options.kind` 可为 `modal` 或 `offcanvas`。
+
+### `toast(options)` / `SoToast.show(options)`
+
+- `content: string | Node`
+- `title?: string`
+- `placement?: 'top-start' | 'top-center' | 'top-end' | 'bottom-start' | 'bottom-center' | 'bottom-end'`（默认 `top-end`）
+- `variant?: 'default' | 'info' | 'success' | 'warning' | 'danger'`（默认 `default`）
+- `duration?: number | false`（默认 `3000`，`false` 表示不自动消失）
+- `showProgress?: boolean`（默认 `true`，显示自动消失倒计时进度条）
+- `maxVisible?: number`（默认 `3`，按同位置队列生效）
+- `closable?: boolean`（默认 `true`）
+- `pauseOnHover?: boolean`（默认 `true`）
+- `pauseOnWindowBlur?: boolean`（默认 `false`，切换窗口时暂停倒计时）
+- `duplicateStrategy?: 'update' | 'ignore' | 'restart-timer' | 'stack'`（默认 `update`）
+- `onShown?: (handle) => void`
+- `onClose?: (reason, handle) => void`
+
+队列与控制：
+
+- 超过 `maxVisible` 的消息会进入队列，前面的 toast 关闭后自动补位
+- 相同 `id` 再次调用会按 `duplicateStrategy` 处理
+- `update`: 更新内容与配置；若 `placement` 改变会迁移到新位置
+- `ignore`: 保留已有 toast，忽略本次重复调用
+- `restart-timer`: 更新并强制重启倒计时
+- `stack`: 自动生成新 id，保留已有 toast 并叠加新 toast
+- 返回 `handle`，支持 `close / update / pause / resume`
+- 可用 `SoToast.clear(placement?)` 清空指定位置或全部 toast
+- 可用 `SoToast.closeAll()` 清空全部 toast
+- 便捷方法：`SoToast.success/error/info/warning`
 
 ## 开发
 

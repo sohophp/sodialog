@@ -11,6 +11,16 @@ export type SoModalScrollMode = 'body' | 'viewport' | 'none' | 'hybrid'
 export type SoFooterButtonVariant = 'primary' | 'outline' | 'danger' | 'success' | 'ghost' | 'link'
 export type SoFooterAlign = 'start' | 'center' | 'end' | 'between'
 export type SoFooterButtonAction = 'none' | 'hide' | 'destroy'
+export type SoToastPlacement =
+  | 'top-start'
+  | 'top-center'
+  | 'top-end'
+  | 'bottom-start'
+  | 'bottom-center'
+  | 'bottom-end'
+export type SoToastVariant = 'default' | 'info' | 'success' | 'warning' | 'danger'
+export type SoToastCloseReason = 'timeout' | 'manual' | 'close-button' | 'container-clear' | 'programmatic'
+export type SoToastDuplicateStrategy = 'update' | 'ignore' | 'restart-timer' | 'stack'
 
 export interface SoDialogFooterButton {
   id?: string
@@ -87,6 +97,72 @@ export interface SoDialogFooterActionContext {
 }
 
 export type SoDialogActionListener = (context: SoDialogFooterActionContext) => void
+
+export interface SoToastOptions {
+  id?: string
+  title?: string
+  content: string | Node
+  placement?: SoToastPlacement
+  variant?: SoToastVariant
+  duration?: number | false
+  showProgress?: boolean
+  closable?: boolean
+  pauseOnHover?: boolean
+  pauseOnWindowBlur?: boolean
+  duplicateStrategy?: SoToastDuplicateStrategy
+  newestOnTop?: boolean
+  maxVisible?: number
+  className?: string
+  attrs?: Record<string, string>
+  onShown?: (handle: SoToastHandle) => void
+  onClose?: (reason: SoToastCloseReason, handle: SoToastHandle) => void
+}
+
+export interface SoToastHandle {
+  id: string
+  element: HTMLElement
+  close: (reason?: Exclude<SoToastCloseReason, 'timeout' | 'close-button'>) => void
+  update: (patch: Partial<Pick<SoToastOptions, 'title' | 'content' | 'variant' | 'duration'>>) => void
+  pause: () => void
+  resume: () => void
+}
+
+interface SoToastResolvedOptions
+  extends Required<
+      Pick<SoToastOptions, 'placement' | 'variant' | 'closable' | 'pauseOnHover' | 'newestOnTop' | 'showProgress'>
+    >,
+    Pick<
+      SoToastOptions,
+      'title' | 'className' | 'attrs' | 'onShown' | 'onClose' | 'pauseOnWindowBlur' | 'duplicateStrategy'
+    > {
+  content: string | Node
+  duration: number | false
+  maxVisible: number
+}
+
+interface SoToastRecord {
+  id: string
+  options: SoToastResolvedOptions
+  element: HTMLElement
+  status: 'pending' | 'active' | 'closing' | 'closed'
+  timerId: number | null
+  remainingMs: number | false
+  startedAt: number | null
+  paused: boolean
+  pausedByWindowBlur: boolean
+  closeButton: HTMLButtonElement | null
+  progressElement: HTMLElement | null
+  bodyElement: HTMLElement
+  titleElement: HTMLElement | null
+  cleanupListeners: Array<() => void>
+  handle: SoToastHandle
+}
+
+interface SoToastPlacementState {
+  container: HTMLElement
+  active: SoToastRecord[]
+  pending: SoToastRecord[]
+}
 
 function appendContent(container: HTMLElement, content: string | Node): void {
   if (typeof content === 'string') {
@@ -920,10 +996,777 @@ export class SoDialog {
   }
 }
 
+export class SoToast {
+  private static placementState = new Map<SoToastPlacement, SoToastPlacementState>()
+  private static recordById = new Map<string, SoToastRecord>()
+  private static idSeed = 0
+
+  private static defaults: {
+    placement: SoToastPlacement
+    variant: SoToastVariant
+    duration: number
+    showProgress: boolean
+    closable: boolean
+    pauseOnHover: boolean
+    pauseOnWindowBlur: boolean
+    duplicateStrategy: SoToastDuplicateStrategy
+    newestOnTop: boolean
+    maxVisible: number
+  } = {
+    placement: 'top-end',
+    variant: 'default',
+    duration: 3000,
+    showProgress: true,
+    closable: true,
+    pauseOnHover: true,
+    pauseOnWindowBlur: false,
+    duplicateStrategy: 'update',
+    newestOnTop: true,
+    maxVisible: 3,
+  }
+
+  private static normalizeOptions(options: SoToastOptions): SoToastResolvedOptions {
+    const resolvedDuration =
+      options.duration === false ? false : Math.max(0, options.duration ?? this.defaults.duration)
+
+    return {
+      placement: options.placement ?? this.defaults.placement,
+      variant: options.variant ?? this.defaults.variant,
+      duration: resolvedDuration,
+      showProgress: options.showProgress ?? this.defaults.showProgress,
+      closable: options.closable ?? this.defaults.closable,
+      pauseOnHover: options.pauseOnHover ?? this.defaults.pauseOnHover,
+      pauseOnWindowBlur: options.pauseOnWindowBlur ?? this.defaults.pauseOnWindowBlur,
+      duplicateStrategy: options.duplicateStrategy ?? this.defaults.duplicateStrategy,
+      newestOnTop: options.newestOnTop ?? this.defaults.newestOnTop,
+      maxVisible: Math.max(1, options.maxVisible ?? this.defaults.maxVisible),
+      title: options.title,
+      content: options.content,
+      className: options.className,
+      attrs: options.attrs,
+      onShown: options.onShown,
+      onClose: options.onClose,
+    }
+  }
+
+  private static createAutoToastId(): string {
+    this.idSeed += 1
+    return `sot-toast-${this.idSeed}`
+  }
+
+  private static createStackedToastId(baseId: string): string {
+    let attempt = 1
+    let nextId = `${baseId}-${attempt}`
+    while (this.recordById.has(nextId)) {
+      attempt += 1
+      nextId = `${baseId}-${attempt}`
+    }
+    return nextId
+  }
+
+  private static resolveRole(variant: SoToastVariant): 'status' | 'alert' {
+    if (variant === 'danger') {
+      return 'alert'
+    }
+    return 'status'
+  }
+
+  private static getPlacementState(placement: SoToastPlacement): SoToastPlacementState {
+    const existed = this.placementState.get(placement)
+    if (existed) {
+      return existed
+    }
+
+    const container = document.createElement('div')
+    container.className = `sod-toast-layer sod-toast-layer-${placement}`
+    container.setAttribute('aria-live', 'polite')
+    container.setAttribute('aria-atomic', 'false')
+    document.body.append(container)
+
+    const created: SoToastPlacementState = {
+      container,
+      active: [],
+      pending: [],
+    }
+    this.placementState.set(placement, created)
+    return created
+  }
+
+  private static createToastElement(record: SoToastRecord): void {
+    const { options } = record
+    const element = document.createElement('article')
+    element.className = `sod-toast sod-toast-${options.variant}`
+    if (options.className?.trim()) {
+      element.className = `${element.className} ${options.className.trim()}`
+    }
+    element.dataset.toastId = record.id
+    element.setAttribute('role', this.resolveRole(options.variant))
+
+    if (options.attrs) {
+      Object.entries(options.attrs).forEach(([key, value]) => {
+        element.setAttribute(key, value)
+      })
+    }
+
+    const header = document.createElement('header')
+    header.className = 'sod-toast-header'
+
+    let titleElement: HTMLElement | null = null
+    if (options.title?.trim()) {
+      titleElement = document.createElement('strong')
+      titleElement.className = 'sod-toast-title'
+      titleElement.textContent = options.title
+      header.append(titleElement)
+    }
+
+    let closeButton: HTMLButtonElement | null = null
+    if (options.closable) {
+      closeButton = document.createElement('button')
+      closeButton.type = 'button'
+      closeButton.className = 'sod-toast-close'
+      closeButton.setAttribute('aria-label', 'Close')
+      closeButton.textContent = '×'
+      closeButton.addEventListener('click', () => {
+        this.closeRecord(record, 'close-button')
+      })
+      header.append(closeButton)
+    }
+
+    if (header.childElementCount > 0) {
+      element.append(header)
+    }
+
+    const body = document.createElement('div')
+    body.className = 'sod-toast-body'
+    appendContent(body, options.content)
+    element.append(body)
+
+    let progressElement: HTMLElement | null = null
+    if (options.showProgress) {
+      progressElement = document.createElement('div')
+      progressElement.className = 'sod-toast-progress'
+      element.append(progressElement)
+    }
+
+    if (options.pauseOnHover) {
+      const onMouseEnter = () => this.pauseRecord(record)
+      const onMouseLeave = () => this.resumeRecord(record)
+      element.addEventListener('mouseenter', onMouseEnter)
+      element.addEventListener('mouseleave', onMouseLeave)
+      record.cleanupListeners.push(() => {
+        element.removeEventListener('mouseenter', onMouseEnter)
+        element.removeEventListener('mouseleave', onMouseLeave)
+      })
+    }
+
+    if (options.pauseOnWindowBlur) {
+      const onWindowBlur = () => {
+        if (record.paused || record.status !== 'active') {
+          return
+        }
+        record.pausedByWindowBlur = true
+        this.pauseRecord(record)
+      }
+
+      const onWindowFocus = () => {
+        if (!record.pausedByWindowBlur) {
+          return
+        }
+        record.pausedByWindowBlur = false
+        this.resumeRecord(record)
+      }
+
+      window.addEventListener('blur', onWindowBlur)
+      window.addEventListener('focus', onWindowFocus)
+      record.cleanupListeners.push(() => {
+        window.removeEventListener('blur', onWindowBlur)
+        window.removeEventListener('focus', onWindowFocus)
+      })
+    }
+
+    record.element = element
+    record.bodyElement = body
+    record.titleElement = titleElement
+    record.closeButton = closeButton
+    record.progressElement = progressElement
+  }
+
+  private static resetProgressAnimation(record: SoToastRecord, duration: number): void {
+    if (!record.progressElement || !record.options.showProgress) {
+      return
+    }
+
+    record.progressElement.style.display = 'block'
+    record.progressElement.style.animation = 'none'
+    record.progressElement.style.animationPlayState = 'running'
+    // Force reflow so restarting animation is reliable across browsers.
+    void record.progressElement.offsetWidth
+    record.progressElement.style.animation = `sod-toast-progress-countdown ${Math.max(1, duration)}ms linear forwards`
+  }
+
+  private static hideProgress(record: SoToastRecord): void {
+    if (!record.progressElement) {
+      return
+    }
+    record.progressElement.style.display = 'none'
+    record.progressElement.style.animation = 'none'
+  }
+
+  private static isRecordActive(state: SoToastPlacementState, record: SoToastRecord): boolean {
+    return state.active.includes(record)
+  }
+
+  private static isRecordPending(state: SoToastPlacementState, record: SoToastRecord): boolean {
+    return state.pending.includes(record)
+  }
+
+  private static mountRecord(state: SoToastPlacementState, record: SoToastRecord): void {
+    record.status = 'active'
+
+    if (record.options.newestOnTop) {
+      state.container.prepend(record.element)
+    } else {
+      state.container.append(record.element)
+    }
+    state.active.push(record)
+
+    this.startRecordTimer(record)
+    record.options.onShown?.(record.handle)
+  }
+
+  private static queueRecord(state: SoToastPlacementState, record: SoToastRecord): void {
+    record.status = 'pending'
+    state.pending.push(record)
+  }
+
+  private static startRecordTimer(record: SoToastRecord): void {
+    this.clearRecordTimer(record)
+
+    if (record.options.duration === false) {
+      record.remainingMs = false
+      record.startedAt = null
+      this.hideProgress(record)
+      return
+    }
+
+    const timeoutMs = Math.max(0, record.remainingMs === false ? record.options.duration : record.remainingMs)
+    if (timeoutMs === 0) {
+      this.closeRecord(record, 'timeout')
+      return
+    }
+
+    record.startedAt = Date.now()
+    record.remainingMs = timeoutMs
+    this.resetProgressAnimation(record, timeoutMs)
+    record.timerId = window.setTimeout(() => {
+      record.timerId = null
+      this.closeRecord(record, 'timeout')
+    }, timeoutMs)
+  }
+
+  private static clearRecordTimer(record: SoToastRecord): void {
+    if (record.timerId !== null) {
+      window.clearTimeout(record.timerId)
+      record.timerId = null
+    }
+  }
+
+  private static pauseRecord(record: SoToastRecord): void {
+    if (record.paused || record.status !== 'active') {
+      return
+    }
+    if (record.options.duration === false) {
+      return
+    }
+
+    const startedAt = record.startedAt ?? Date.now()
+    const elapsed = Math.max(0, Date.now() - startedAt)
+    const currentRemaining = record.remainingMs === false ? record.options.duration : record.remainingMs
+    record.remainingMs = Math.max(0, currentRemaining - elapsed)
+    record.startedAt = null
+    record.paused = true
+    if (record.progressElement) {
+      record.progressElement.style.animationPlayState = 'paused'
+    }
+    this.clearRecordTimer(record)
+  }
+
+  private static resumeRecord(record: SoToastRecord): void {
+    if (!record.paused || record.status !== 'active') {
+      return
+    }
+
+    record.paused = false
+    if (record.progressElement) {
+      record.progressElement.style.animationPlayState = 'running'
+    }
+    this.startRecordTimer(record)
+  }
+
+  private static rebuildRecordElement(record: SoToastRecord): void {
+    const previousElement = record.element
+    const parent = previousElement.parentElement
+
+    record.cleanupListeners.forEach((cleanup) => cleanup())
+    record.cleanupListeners = []
+    previousElement.remove()
+
+    this.createToastElement(record)
+
+    if (parent && record.status === 'active') {
+      if (record.options.newestOnTop) {
+        parent.prepend(record.element)
+      } else {
+        parent.append(record.element)
+      }
+      this.startRecordTimer(record)
+    }
+  }
+
+  private static moveRecordToPlacement(record: SoToastRecord, nextPlacement: SoToastPlacement): void {
+    const previousPlacement = record.options.placement
+    if (previousPlacement === nextPlacement) {
+      return
+    }
+
+    const previousState = this.placementState.get(previousPlacement)
+    const nextState = this.getPlacementState(nextPlacement)
+    const wasActive = Boolean(previousState && this.removeFromArray(previousState.active, record))
+    const wasPending = Boolean(previousState && this.removeFromArray(previousState.pending, record))
+
+    record.options.placement = nextPlacement
+    this.clearRecordTimer(record)
+
+    if (wasPending && !wasActive) {
+      this.queueRecord(nextState, record)
+      this.drainQueue(nextState, nextPlacement)
+      if (previousState) {
+        this.drainQueue(previousState, previousPlacement)
+      }
+      return
+    }
+
+    if (nextState.active.length < record.options.maxVisible) {
+      this.mountRecord(nextState, record)
+    } else {
+      this.queueRecord(nextState, record)
+    }
+
+    if (previousState) {
+      this.drainQueue(previousState, previousPlacement)
+    }
+  }
+
+  private static updateRecord(
+    record: SoToastRecord,
+    patch: Partial<
+      Pick<
+        SoToastOptions,
+        | 'title'
+        | 'content'
+        | 'variant'
+        | 'duration'
+        | 'placement'
+        | 'closable'
+        | 'pauseOnHover'
+        | 'pauseOnWindowBlur'
+        | 'duplicateStrategy'
+        | 'newestOnTop'
+        | 'maxVisible'
+        | 'showProgress'
+        | 'className'
+        | 'attrs'
+      >
+    >,
+  ): void {
+    if (patch.title !== undefined) {
+      const normalizedTitle = patch.title.trim()
+      record.options.title = normalizedTitle.length > 0 ? normalizedTitle : undefined
+
+      if (record.options.title) {
+        if (!record.titleElement) {
+          const header = record.element.querySelector<HTMLElement>('.sod-toast-header')
+          if (header) {
+            const titleElement = document.createElement('strong')
+            titleElement.className = 'sod-toast-title'
+            titleElement.textContent = record.options.title
+            header.prepend(titleElement)
+            record.titleElement = titleElement
+          }
+        } else {
+          record.titleElement.textContent = record.options.title
+        }
+      } else if (record.titleElement) {
+        record.titleElement.remove()
+        record.titleElement = null
+      }
+    }
+
+    if (patch.content !== undefined) {
+      record.options.content = patch.content
+      record.bodyElement.replaceChildren()
+      appendContent(record.bodyElement, patch.content)
+    }
+
+    if (patch.variant !== undefined) {
+      record.options.variant = patch.variant
+      record.element.classList.remove('sod-toast-default', 'sod-toast-info', 'sod-toast-success', 'sod-toast-warning', 'sod-toast-danger')
+      record.element.classList.add(`sod-toast-${patch.variant}`)
+      record.element.setAttribute('role', this.resolveRole(patch.variant))
+    }
+
+    if (patch.duration !== undefined) {
+      record.options.duration = patch.duration === false ? false : Math.max(0, patch.duration)
+      record.remainingMs = record.options.duration === false ? false : record.options.duration
+      record.paused = false
+      if (record.status === 'active') {
+        this.startRecordTimer(record)
+      }
+    }
+
+    if (patch.maxVisible !== undefined) {
+      record.options.maxVisible = Math.max(1, patch.maxVisible)
+    }
+
+    if (patch.newestOnTop !== undefined) {
+      record.options.newestOnTop = patch.newestOnTop
+    }
+
+    let shouldRebuild = false
+
+    if (patch.closable !== undefined && patch.closable !== record.options.closable) {
+      record.options.closable = patch.closable
+      shouldRebuild = true
+    }
+
+    if (patch.pauseOnHover !== undefined && patch.pauseOnHover !== record.options.pauseOnHover) {
+      record.options.pauseOnHover = patch.pauseOnHover
+      shouldRebuild = true
+    }
+
+    if (patch.pauseOnWindowBlur !== undefined && patch.pauseOnWindowBlur !== record.options.pauseOnWindowBlur) {
+      record.options.pauseOnWindowBlur = patch.pauseOnWindowBlur
+      shouldRebuild = true
+    }
+
+    if (patch.duplicateStrategy !== undefined) {
+      record.options.duplicateStrategy = patch.duplicateStrategy
+    }
+
+    if (patch.showProgress !== undefined && patch.showProgress !== record.options.showProgress) {
+      record.options.showProgress = patch.showProgress
+      shouldRebuild = true
+    }
+
+    if (patch.className !== undefined) {
+      record.options.className = patch.className
+      shouldRebuild = true
+    }
+
+    if (patch.attrs !== undefined) {
+      record.options.attrs = patch.attrs
+      shouldRebuild = true
+    }
+
+    if (shouldRebuild) {
+      this.rebuildRecordElement(record)
+    }
+
+    if (patch.placement && patch.placement !== record.options.placement) {
+      this.moveRecordToPlacement(record, patch.placement)
+    }
+  }
+
+  private static removeStateContainerIfEmpty(placement: SoToastPlacement): void {
+    const state = this.placementState.get(placement)
+    if (!state) {
+      return
+    }
+
+    if (state.active.length > 0 || state.pending.length > 0) {
+      return
+    }
+
+    state.container.remove()
+    this.placementState.delete(placement)
+  }
+
+  private static drainQueue(state: SoToastPlacementState, placement: SoToastPlacement): void {
+    let canContinue = true
+    while (canContinue && state.pending.length > 0) {
+      const next = state.pending[0]
+      if (state.active.length >= next.options.maxVisible) {
+        canContinue = false
+        continue
+      }
+
+      state.pending.shift()
+      this.mountRecord(state, next)
+    }
+
+    this.removeStateContainerIfEmpty(placement)
+  }
+
+  private static removeFromArray<T>(items: T[], target: T): boolean {
+    const index = items.indexOf(target)
+    if (index < 0) {
+      return false
+    }
+
+    items.splice(index, 1)
+    return true
+  }
+
+  private static finalizeClose(record: SoToastRecord, reason: SoToastCloseReason): void {
+    if (record.status === 'closed') {
+      return
+    }
+
+    const placement = record.options.placement
+    const state = this.placementState.get(placement)
+
+    this.clearRecordTimer(record)
+    record.cleanupListeners.forEach((cleanup) => cleanup())
+    record.cleanupListeners = []
+    record.element.remove()
+    record.status = 'closed'
+
+    if (state) {
+      this.removeFromArray(state.active, record)
+      this.removeFromArray(state.pending, record)
+    }
+
+    this.recordById.delete(record.id)
+    record.options.onClose?.(reason, record.handle)
+
+    if (state) {
+      this.drainQueue(state, placement)
+    } else {
+      this.removeStateContainerIfEmpty(placement)
+    }
+  }
+
+  private static closeRecord(record: SoToastRecord, reason: SoToastCloseReason): void {
+    if (record.status === 'closed' || record.status === 'closing') {
+      return
+    }
+
+    const placement = record.options.placement
+    const state = this.placementState.get(placement)
+    const pendingOnly = Boolean(state && this.isRecordPending(state, record) && !this.isRecordActive(state, record))
+
+    if (pendingOnly) {
+      this.finalizeClose(record, reason)
+      return
+    }
+
+    record.status = 'closing'
+    this.clearRecordTimer(record)
+    record.element.classList.add('is-closing')
+
+    let settled = false
+    const settle = () => {
+      if (settled) {
+        return
+      }
+      settled = true
+      this.finalizeClose(record, reason)
+    }
+
+    const onAnimationEnd = (event: AnimationEvent) => {
+      if (event.target !== record.element) {
+        return
+      }
+      record.element.removeEventListener('animationend', onAnimationEnd)
+      settle()
+    }
+
+    record.element.addEventListener('animationend', onAnimationEnd)
+    window.setTimeout(() => {
+      record.element.removeEventListener('animationend', onAnimationEnd)
+      settle()
+    }, 220)
+  }
+
+  private static createHandle(record: SoToastRecord): SoToastHandle {
+    return {
+      id: record.id,
+      get element() {
+        return record.element
+      },
+      close: (reason = 'programmatic') => {
+        this.closeRecord(record, reason)
+      },
+      update: (patch) => {
+        this.updateRecord(record, patch)
+      },
+      pause: () => {
+        this.pauseRecord(record)
+      },
+      resume: () => {
+        this.resumeRecord(record)
+      },
+    }
+  }
+
+  static show(options: SoToastOptions): SoToastHandle {
+    const requestedId = options.id?.trim()
+    const toastId = requestedId || this.createAutoToastId()
+    const normalizedOptions = this.normalizeOptions(options)
+    const existed = this.recordById.get(toastId)
+
+    if (existed) {
+      const strategy = normalizedOptions.duplicateStrategy
+
+      if (strategy === 'ignore') {
+        return existed.handle
+      }
+
+      if (strategy === 'stack') {
+        const stackedId = this.createStackedToastId(toastId)
+        return this.show({ ...options, id: stackedId, duplicateStrategy: 'update' })
+      }
+
+      this.updateRecord(existed, {
+        title: options.title,
+        content: options.content,
+        variant: options.variant,
+        duration:
+          strategy === 'restart-timer'
+            ? options.duration === undefined
+              ? existed.options.duration
+              : normalizedOptions.duration
+            : options.duration === undefined
+              ? undefined
+              : normalizedOptions.duration,
+        placement: options.placement,
+        closable: options.closable,
+        pauseOnHover: options.pauseOnHover,
+        pauseOnWindowBlur: options.pauseOnWindowBlur,
+        duplicateStrategy: options.duplicateStrategy,
+        newestOnTop: options.newestOnTop,
+        maxVisible: options.maxVisible,
+        showProgress: options.showProgress,
+        className: options.className,
+        attrs: options.attrs,
+      })
+      existed.options.onClose = normalizedOptions.onClose
+      existed.options.onShown = normalizedOptions.onShown
+      return existed.handle
+    }
+
+    const baseRecord = {
+      id: toastId,
+      options: normalizedOptions,
+      element: document.createElement('article'),
+      status: 'pending' as const,
+      timerId: null,
+      remainingMs: normalizedOptions.duration,
+      startedAt: null,
+      paused: false,
+      pausedByWindowBlur: false,
+      closeButton: null,
+      progressElement: null,
+      bodyElement: document.createElement('div'),
+      titleElement: null,
+      cleanupListeners: [],
+      handle: undefined as unknown as SoToastHandle,
+    }
+    const record: SoToastRecord = baseRecord
+    record.handle = this.createHandle(record)
+    this.createToastElement(record)
+
+    this.recordById.set(toastId, record)
+
+    const state = this.getPlacementState(normalizedOptions.placement)
+    if (state.active.length < normalizedOptions.maxVisible) {
+      this.mountRecord(state, record)
+    } else {
+      this.queueRecord(state, record)
+    }
+
+    return record.handle
+  }
+
+  static clear(placement?: SoToastPlacement): void {
+    const placements = placement ? [placement] : Array.from(this.placementState.keys())
+
+    placements.forEach((slot) => {
+      const state = this.placementState.get(slot)
+      if (!state) {
+        return
+      }
+
+      const active = [...state.active]
+      const pending = [...state.pending]
+
+      pending.forEach((record) => this.closeRecord(record, 'container-clear'))
+      active.forEach((record) => this.closeRecord(record, 'container-clear'))
+    })
+  }
+
+  static configure(defaults: Partial<SoToastOptions>): void {
+    if (defaults.placement) {
+      this.defaults.placement = defaults.placement
+    }
+    if (defaults.variant) {
+      this.defaults.variant = defaults.variant
+    }
+    if (defaults.duration !== undefined) {
+      this.defaults.duration = defaults.duration === false ? 3000 : Math.max(0, defaults.duration)
+    }
+    if (defaults.showProgress !== undefined) {
+      this.defaults.showProgress = defaults.showProgress
+    }
+    if (defaults.closable !== undefined) {
+      this.defaults.closable = defaults.closable
+    }
+    if (defaults.pauseOnHover !== undefined) {
+      this.defaults.pauseOnHover = defaults.pauseOnHover
+    }
+    if (defaults.pauseOnWindowBlur !== undefined) {
+      this.defaults.pauseOnWindowBlur = defaults.pauseOnWindowBlur
+    }
+    if (defaults.duplicateStrategy !== undefined) {
+      this.defaults.duplicateStrategy = defaults.duplicateStrategy
+    }
+    if (defaults.newestOnTop !== undefined) {
+      this.defaults.newestOnTop = defaults.newestOnTop
+    }
+    if (defaults.maxVisible !== undefined) {
+      this.defaults.maxVisible = Math.max(1, defaults.maxVisible)
+    }
+  }
+
+  static success(content: string | Node, options: Omit<SoToastOptions, 'content' | 'variant'> = {}): SoToastHandle {
+    return this.show({ ...options, content, variant: 'success' })
+  }
+
+  static error(content: string | Node, options: Omit<SoToastOptions, 'content' | 'variant'> = {}): SoToastHandle {
+    return this.show({ ...options, content, variant: 'danger' })
+  }
+
+  static info(content: string | Node, options: Omit<SoToastOptions, 'content' | 'variant'> = {}): SoToastHandle {
+    return this.show({ ...options, content, variant: 'info' })
+  }
+
+  static warning(content: string | Node, options: Omit<SoToastOptions, 'content' | 'variant'> = {}): SoToastHandle {
+    return this.show({ ...options, content, variant: 'warning' })
+  }
+
+  static closeAll(): void {
+    this.clear()
+  }
+}
+
 export function openModal(options: SoDialogModalOptions): SoDialogHandle {
   return SoDialog.openModal(options)
 }
 
 export function openOffcanvas(options: Omit<SoDialogOffcanvasOptions, 'kind'>): SoDialogHandle {
   return SoDialog.openOffcanvas(options)
+}
+
+export function toast(options: SoToastOptions): SoToastHandle {
+  return SoToast.show(options)
 }
