@@ -24,6 +24,7 @@ app.innerHTML = `
       </div>
       <nav class="quick-nav">
         <a href="#quick-start">快速开始</a>
+        <a href="#toast-playbook">Toast 指南</a>
         <a href="#live-demo">原版 Demo</a>
         <a href="#api">API</a>
         <a href="#dev-flow">开发流程</a>
@@ -75,7 +76,7 @@ app.innerHTML = `
       </div>
       <div class="code-wrap">
         <button class="copy-btn" data-copy-target="usage-code" type="button">复制</button>
-        <pre id="usage-code"><code>import { openModal, openOffcanvas } from 'sodialog'
+        <pre id="usage-code"><code>import { openModal, openOffcanvas, toast } from 'sodialog'
 import 'sodialog/style.css'
 
 openModal({
@@ -89,13 +90,54 @@ openOffcanvas({
   title: '侧边栏',
   content: '&lt;p&gt;这是 Offcanvas&lt;/p&gt;',
   placement: 'end',
+})
+
+toast({
+  title: '保存成功',
+  content: '配置已更新',
+  variant: 'success',
+  duration: 2400,
 })</code></pre>
+      </div>
+    </section>
+
+    <section id="toast-playbook" class="card reveal">
+      <h2>Toast 快速指南</h2>
+      <p>支持位置、队列、重复策略、失焦暂停与倒计时条，适合做全局提醒中心。</p>
+      <div class="grid two-col">
+        <article class="mini-card">
+          <h3>固定 ID + 重启计时</h3>
+          <div class="code-wrap compact">
+            <button class="copy-btn" data-copy-target="toast-dedupe-code" type="button">复制</button>
+            <pre id="toast-dedupe-code"><code>toast({
+  id: 'sync-job',
+  title: '同步任务',
+  content: '正在更新数据...',
+  duplicateStrategy: 'restart-timer',
+  duration: 2200,
+})</code></pre>
+          </div>
+        </article>
+        <article class="mini-card">
+          <h3>全局配置</h3>
+          <div class="code-wrap compact">
+            <button class="copy-btn" data-copy-target="toast-config-code" type="button">复制</button>
+            <pre id="toast-config-code"><code>import { SoToast } from 'sodialog'
+
+SoToast.configure({
+  placement: 'top-end',
+  maxVisible: 4,
+  pauseOnWindowBlur: true,
+  showProgress: true,
+})</code></pre>
+          </div>
+        </article>
       </div>
     </section>
 
     <section id="api" class="card reveal">
       <h2>核心 API 摘要</h2>
-      <div class="grid two-col">
+      <div class="grid three-col">
         <article class="mini-card">
           <h3><code>openModal(options)</code></h3>
           <ul>
@@ -114,6 +156,15 @@ openOffcanvas({
             <li><code>placement</code>：<code>start | end | top | bottom</code></li>
             <li>默认动画：<code>slide</code></li>
             <li>适合做侧栏配置、详情抽屉</li>
+          </ul>
+        </article>
+        <article class="mini-card">
+          <h3><code>toast(options)</code></h3>
+          <ul>
+            <li><code>placement</code>：6 个角落/中轴位置</li>
+            <li><code>maxVisible</code>：超出自动队列</li>
+            <li><code>duplicateStrategy</code>：update/ignore/restart-timer/stack</li>
+            <li><code>pauseOnWindowBlur</code>：切窗暂停倒计时</li>
           </ul>
         </article>
       </div>

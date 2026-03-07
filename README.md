@@ -2,6 +2,17 @@
 
 基于 HTML5 `dialog` 的可复用弹窗库，支持 **Modal** 与 **Offcanvas**，并通过 JavaScript 动态创建 HTML 元素。
 
+## 目录
+
+- [安装](#安装)
+- [使用](#使用)
+- [API](#api)
+- [Toast 常见示例](#toast-常见示例)
+- [开发](#开发)
+- [GitHub Pages 首页](#github-pages-首页)
+- [文档体系](#文档体系)
+- [发布到 NPM](#发布到-npm)
+
 ## 安装
 
 ```bash
@@ -11,7 +22,7 @@ npm install sodialog
 ## 使用
 
 ```ts
-import { openModal, openOffcanvas } from 'sodialog'
+import { openModal, openOffcanvas, toast } from 'sodialog'
 import 'sodialog/style.css'
 
 openModal({
@@ -34,9 +45,6 @@ openOffcanvas({
   animation: 'slide',
   content: '<p>这是 Offcanvas</p>',
 })
-
-// Toast
-import { toast } from 'sodialog'
 
 toast({
   title: '保存成功',
@@ -183,6 +191,62 @@ openOffcanvas({ title: 'Bottom', placement: 'bottom', animation: 'zoom', content
 - 可用 `SoToast.clear(placement?)` 清空指定位置或全部 toast
 - 可用 `SoToast.closeAll()` 清空全部 toast
 - 便捷方法：`SoToast.success/error/info/warning`
+
+### `duplicateStrategy` 行为说明
+
+- `update`：更新已有同 ID toast，保留单实例
+- `ignore`：同 ID 已存在时直接忽略
+- `restart-timer`：更新内容并重新开始倒计时
+- `stack`：自动生成新 ID，允许同来源消息堆叠
+
+## Toast 常见示例
+
+### 1) 成功提示（默认 3 秒自动消失）
+
+```ts
+toast({
+  title: '保存成功',
+  content: '配置已同步到服务器',
+  variant: 'success',
+})
+```
+
+### 2) 错误提示（常驻 + 手动关闭）
+
+```ts
+toast({
+  title: '提交失败',
+  content: '网络连接异常，请稍后重试',
+  variant: 'danger',
+  duration: false,
+  placement: 'bottom-end',
+})
+```
+
+### 3) 固定 ID 去重（重复触发时重置计时）
+
+```ts
+toast({
+  id: 'sync-job',
+  title: '同步任务',
+  content: '正在更新数据...',
+  duplicateStrategy: 'restart-timer',
+  duration: 2200,
+})
+```
+
+### 4) 全局默认配置
+
+```ts
+import { SoToast } from 'sodialog'
+
+SoToast.configure({
+  placement: 'top-end',
+  maxVisible: 4,
+  pauseOnWindowBlur: true,
+  showProgress: true,
+})
+```
 
 ## 开发
 
