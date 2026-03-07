@@ -7,6 +7,12 @@ export default defineConfig(({ mode }) => {
       base: '/SoDialog/',
       build: {
         outDir: 'dist-pages',
+        rollupOptions: {
+          input: {
+            main: resolve(__dirname, 'index.html'),
+            demo: resolve(__dirname, 'demo.html'),
+          },
+        },
       },
     }
   }

@@ -216,6 +216,27 @@ body {
   padding: 0.86rem;
 }
 
+.demo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 0.8rem;
+}
+
+.demo-frame-wrap {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.demo-frame {
+  width: 100%;
+  min-height: 760px;
+  border: 0;
+  display: block;
+}
+
 .code-wrap {
   position: relative;
   border: 1px solid var(--line);
@@ -359,5 +380,9 @@ h3 code {
   .copy-btn {
     top: 0.44rem;
     right: 0.44rem;
+  }
+
+  .demo-frame {
+    min-height: 980px;
   }
 }
