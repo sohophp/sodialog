@@ -75,15 +75,30 @@ body {
 }
 
 .hero {
-  background: linear-gradient(140deg, rgb(255 255 255 / 80%), rgb(255 250 246 / 84%));
+  position: relative;
+  background: linear-gradient(140deg, rgb(255 255 255 / 86%), rgb(255 250 246 / 90%));
   border: 1px solid var(--line);
   border-radius: 22px;
   box-shadow: var(--shadow);
   padding: 1.4rem 1.4rem 1.8rem;
   animation: lift-in 0.55s ease;
+  overflow: hidden;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: auto -30% -120px auto;
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(220 79 36 / 24%), rgb(220 79 36 / 0%) 70%);
+  pointer-events: none;
 }
 
 .hero-top {
+  position: relative;
+  z-index: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -91,8 +106,32 @@ body {
   flex-wrap: wrap;
 }
 
+.brand-block {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.brand-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  box-shadow: 0 8px 16px rgb(175 47 15 / 24%);
+}
+
+.brand-copy {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.brand-name {
+  font: 700 1.05rem/1 'Space Grotesk', sans-serif;
+  letter-spacing: 0.02em;
+}
+
 .tag {
-  font: 600 0.8rem/1 'Space Grotesk', sans-serif;
+  font: 600 0.74rem/1 'Space Grotesk', sans-serif;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--brand-strong);
@@ -111,23 +150,51 @@ body {
 .quick-nav a {
   color: var(--ink);
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: 0.84rem;
   font-weight: 600;
+  border: 1px solid var(--line);
+  padding: 0.32rem 0.58rem;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 65%);
 }
 
 .quick-nav a:hover {
   color: var(--brand);
+  border-color: rgb(220 79 36 / 45%);
+  background: rgb(220 79 36 / 10%);
 }
 
 .hero h1 {
   margin: 1rem 0 0.6rem;
   font: 700 clamp(1.6rem, 2.8vw, 2.6rem) / 1.15 'Space Grotesk', 'Noto Sans SC', sans-serif;
+  position: relative;
+  z-index: 1;
 }
 
 .hero p {
   margin: 0;
   color: var(--muted);
   max-width: 68ch;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-metrics {
+  margin-top: 0.9rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-metrics span {
+  font: 600 0.8rem/1 'Space Grotesk', 'Noto Sans SC', sans-serif;
+  color: #20312f;
+  background: rgb(15 111 95 / 10%);
+  border: 1px solid rgb(15 111 95 / 22%);
+  border-radius: 999px;
+  padding: 0.32rem 0.58rem;
 }
 
 .hero-actions {
@@ -194,6 +261,12 @@ body {
 .card p,
 .card li {
   color: var(--muted);
+}
+
+.lead {
+  margin: -0.2rem 0 0.7rem;
+  font-weight: 600;
+  color: #2d3d3a;
 }
 
 .grid {
@@ -364,6 +437,12 @@ h3 code {
 }
 
 @media (width <= 560px) {
+  .brand-copy {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.32rem;
+  }
+
   .quick-nav {
     gap: 0.5rem;
   }

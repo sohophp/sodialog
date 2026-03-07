@@ -15,7 +15,13 @@ app.innerHTML = `
 
   <header class="hero">
     <div class="hero-top">
-      <span class="tag">SoDialog Documentation</span>
+      <div class="brand-block">
+        <img class="brand-logo" src="./logo.ico" alt="SoDialog Logo" width="36" height="36" />
+        <div class="brand-copy">
+          <strong class="brand-name">SoDialog</strong>
+          <span class="tag">Documentation</span>
+        </div>
+      </div>
       <nav class="quick-nav">
         <a href="#quick-start">快速开始</a>
         <a href="#live-demo">原版 Demo</a>
@@ -31,6 +37,12 @@ app.innerHTML = `
       <strong>Offcanvas</strong>，适合快速集成到 TypeScript 前端项目。
     </p>
 
+    <div class="hero-metrics">
+      <span>TypeScript First</span>
+      <span>Modal + Offcanvas</span>
+      <span>GitHub Actions Ready</span>
+    </div>
+
     <div class="hero-actions">
       <a class="btn primary" href="https://www.npmjs.com/package/sodialog" target="_blank" rel="noreferrer">NPM 包</a>
       <a class="btn secondary" href="https://github.com/sohophp/sodialog" target="_blank" rel="noreferrer">GitHub 仓库</a>
@@ -41,6 +53,7 @@ app.innerHTML = `
   <main class="content">
     <section id="quick-start" class="card reveal">
       <h2>快速开始</h2>
+      <p class="lead">3 步即可接入: 安装、引入样式、调用 API。</p>
       <ol>
         <li>安装：<code>npm install sodialog</code></li>
         <li>引入 API 与样式</li>
