@@ -7,6 +7,7 @@
 - [安装](#安装)
 - [使用](#使用)
 - [API](#api)
+- [Promise API](#promise-api)
 - [Toast 常见示例](#toast-常见示例)
 - [开发](#开发)
 - [GitHub Pages 首页](#github-pages-首页)
@@ -22,7 +23,7 @@ npm install sodialog
 ## 使用
 
 ```ts
-import { openModal, openOffcanvas, toast } from 'sodialog'
+import { openModal, openOffcanvas, confirmModal, promptModal, toast } from 'sodialog'
 import 'sodialog/style.css'
 
 openModal({
@@ -54,6 +55,20 @@ toast({
   duration: 2500,
   maxVisible: 3,
 })
+
+const ok = await confirmModal({
+  title: '删除确认',
+  content: '<p>确定删除当前记录吗？</p>',
+})
+
+if (ok) {
+  const name = await promptModal({
+    title: '请输入备注',
+    placeholder: '操作备注',
+    validate: (value) => (value.length < 2 ? '至少输入 2 个字符' : true),
+  })
+  console.log('prompt result:', name)
+}
 ```
 
 ## API
@@ -89,6 +104,11 @@ toast({
 - `onConfirm?: () => void`
 - `onCancel?: () => void`
 - `onAction?: (context) => void`（监听所有 footer 按钮动作）
+- `onBeforeOpen?: (context) => void`
+- `onAfterOpen?: (context) => void`
+- `onBeforeClose?: (context) => void`
+- `onAfterClose?: (context) => void`
+- `onLifecycle?: (context) => void`（统一监听所有生命周期阶段）
 - `handle.setFooterButtons(buttons): void`（运行时整体替换 footer 按钮）
 - `handle.updateFooterButton(id, updates): boolean`（按 id 更新某个 footer 按钮）
 - `handle.onAction(listener): () => void`（追加动作监听，返回取消监听函数）
@@ -163,6 +183,22 @@ openOffcanvas({ title: 'Bottom', placement: 'bottom', animation: 'zoom', content
 
 通用入口，`options.kind` 可为 `modal` 或 `offcanvas`。
 
+## Promise API
+
+### `SoDialog.confirm(options)` / `confirmModal(options)`
+
+- 返回 `Promise<boolean>`
+- 确认按钮 resolve `true`
+- 取消、Esc、点击遮罩、关闭按钮 resolve `false`
+
+### `SoDialog.prompt(options)` / `promptModal(options)`
+
+- 返回 `Promise<string | null>`
+- 确认返回输入值，取消返回 `null`
+- 支持 `defaultValue`、`placeholder`、`inputType`
+- 支持 `trimResult`（默认 `true`）
+- 支持 `validate(value)`，返回 `string`/`false` 可阻止关闭并显示错误
+
 ### `toast(options)` / `SoToast.show(options)`
 
 - `content: string | Node`
@@ -176,6 +212,11 @@ openOffcanvas({ title: 'Bottom', placement: 'bottom', animation: 'zoom', content
 - `pauseOnHover?: boolean`（默认 `true`）
 - `pauseOnWindowBlur?: boolean`（默认 `false`，切换窗口时暂停倒计时）
 - `duplicateStrategy?: 'update' | 'ignore' | 'restart-timer' | 'stack'`（默认 `update`）
+- `onBeforeOpen?: (context) => void`
+- `onAfterOpen?: (context) => void`
+- `onBeforeClose?: (context) => void`
+- `onAfterClose?: (context) => void`
+- `onLifecycle?: (context) => void`（统一监听所有生命周期阶段）
 - `onShown?: (handle) => void`
 - `onClose?: (reason, handle) => void`
 
@@ -191,6 +232,16 @@ openOffcanvas({ title: 'Bottom', placement: 'bottom', animation: 'zoom', content
 - 可用 `SoToast.clear(placement?)` 清空指定位置或全部 toast
 - 可用 `SoToast.closeAll()` 清空全部 toast
 - 便捷方法：`SoToast.success/error/info/warning`
+
+### 统一生命周期 context
+
+生命周期回调会收到统一结构：
+
+- `component: 'modal' | 'offcanvas' | 'toast'`
+- `phase: 'before-open' | 'after-open' | 'before-close' | 'after-close'`
+- `id?: string`
+- `reason?: string`
+- `element: HTMLElement`
 
 ### `duplicateStrategy` 行为说明
 

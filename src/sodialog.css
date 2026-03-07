@@ -165,6 +165,37 @@
   margin: 0 0 0.5rem;
 }
 
+.sod-prompt-wrap {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.sod-prompt-intro {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.sod-prompt-input {
+  width: 100%;
+  min-height: 2.3rem;
+  border: 1px solid #ced4da;
+  border-radius: 0.4rem;
+  font-size: 0.95rem;
+  padding: 0.45rem 0.6rem;
+}
+
+.sod-prompt-input:focus-visible {
+  outline: 2px solid #86b7fe;
+  outline-offset: 1px;
+  border-color: #86b7fe;
+}
+
+.sod-prompt-error {
+  margin: 0;
+  color: #b02a37;
+  font-size: 0.84rem;
+}
+
 .sod-body ul {
   margin: 0.5rem 0 0;
   padding-left: 1.2rem;
