@@ -153,15 +153,18 @@ body {
   font-size: 0.84rem;
   font-weight: 600;
   border: 1px solid var(--line);
-  padding: 0.32rem 0.58rem;
-  border-radius: 999px;
+  padding: 0.4rem 0.68rem;
+  border-radius: 8px;
   background: rgb(255 255 255 / 65%);
+  box-shadow: inset 0 -2px 0 rgb(24 32 31 / 8%);
+  transition: color 0.16s ease, border-color 0.16s ease, background-color 0.16s ease, transform 0.12s ease;
 }
 
 .quick-nav a:hover {
   color: var(--brand);
   border-color: rgb(220 79 36 / 45%);
   background: rgb(220 79 36 / 10%);
+  transform: translateY(-1px);
 }
 
 .hero h1 {
@@ -503,7 +506,8 @@ h3 code {
   }
 
   .quick-nav a {
-    font-size: 0.84rem;
+    font-size: 0.82rem;
+    border-radius: 7px;
   }
 
   .btn {
