@@ -104,7 +104,6 @@ main section {
   position: relative;
   z-index: 1;
   display: flex;
-  justify-content: space-between;
   align-items: center;
   gap: 1rem;
   flex-wrap: wrap;
@@ -145,30 +144,6 @@ main section {
   padding: 0.46rem 0.8rem;
 }
 
-.quick-nav {
-  display: flex;
-  gap: 0.8rem;
-  flex-wrap: wrap;
-}
-
-.quick-nav a {
-  color: var(--ink);
-  text-decoration: none;
-  font-size: 0.84rem;
-  font-weight: 600;
-  border: 1px solid var(--line);
-  padding: 0.32rem 0.58rem;
-  border-radius: 999px;
-  background: rgb(255 255 255 / 65%);
-}
-
-.quick-nav a:hover {
-  color: var(--brand);
-  border-color: rgb(220 79 36 / 45%);
-  background: rgb(220 79 36 / 10%);
-}
-
-.quick-nav a.is-active,
 .section-nav a.is-active {
   color: #fff;
   border-color: var(--brand-strong);
@@ -539,14 +514,6 @@ h3 code {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.32rem;
-  }
-
-  .quick-nav {
-    gap: 0.5rem;
-  }
-
-  .quick-nav a {
-    font-size: 0.84rem;
   }
 
   .section-nav {

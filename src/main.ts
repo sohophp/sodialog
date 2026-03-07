@@ -22,13 +22,6 @@ app.innerHTML = `
           <span class="tag">Documentation</span>
         </div>
       </div>
-      <nav class="quick-nav">
-        <a href="#quick-start">快速开始</a>
-        <a href="#live-demo">原版 Demo</a>
-        <a href="#api">API</a>
-        <a href="#dev-flow">开发流程</a>
-        <a href="#release-flow">发布流程</a>
-      </nav>
     </div>
 
     <h1>SoDialog 开发文档与使用说明</h1>
@@ -191,7 +184,7 @@ git push --follow-tags</code></pre>
 `
 
 const copyButtons = document.querySelectorAll<HTMLButtonElement>('.copy-btn')
-const sectionLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('.quick-nav a, .section-nav a'))
+const sectionLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('.section-nav a'))
 const sectionTargets = Array.from(document.querySelectorAll<HTMLElement>('main section[id]'))
 
 copyButtons.forEach((button) => {
