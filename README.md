@@ -98,7 +98,20 @@ openOffcanvas({ title: 'Bottom', placement: 'bottom', animation: 'zoom', content
 npm run dev
 npm run lint
 npm run build
+npm run docs:changelog
 ```
+
+## 文档体系
+
+- `README.md`：使用方式、API、发布流程总览
+- `CHANGELOG.md`：版本变更记录（按 git tag 自动生成）
+- `RELEASE_CHECKLIST.md`：发布前人工检查清单
+
+### 文档自动更新
+
+- 本地可执行：`npm run docs:changelog`
+- 仓库内置工作流：`.github/workflows/docs-changelog.yml`
+- 当推送版本 tag（`v*.*.*`）时，工作流会自动重建 `CHANGELOG.md` 并回推到 `master`
 
 Demo 中已包含：
 

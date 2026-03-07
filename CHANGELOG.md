@@ -1,0 +1,76 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is inspired by Keep a Changelog and generated from git tags/commits.
+
+## [Unreleased]
+
+## [0.1.11] - 2026-03-07
+
+### Commits
+- fix: add repository metadata for npm provenance
+
+## [0.1.10] - 2026-03-07
+
+### Commits
+- ci: prefer automation token publish with oidc fallback
+
+## [0.1.9] - 2026-03-07
+
+### Commits
+- ci: enforce trusted publishing to avoid otp
+
+## [0.1.8] - 2026-03-07
+
+### Commits
+- fix: workflow secret condition
+
+## [0.1.7] - 2026-03-07
+
+### Commits
+- ci: support token-first npm publish with OIDC fallback
+
+## [0.1.6] - 2026-03-07
+
+### Commits
+- ci: switch npm publish to trusted publishing
+
+## [0.1.5] - 2026-03-07
+
+### Commits
+- ci: fix bash quoting in npm publish workflow
+
+## [0.1.4] - 2026-03-07
+
+### Commits
+- docs: add npm auto-publish guide for tag release
+
+## [0.1.3] - 2026-03-07
+
+### Commits
+- No user-facing commit messages recorded in this range.
+
+## [0.1.2] - 2026-03-07
+
+### Commits
+- No user-facing commit messages recorded in this range.
+
+## [0.1.1] - 2026-03-07
+
+### Commits
+- release: prepare v0.1.1
+- feat: build reusable SoDialog npm library
+
+[Unreleased]: https://github.com/sohophp/sodialog/compare/v0.1.11...HEAD
+[0.1.11]: https://github.com/sohophp/sodialog/releases/tag/v0.1.11
+[0.1.10]: https://github.com/sohophp/sodialog/releases/tag/v0.1.10
+[0.1.9]: https://github.com/sohophp/sodialog/releases/tag/v0.1.9
+[0.1.8]: https://github.com/sohophp/sodialog/releases/tag/v0.1.8
+[0.1.7]: https://github.com/sohophp/sodialog/releases/tag/v0.1.7
+[0.1.6]: https://github.com/sohophp/sodialog/releases/tag/v0.1.6
+[0.1.5]: https://github.com/sohophp/sodialog/releases/tag/v0.1.5
+[0.1.4]: https://github.com/sohophp/sodialog/releases/tag/v0.1.4
+[0.1.3]: https://github.com/sohophp/sodialog/releases/tag/v0.1.3
+[0.1.2]: https://github.com/sohophp/sodialog/releases/tag/v0.1.2
+[0.1.1]: https://github.com/sohophp/sodialog/releases/tag/v0.1.1

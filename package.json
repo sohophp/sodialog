@@ -38,6 +38,7 @@
     "build": "vite build && npm run build:types",
     "build:types": "tsc -p tsconfig.build.json",
     "build:demo": "vite build --mode demo",
+    "docs:changelog": "node scripts/generate-changelog.mjs",
     "preview": "vite preview",
     "lint": "eslint .",
     "prepublishOnly": "npm run lint && npm run build"
