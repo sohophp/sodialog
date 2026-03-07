@@ -1,5 +1,12 @@
 import './demo-style.css'
-import { SoToast, openModal, openOffcanvas, type SoToastPlacement, type SoToastVariant } from './lib'
+import {
+  SoToast,
+  openModal,
+  openOffcanvas,
+  type SoToastDuplicateStrategy,
+  type SoToastPlacement,
+  type SoToastVariant,
+} from './lib'
 
 type DemoPlacement = 'start' | 'end' | 'top' | 'bottom'
 type DemoAnimation = 'slide' | 'fade' | 'zoom'
@@ -820,6 +827,22 @@ function renderApp(root: HTMLDivElement) {
   toastIdInput.className = 'animation-input'
   toastIdInput.placeholder = '例如 sync-job'
 
+  const toastDuplicateLabel = document.createElement('label')
+  toastDuplicateLabel.className = 'animation-label'
+  toastDuplicateLabel.setAttribute('for', 'toast-duplicate-strategy')
+  toastDuplicateLabel.textContent = '重复策略'
+
+  const toastDuplicateSelect = document.createElement('select')
+  toastDuplicateSelect.id = 'toast-duplicate-strategy'
+  toastDuplicateSelect.className = 'animation-select'
+  ;(['update', 'ignore', 'restart-timer', 'stack'] as const).forEach((strategy) => {
+    const option = document.createElement('option')
+    option.value = strategy
+    option.textContent = strategy
+    toastDuplicateSelect.append(option)
+  })
+  toastDuplicateSelect.value = 'update'
+
   const toastMaxLabel = document.createElement('label')
   toastMaxLabel.className = 'animation-label'
   toastMaxLabel.setAttribute('for', 'toast-max-visible')
@@ -854,6 +877,16 @@ function renderApp(root: HTMLDivElement) {
   toastProgressText.textContent = '显示倒计时条'
   toastProgressLabel.append(toastProgressCheckbox, toastProgressText)
 
+  const toastBlurPauseLabel = document.createElement('label')
+  toastBlurPauseLabel.className = 'check-label'
+
+  const toastBlurPauseCheckbox = document.createElement('input')
+  toastBlurPauseCheckbox.type = 'checkbox'
+
+  const toastBlurPauseText = document.createElement('span')
+  toastBlurPauseText.textContent = '切窗暂停计时'
+  toastBlurPauseLabel.append(toastBlurPauseCheckbox, toastBlurPauseText)
+
   toastRow.append(
     toastPlacementLabel,
     toastPlacementSelect,
@@ -861,12 +894,15 @@ function renderApp(root: HTMLDivElement) {
     toastVariantSelect,
     toastIdLabel,
     toastIdInput,
+    toastDuplicateLabel,
+    toastDuplicateSelect,
     toastDurationLabel,
     toastDurationInput,
     toastMaxLabel,
     toastMaxInput,
     toastStickyLabel,
     toastProgressLabel,
+    toastBlurPauseLabel,
   )
 
   const toastActions = document.createElement('div')
@@ -881,6 +917,7 @@ function renderApp(root: HTMLDivElement) {
     const duration = toastStickyCheckbox.checked ? false : Number(toastDurationInput.value) || 2600
     const maxVisible = Math.max(1, Number(toastMaxInput.value) || 3)
     const fixedId = toastIdInput.value.trim() || undefined
+    const duplicateStrategy = toastDuplicateSelect.value as SoToastDuplicateStrategy
 
     SoToast.show({
       id: fixedId,
@@ -890,6 +927,8 @@ function renderApp(root: HTMLDivElement) {
       variant,
       duration,
       showProgress: toastProgressCheckbox.checked,
+      pauseOnWindowBlur: toastBlurPauseCheckbox.checked,
+      duplicateStrategy,
       maxVisible,
       onClose: (reason) => {
         appendLog('onAction', undefined, `toast close: ${reason}`)
@@ -904,15 +943,19 @@ function renderApp(root: HTMLDivElement) {
     const placement = toastPlacementSelect.value as SoToastPlacement
     const variant = toastVariantSelect.value as SoToastVariant
     const maxVisible = Math.max(1, Number(toastMaxInput.value) || 3)
+    const duplicateStrategy = toastDuplicateSelect.value as SoToastDuplicateStrategy
 
     for (let index = 1; index <= 6; index += 1) {
       SoToast.show({
+        id: duplicateStrategy === 'stack' ? `queue-${placement}` : undefined,
         title: `队列消息 ${index}`,
         content: `第 ${index} 条，maxVisible=${maxVisible}`,
         placement,
         variant,
         duration: 1200 + index * 350,
         showProgress: toastProgressCheckbox.checked,
+        pauseOnWindowBlur: toastBlurPauseCheckbox.checked,
+        duplicateStrategy,
         maxVisible,
       })
     }
@@ -936,6 +979,8 @@ function renderApp(root: HTMLDivElement) {
       variant,
       duration,
       showProgress: toastProgressCheckbox.checked,
+      pauseOnWindowBlur: toastBlurPauseCheckbox.checked,
+      duplicateStrategy: toastDuplicateSelect.value as SoToastDuplicateStrategy,
       maxVisible: Math.max(1, Number(toastMaxInput.value) || 3),
     })
   })

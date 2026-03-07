@@ -166,15 +166,22 @@ openOffcanvas({ title: 'Bottom', placement: 'bottom', animation: 'zoom', content
 - `maxVisible?: number`（默认 `3`，按同位置队列生效）
 - `closable?: boolean`（默认 `true`）
 - `pauseOnHover?: boolean`（默认 `true`）
+- `pauseOnWindowBlur?: boolean`（默认 `false`，切换窗口时暂停倒计时）
+- `duplicateStrategy?: 'update' | 'ignore' | 'restart-timer' | 'stack'`（默认 `update`）
 - `onShown?: (handle) => void`
 - `onClose?: (reason, handle) => void`
 
 队列与控制：
 
 - 超过 `maxVisible` 的消息会进入队列，前面的 toast 关闭后自动补位
-- 相同 `id` 再次调用会更新已有 toast；若 `placement` 改变，会迁移到新位置
+- 相同 `id` 再次调用会按 `duplicateStrategy` 处理
+- `update`: 更新内容与配置；若 `placement` 改变会迁移到新位置
+- `ignore`: 保留已有 toast，忽略本次重复调用
+- `restart-timer`: 更新并强制重启倒计时
+- `stack`: 自动生成新 id，保留已有 toast 并叠加新 toast
 - 返回 `handle`，支持 `close / update / pause / resume`
 - 可用 `SoToast.clear(placement?)` 清空指定位置或全部 toast
+- 可用 `SoToast.closeAll()` 清空全部 toast
 - 便捷方法：`SoToast.success/error/info/warning`
 
 ## 开发

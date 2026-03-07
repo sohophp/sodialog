@@ -20,6 +20,7 @@ export type SoToastPlacement =
   | 'bottom-end'
 export type SoToastVariant = 'default' | 'info' | 'success' | 'warning' | 'danger'
 export type SoToastCloseReason = 'timeout' | 'manual' | 'close-button' | 'container-clear' | 'programmatic'
+export type SoToastDuplicateStrategy = 'update' | 'ignore' | 'restart-timer' | 'stack'
 
 export interface SoDialogFooterButton {
   id?: string
@@ -107,6 +108,8 @@ export interface SoToastOptions {
   showProgress?: boolean
   closable?: boolean
   pauseOnHover?: boolean
+  pauseOnWindowBlur?: boolean
+  duplicateStrategy?: SoToastDuplicateStrategy
   newestOnTop?: boolean
   maxVisible?: number
   className?: string
@@ -128,7 +131,10 @@ interface SoToastResolvedOptions
   extends Required<
       Pick<SoToastOptions, 'placement' | 'variant' | 'closable' | 'pauseOnHover' | 'newestOnTop' | 'showProgress'>
     >,
-    Pick<SoToastOptions, 'title' | 'className' | 'attrs' | 'onShown' | 'onClose'> {
+    Pick<
+      SoToastOptions,
+      'title' | 'className' | 'attrs' | 'onShown' | 'onClose' | 'pauseOnWindowBlur' | 'duplicateStrategy'
+    > {
   content: string | Node
   duration: number | false
   maxVisible: number
@@ -143,6 +149,7 @@ interface SoToastRecord {
   remainingMs: number | false
   startedAt: number | null
   paused: boolean
+  pausedByWindowBlur: boolean
   closeButton: HTMLButtonElement | null
   progressElement: HTMLElement | null
   bodyElement: HTMLElement
@@ -1001,6 +1008,8 @@ export class SoToast {
     showProgress: boolean
     closable: boolean
     pauseOnHover: boolean
+    pauseOnWindowBlur: boolean
+    duplicateStrategy: SoToastDuplicateStrategy
     newestOnTop: boolean
     maxVisible: number
   } = {
@@ -1010,6 +1019,8 @@ export class SoToast {
     showProgress: true,
     closable: true,
     pauseOnHover: true,
+    pauseOnWindowBlur: false,
+    duplicateStrategy: 'update',
     newestOnTop: true,
     maxVisible: 3,
   }
@@ -1025,6 +1036,8 @@ export class SoToast {
       showProgress: options.showProgress ?? this.defaults.showProgress,
       closable: options.closable ?? this.defaults.closable,
       pauseOnHover: options.pauseOnHover ?? this.defaults.pauseOnHover,
+      pauseOnWindowBlur: options.pauseOnWindowBlur ?? this.defaults.pauseOnWindowBlur,
+      duplicateStrategy: options.duplicateStrategy ?? this.defaults.duplicateStrategy,
       newestOnTop: options.newestOnTop ?? this.defaults.newestOnTop,
       maxVisible: Math.max(1, options.maxVisible ?? this.defaults.maxVisible),
       title: options.title,
@@ -1039,6 +1052,16 @@ export class SoToast {
   private static createAutoToastId(): string {
     this.idSeed += 1
     return `sot-toast-${this.idSeed}`
+  }
+
+  private static createStackedToastId(baseId: string): string {
+    let attempt = 1
+    let nextId = `${baseId}-${attempt}`
+    while (this.recordById.has(nextId)) {
+      attempt += 1
+      nextId = `${baseId}-${attempt}`
+    }
+    return nextId
   }
 
   private static resolveRole(variant: SoToastVariant): 'status' | 'alert' {
@@ -1136,6 +1159,31 @@ export class SoToast {
       })
     }
 
+    if (options.pauseOnWindowBlur) {
+      const onWindowBlur = () => {
+        if (record.paused || record.status !== 'active') {
+          return
+        }
+        record.pausedByWindowBlur = true
+        this.pauseRecord(record)
+      }
+
+      const onWindowFocus = () => {
+        if (!record.pausedByWindowBlur) {
+          return
+        }
+        record.pausedByWindowBlur = false
+        this.resumeRecord(record)
+      }
+
+      window.addEventListener('blur', onWindowBlur)
+      window.addEventListener('focus', onWindowFocus)
+      record.cleanupListeners.push(() => {
+        window.removeEventListener('blur', onWindowBlur)
+        window.removeEventListener('focus', onWindowFocus)
+      })
+    }
+
     record.element = element
     record.bodyElement = body
     record.titleElement = titleElement
@@ -1150,10 +1198,10 @@ export class SoToast {
 
     record.progressElement.style.display = 'block'
     record.progressElement.style.animation = 'none'
-    record.progressElement.style.animationDuration = `${Math.max(1, duration)}ms`
+    record.progressElement.style.animationPlayState = 'running'
     // Force reflow so restarting animation is reliable across browsers.
     void record.progressElement.offsetWidth
-    record.progressElement.style.animation = ''
+    record.progressElement.style.animation = `sod-toast-progress-countdown ${Math.max(1, duration)}ms linear forwards`
   }
 
   private static hideProgress(record: SoToastRecord): void {
@@ -1321,6 +1369,8 @@ export class SoToast {
         | 'placement'
         | 'closable'
         | 'pauseOnHover'
+        | 'pauseOnWindowBlur'
+        | 'duplicateStrategy'
         | 'newestOnTop'
         | 'maxVisible'
         | 'showProgress'
@@ -1392,6 +1442,15 @@ export class SoToast {
     if (patch.pauseOnHover !== undefined && patch.pauseOnHover !== record.options.pauseOnHover) {
       record.options.pauseOnHover = patch.pauseOnHover
       shouldRebuild = true
+    }
+
+    if (patch.pauseOnWindowBlur !== undefined && patch.pauseOnWindowBlur !== record.options.pauseOnWindowBlur) {
+      record.options.pauseOnWindowBlur = patch.pauseOnWindowBlur
+      shouldRebuild = true
+    }
+
+    if (patch.duplicateStrategy !== undefined) {
+      record.options.duplicateStrategy = patch.duplicateStrategy
     }
 
     if (patch.showProgress !== undefined && patch.showProgress !== record.options.showProgress) {
@@ -1551,24 +1610,45 @@ export class SoToast {
   }
 
   static show(options: SoToastOptions): SoToastHandle {
-    const toastId = options.id?.trim() || this.createAutoToastId()
+    const requestedId = options.id?.trim()
+    const toastId = requestedId || this.createAutoToastId()
     const normalizedOptions = this.normalizeOptions(options)
     const existed = this.recordById.get(toastId)
 
     if (existed) {
+      const strategy = normalizedOptions.duplicateStrategy
+
+      if (strategy === 'ignore') {
+        return existed.handle
+      }
+
+      if (strategy === 'stack') {
+        const stackedId = this.createStackedToastId(toastId)
+        return this.show({ ...options, id: stackedId, duplicateStrategy: 'update' })
+      }
+
       this.updateRecord(existed, {
-        title: normalizedOptions.title,
-        content: normalizedOptions.content,
-        variant: normalizedOptions.variant,
-        duration: normalizedOptions.duration,
-        placement: normalizedOptions.placement,
-        closable: normalizedOptions.closable,
-        pauseOnHover: normalizedOptions.pauseOnHover,
-        newestOnTop: normalizedOptions.newestOnTop,
-        maxVisible: normalizedOptions.maxVisible,
-        showProgress: normalizedOptions.showProgress,
-        className: normalizedOptions.className,
-        attrs: normalizedOptions.attrs,
+        title: options.title,
+        content: options.content,
+        variant: options.variant,
+        duration:
+          strategy === 'restart-timer'
+            ? options.duration === undefined
+              ? existed.options.duration
+              : normalizedOptions.duration
+            : options.duration === undefined
+              ? undefined
+              : normalizedOptions.duration,
+        placement: options.placement,
+        closable: options.closable,
+        pauseOnHover: options.pauseOnHover,
+        pauseOnWindowBlur: options.pauseOnWindowBlur,
+        duplicateStrategy: options.duplicateStrategy,
+        newestOnTop: options.newestOnTop,
+        maxVisible: options.maxVisible,
+        showProgress: options.showProgress,
+        className: options.className,
+        attrs: options.attrs,
       })
       existed.options.onClose = normalizedOptions.onClose
       existed.options.onShown = normalizedOptions.onShown
@@ -1584,6 +1664,7 @@ export class SoToast {
       remainingMs: normalizedOptions.duration,
       startedAt: null,
       paused: false,
+      pausedByWindowBlur: false,
       closeButton: null,
       progressElement: null,
       bodyElement: document.createElement('div'),
@@ -1643,6 +1724,12 @@ export class SoToast {
     if (defaults.pauseOnHover !== undefined) {
       this.defaults.pauseOnHover = defaults.pauseOnHover
     }
+    if (defaults.pauseOnWindowBlur !== undefined) {
+      this.defaults.pauseOnWindowBlur = defaults.pauseOnWindowBlur
+    }
+    if (defaults.duplicateStrategy !== undefined) {
+      this.defaults.duplicateStrategy = defaults.duplicateStrategy
+    }
     if (defaults.newestOnTop !== undefined) {
       this.defaults.newestOnTop = defaults.newestOnTop
     }
@@ -1665,6 +1752,10 @@ export class SoToast {
 
   static warning(content: string | Node, options: Omit<SoToastOptions, 'content' | 'variant'> = {}): SoToastHandle {
     return this.show({ ...options, content, variant: 'warning' })
+  }
+
+  static closeAll(): void {
+    this.clear()
   }
 }
 

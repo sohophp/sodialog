@@ -604,10 +604,12 @@
 }
 
 .sod-toast-progress {
+  width: 100%;
   height: 3px;
   background: var(--sod-toast-accent);
+  opacity: 0.9;
   transform-origin: left center;
-  animation: sod-toast-progress-countdown linear forwards;
+  animation: sod-toast-progress-countdown 3000ms linear forwards;
 }
 
 .sod-toast-default {
