@@ -152,6 +152,16 @@ npm run build
 npm run docs:changelog
 ```
 
+## GitHub Pages 首页
+
+本仓库已将文档主页入口放在 `index.html + src/main.ts`，用于展示开发文档与使用说明。
+
+- 本地构建主页：`npm run build:demo`
+- 产物目录：`dist-pages/`
+- 线上部署：`.github/workflows/pages.yml`（推送到 `master` 自动部署）
+
+默认线上地址：`https://sohophp.github.io/SoDialog/`
+
 ## 文档体系
 
 - `README.md`：使用方式、API、发布流程总览
