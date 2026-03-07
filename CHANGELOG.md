@@ -6,6 +6,14 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 
 ## [Unreleased]
 
+## [0.1.16] - 2026-03-08
+
+### Commits
+- test: add vitest coverage for toast and modal core flows
+- feat(dialog): add promise-based confirm and prompt APIs
+- feat(lifecycle): unify modal/offcanvas/toast lifecycle hooks
+- docs(changelog): update for v0.1.15
+
 ## [0.1.15] - 2026-03-08
 
 ### Commits
@@ -102,7 +110,8 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 - release: prepare v0.1.1
 - feat: build reusable SoDialog npm library
 
-[Unreleased]: https://github.com/sohophp/sodialog/compare/v0.1.15...HEAD
+[Unreleased]: https://github.com/sohophp/sodialog/compare/v0.1.16...HEAD
+[0.1.16]: https://github.com/sohophp/sodialog/releases/tag/v0.1.16
 [0.1.15]: https://github.com/sohophp/sodialog/releases/tag/v0.1.15
 [0.1.14]: https://github.com/sohophp/sodialog/releases/tag/v0.1.14
 [0.1.13]: https://github.com/sohophp/sodialog/releases/tag/v0.1.13
