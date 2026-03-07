@@ -4,7 +4,7 @@ import { resolve } from 'node:path'
 export default defineConfig(({ mode }) => {
   if (mode === 'demo') {
     return {
-      base: '/SoDialog/',
+      base: '/sodialog/',
       build: {
         outDir: 'dist-pages',
         rollupOptions: {
