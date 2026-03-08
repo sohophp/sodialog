@@ -775,6 +775,69 @@
   }
 }
 
+.sod-context-menu {
+  position: fixed;
+  z-index: 1300;
+  display: grid;
+  gap: 0.25rem;
+  min-width: 180px;
+  max-width: min(320px, calc(100vw - 1rem));
+  max-height: 320px;
+  padding: 0.35rem;
+  border: 1px solid #dee2e6;
+  border-radius: 0.45rem;
+  background: #fff;
+  box-shadow: 0 0.6rem 1.4rem rgb(0 0 0 / 18%);
+  overflow: auto;
+}
+
+.sod-context-menu-item {
+  border: 0;
+  border-radius: 0.35rem;
+  background: transparent;
+  color: #212529;
+  text-align: left;
+  padding: 0.5rem 0.6rem;
+  font-size: 0.92rem;
+  line-height: 1.35;
+  cursor: pointer;
+}
+
+.sod-context-menu-item-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: 100%;
+}
+
+.sod-context-menu-label {
+  flex: 1 1 auto;
+}
+
+.sod-context-menu-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  min-width: 1rem;
+  line-height: 1;
+}
+
+.sod-context-menu-item:hover {
+  background: #f1f3f5;
+}
+
+.sod-context-menu-item:focus-visible {
+  outline: 2px solid #86b7fe;
+  outline-offset: 1px;
+}
+
+.sod-context-menu-item:disabled {
+  color: #adb5bd;
+  cursor: not-allowed;
+  background: transparent;
+}
+
 @keyframes sod-zoom-out {
   from {
     opacity: 1;

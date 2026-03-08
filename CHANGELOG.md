@@ -9,7 +9,15 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 ## [0.1.20] - 2026-03-09
 
 ### Commits
-- No user-facing commit messages recorded in this range.
+- feat(docs): add standalone API page and pinned header UX
+- feat(context-menu): add bindContextMenu API with lifecycle hooks and handle controls
+- feat(context-menu): support menu item icons and Bootstrap Icons class rendering
+- feat(context-menu): harden close and destroy behavior (esc/outside/blur/scroll/resize)
+- docs(api): add context menu API reference and icon field documentation
+- docs(examples): add context menu demo sections for examples and legacy demo pages
+- feat(demo): add modal-internal context menu demo with icon actions and cleanup
+- test(context-menu): cover open/close behavior and icon rendering
+- chore(eslint): ignore dist-pages generated assets during lint
 
 ## [0.1.19] - 2026-03-08
 

@@ -69,6 +69,37 @@
   font-size: 1.1rem;
 }
 
+#app .context-menu-hint {
+  margin: 0.7rem 0;
+  color: #6c757d;
+}
+
+#app .context-menu-board {
+  display: grid;
+  gap: 0.55rem;
+  border: 1px dashed #ced4da;
+  border-radius: 0.5rem;
+  background: #fff;
+  padding: 0.75rem;
+}
+
+#app .context-menu-row {
+  appearance: none;
+  border: 1px solid #dee2e6;
+  border-radius: 0.45rem;
+  background: #fff;
+  color: #212529;
+  text-align: left;
+  font-size: 0.93rem;
+  padding: 0.5rem 0.6rem;
+  cursor: context-menu;
+}
+
+#app .context-menu-row:hover {
+  border-color: #86b7fe;
+  background: #f1f6ff;
+}
+
 #app .animation-row {
   display: flex;
   align-items: center;

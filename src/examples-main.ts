@@ -2,11 +2,13 @@ import './examples-style.css'
 import { setupPinnedHeroTop } from './pinned-hero-top'
 import {
   SoToast,
+  bindContextMenu,
   confirmModal,
   formModal,
   openModal,
   openOffcanvas,
   promptModal,
+  type SoContextMenuItem,
   toast,
 } from './lib'
 
@@ -14,6 +16,20 @@ const app = document.querySelector<HTMLDivElement>('#app')
 
 if (!app) {
   throw new Error('Cannot find #app root element')
+}
+
+function ensureBootstrapIconsLoaded(): void {
+  const href = 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css'
+  const existed = document.querySelector(`link[data-sod-icons="bootstrap"][href="${href}"]`)
+  if (existed) {
+    return
+  }
+
+  const link = document.createElement('link')
+  link.rel = 'stylesheet'
+  link.href = href
+  link.dataset.sodIcons = 'bootstrap'
+  document.head.append(link)
 }
 
 app.innerHTML = `
@@ -92,6 +108,14 @@ app.innerHTML = `
           <a class="nav-l2" href="#toast-3">3. 手动控制</a>
           <a class="nav-l2" href="#toast-4">4. 队列</a>
           <a class="nav-l2" href="#toast-5">5. 重复策略</a>
+        </div>
+      </div>
+
+      <div class="nav-group">
+        <a class="nav-l1" href="#context-menu-example">Context Menu</a>
+        <div class="nav-l2-list">
+          <a class="nav-l2" href="#context-menu-1">1. 图标右键菜单</a>
+          <a class="nav-l2" href="#context-menu-2">2. 手动打开与动态更新</a>
         </div>
       </div>
     </aside>
@@ -559,6 +583,61 @@ SoToast.closeAll()
         </article>
       </div>
     </section>
+
+    <section class="card" id="context-menu-example">
+      <h2>4) Context Menu 示例</h2>
+      <p class="section-lead">演示带图标的右键菜单、动态更新菜单项，以及手动在指定坐标打开菜单。</p>
+      <div class="example-grid">
+        <article class="example-card" id="context-menu-1">
+          <h3>示例 1：Bootstrap Icons 图标右键菜单</h3>
+          <div class="row">
+            <button class="btn primary" id="enable-context-menu">启用右键示例</button>
+          </div>
+          <p class="context-menu-tip">启用后，在下方任意“文件行”上点击右键触发菜单。</p>
+          <div class="context-demo-board" id="context-demo-board">
+            <button class="context-demo-row" data-file-name="release-notes.md" type="button">release-notes.md</button>
+            <button class="context-demo-row" data-file-name="api-main.ts" type="button">api-main.ts</button>
+            <button class="context-demo-row" data-file-name="examples-main.ts" type="button">examples-main.ts</button>
+          </div>
+          <div id="context-menu-result" class="result-box">结果输出：等待执行...</div>
+          <div class="code">
+            <button class="copy-btn" data-copy-target="context-menu-icon-code" type="button">复制</button>
+            <pre id="context-menu-icon-code"><code>bindContextMenu({
+  target: '.context-demo-row',
+  items: [
+    { id: 'copy', label: '复制文件名', icon: 'bi bi-copy' },
+    { id: 'rename', label: '重命名', icon: 'bi bi-pencil-square' },
+    { id: 'delete', label: '删除', icon: 'bi bi-trash', iconAriaLabel: 'Delete' },
+  ],
+  onAction: ({ itemId, triggerElement }) =&gt; {
+    console.log(itemId, triggerElement.dataset.fileName)
+  },
+})</code></pre>
+          </div>
+        </article>
+
+        <article class="example-card" id="context-menu-2">
+          <h3>示例 2：手动打开与动态菜单项</h3>
+          <div class="row">
+            <button class="btn primary" id="open-context-menu-manual">手动打开菜单</button>
+            <button class="btn secondary" id="update-context-menu-items">切换菜单项</button>
+          </div>
+          <div class="code">
+            <button class="copy-btn" data-copy-target="context-menu-manual-code" type="button">复制</button>
+            <pre id="context-menu-manual-code"><code>const handle = bindContextMenu({
+  target: '.context-demo-row',
+  items: [{ id: 'inspect', label: '查看详情', icon: 'bi bi-eye' }],
+})
+
+handle.openAt(320, 240)
+handle.setItems([
+  { id: 'pin', label: '置顶', icon: 'bi bi-pin-angle' },
+  { id: 'share', label: '分享', icon: 'bi bi-share' },
+])</code></pre>
+          </div>
+        </article>
+      </div>
+    </section>
   </div>
   </main>
 
@@ -839,6 +918,97 @@ const toastDupUpdateBtn = document.querySelector<HTMLButtonElement>('#open-toast
 const toastDupRestartBtn = document.querySelector<HTMLButtonElement>('#open-toast-dup-restart')
 const toastDupStackBtn = document.querySelector<HTMLButtonElement>('#open-toast-dup-stack')
 const toastClearBtn = document.querySelector<HTMLButtonElement>('#clear-toast')
+const enableContextMenuBtn = document.querySelector<HTMLButtonElement>('#enable-context-menu')
+const openContextMenuManualBtn = document.querySelector<HTMLButtonElement>('#open-context-menu-manual')
+const updateContextMenuItemsBtn = document.querySelector<HTMLButtonElement>('#update-context-menu-items')
+const contextMenuResult = document.querySelector<HTMLDivElement>('#context-menu-result')
+const contextDemoBoard = document.querySelector<HTMLElement>('#context-demo-board')
+
+let contextMenuReady = false
+let contextMenuAltItems = false
+let contextMenuHandle: ReturnType<typeof bindContextMenu> | null = null
+
+const getContextMenuPrimaryItems = (): SoContextMenuItem[] => {
+  return [
+    {
+      id: 'copy',
+      label: '复制文件名',
+      icon: 'bi bi-copy',
+      onClick: ({ triggerElement }) => {
+        const fileName = triggerElement.dataset.fileName ?? '(unknown)'
+        void navigator.clipboard.writeText(fileName)
+      },
+    },
+    {
+      id: 'rename',
+      label: '重命名',
+      icon: 'bi bi-pencil-square',
+    },
+    {
+      id: 'delete',
+      label: '删除',
+      icon: 'bi bi-trash',
+      iconAriaLabel: 'Delete',
+    },
+  ]
+}
+
+const getContextMenuAltItems = (): SoContextMenuItem[] => {
+  return [
+    {
+      id: 'pin',
+      label: '置顶文件',
+      icon: 'bi bi-pin-angle',
+    },
+    {
+      id: 'share',
+      label: '分享链接',
+      icon: 'bi bi-share',
+    },
+    {
+      id: 'inspect',
+      label: '查看详情',
+      icon: 'bi bi-eye',
+    },
+  ]
+}
+
+const ensureContextMenuReady = () => {
+  if (contextMenuReady) {
+    return
+  }
+
+  ensureBootstrapIconsLoaded()
+
+  contextMenuHandle = bindContextMenu({
+    target: '.context-demo-row',
+    items: getContextMenuPrimaryItems(),
+    closeOnOutsideClick: true,
+    closeOnEsc: true,
+    closeOnWindowBlur: true,
+    closeOnScroll: true,
+    closeOnResize: true,
+    onAction: ({ itemId, triggerElement }) => {
+      const fileName = triggerElement.dataset.fileName ?? '(unknown)'
+      if (contextMenuResult) {
+        contextMenuResult.textContent = `结果输出：${itemId} -> ${fileName}`
+      }
+      toast({
+        title: 'ContextMenu',
+        content: `${itemId} -> ${fileName}`,
+        variant: 'info',
+        duration: 1200,
+      })
+    },
+    onClose: (reason) => {
+      if (contextMenuResult) {
+        contextMenuResult.textContent = `结果输出：菜单已关闭（${reason}）`
+      }
+    },
+  })
+
+  contextMenuReady = true
+}
 
 toastMinimalBtn?.addEventListener('click', () => {
   toast({
@@ -926,6 +1096,43 @@ toastDupStackBtn?.addEventListener('click', () => {
 
 toastClearBtn?.addEventListener('click', () => {
   SoToast.closeAll()
+})
+
+enableContextMenuBtn?.addEventListener('click', () => {
+  ensureContextMenuReady()
+  if (contextMenuResult) {
+    contextMenuResult.textContent = '结果输出：右键任意文件行以触发菜单。'
+  }
+  toast({
+    title: 'ContextMenu 已启用',
+    content: '请在下方文件行点击右键。',
+    variant: 'success',
+    duration: 1500,
+  })
+})
+
+openContextMenuManualBtn?.addEventListener('click', () => {
+  ensureContextMenuReady()
+  const trigger = contextDemoBoard?.querySelector<HTMLElement>('.context-demo-row')
+  contextMenuHandle?.openAt(320, 240, trigger ?? undefined)
+  if (contextMenuResult) {
+    contextMenuResult.textContent = '结果输出：已手动在 (320, 240) 打开菜单。'
+  }
+})
+
+updateContextMenuItemsBtn?.addEventListener('click', () => {
+  ensureContextMenuReady()
+  contextMenuAltItems = !contextMenuAltItems
+  contextMenuHandle?.setItems(contextMenuAltItems ? getContextMenuAltItems() : getContextMenuPrimaryItems())
+  if (contextMenuResult) {
+    contextMenuResult.textContent = `结果输出：菜单项已切换为${contextMenuAltItems ? '备用组' : '默认组'}。`
+  }
+  toast({
+    title: 'ContextMenu',
+    content: contextMenuAltItems ? '已切换为备用菜单项' : '已恢复默认菜单项',
+    variant: 'default',
+    duration: 1200,
+  })
 })
 
 const copyButtons = document.querySelectorAll<HTMLButtonElement>('.copy-btn')

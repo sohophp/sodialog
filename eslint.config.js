@@ -3,7 +3,7 @@ import tseslint from 'typescript-eslint'
 
 export default tseslint.config(
   {
-    ignores: ['dist', '.history', 'node_modules'],
+    ignores: ['dist', 'dist-pages', '.history', 'node_modules'],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,

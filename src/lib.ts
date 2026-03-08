@@ -21,7 +21,7 @@ export type SoToastPlacement =
 export type SoToastVariant = 'default' | 'info' | 'success' | 'warning' | 'danger'
 export type SoToastCloseReason = 'timeout' | 'manual' | 'close-button' | 'container-clear' | 'programmatic'
 export type SoToastDuplicateStrategy = 'update' | 'ignore' | 'restart-timer' | 'stack'
-export type SoLifecycleComponent = 'modal' | 'offcanvas' | 'toast'
+export type SoLifecycleComponent = 'modal' | 'offcanvas' | 'toast' | 'context-menu'
 export type SoLifecyclePhase = 'before-open' | 'after-open' | 'before-close' | 'after-close'
 export type SoLifecycleReason =
   | 'api'
@@ -36,7 +36,75 @@ export type SoLifecycleReason =
   | 'timeout'
   | 'container-clear'
   | 'programmatic'
+  | 'outside'
+  | 'item'
   | 'manual'
+
+export type SoContextMenuCloseReason =
+  | 'outside'
+  | 'esc'
+  | 'item'
+  | 'programmatic'
+  | 'destroy'
+  | 'reopen'
+  | 'blur'
+  | 'scroll'
+  | 'resize'
+
+export interface SoContextMenuItem {
+  id?: string
+  label: string | Node
+  icon?: string | Node
+  iconPosition?: 'start' | 'end'
+  iconAriaLabel?: string
+  disabled?: boolean
+  closeOnClick?: boolean
+  className?: string
+  attrs?: Record<string, string>
+  onClick?: (context: SoContextMenuActionContext) => void | boolean | Promise<void | boolean>
+}
+
+export interface SoContextMenuActionContext {
+  itemId: string
+  item: SoContextMenuItem
+  itemElement: HTMLButtonElement
+  menuElement: HTMLElement
+  triggerElement: HTMLElement
+  originalEvent?: MouseEvent
+  handle: SoContextMenuHandle
+}
+
+export interface SoContextMenuOptions extends SoLifecycleHooks {
+  id?: string
+  target: string | Element | Iterable<Element> | ArrayLike<Element>
+  items: SoContextMenuItem[]
+  className?: string
+  attrs?: Record<string, string>
+  offsetX?: number
+  offsetY?: number
+  minWidth?: number
+  maxHeight?: number
+  closeOnOutsideClick?: boolean
+  closeOnEsc?: boolean
+  closeOnWindowBlur?: boolean
+  closeOnScroll?: boolean
+  closeOnResize?: boolean
+  preventNativeMenu?: boolean
+  onOpen?: (handle: SoContextMenuHandle) => void
+  onClose?: (reason: SoContextMenuCloseReason, handle: SoContextMenuHandle) => void
+  onAction?: (context: SoContextMenuActionContext) => void
+}
+
+export interface SoContextMenuHandle {
+  id?: string
+  element: HTMLElement
+  isOpen: () => boolean
+  openAt: (x: number, y: number, triggerElement?: HTMLElement, event?: MouseEvent) => void
+  close: (reason?: Exclude<SoContextMenuCloseReason, 'destroy'>) => void
+  setItems: (items: SoContextMenuItem[]) => void
+  updateItem: (id: string, patch: Partial<SoContextMenuItem>) => boolean
+  destroy: () => void
+}
 
 export interface SoLifecycleContext {
   component: SoLifecycleComponent
@@ -2462,6 +2530,529 @@ export class SoToast {
   }
 }
 
+export class SoContextMenu {
+  private static activeHandle: SoContextMenuHandle | null = null
+  private static idSeed = 0
+
+  private static createAutoId(): string {
+    this.idSeed += 1
+    return `socm-${this.idSeed}`
+  }
+
+  private static normalizeTargetElements(
+    target: SoContextMenuOptions['target'],
+  ): { delegatedSelector: string | null; elements: HTMLElement[] } {
+    if (typeof target === 'string') {
+      return {
+        delegatedSelector: target,
+        elements: [],
+      }
+    }
+
+    if (target instanceof Element) {
+      return {
+        delegatedSelector: null,
+        elements: target instanceof HTMLElement ? [target] : [],
+      }
+    }
+
+    const elements: HTMLElement[] = []
+    const iterable = target as Iterable<Element>
+    if (typeof iterable[Symbol.iterator] === 'function') {
+      for (const element of iterable) {
+        if (element instanceof HTMLElement) {
+          elements.push(element)
+        }
+      }
+      return {
+        delegatedSelector: null,
+        elements,
+      }
+    }
+
+    const arrayLike = target as ArrayLike<Element>
+    for (let index = 0; index < arrayLike.length; index += 1) {
+      const element = arrayLike[index]
+      if (element instanceof HTMLElement) {
+        elements.push(element)
+      }
+    }
+
+    return {
+      delegatedSelector: null,
+      elements,
+    }
+  }
+
+  private static resolveMountRoot(triggerElement?: HTMLElement): HTMLElement {
+    const activeTarget =
+      triggerElement ?? (document.activeElement instanceof HTMLElement ? (document.activeElement as HTMLElement) : null)
+
+    const dialogRoot = activeTarget?.closest('dialog[open]')
+    if (dialogRoot instanceof HTMLElement) {
+      return dialogRoot
+    }
+
+    return document.body
+  }
+
+  static bind(options: SoContextMenuOptions): SoContextMenuHandle {
+      const CAPTURE_LISTENER = true
+    const menuElement = document.createElement('div')
+    menuElement.className = 'sod-context-menu'
+    menuElement.setAttribute('role', 'menu')
+    menuElement.hidden = true
+    menuElement.setAttribute('aria-hidden', 'true')
+    menuElement.style.display = 'none'
+    menuElement.tabIndex = -1
+
+    const id = options.id?.trim() || this.createAutoId()
+    menuElement.dataset.contextMenuId = id
+
+    if (options.className?.trim()) {
+      menuElement.className = `${menuElement.className} ${options.className.trim()}`
+    }
+
+    if (options.attrs) {
+      Object.entries(options.attrs).forEach(([key, value]) => {
+        menuElement.setAttribute(key, value)
+      })
+    }
+
+    const lifecycleHooks: SoLifecycleHooks = {
+      onLifecycle: options.onLifecycle,
+      onBeforeOpen: options.onBeforeOpen,
+      onAfterOpen: options.onAfterOpen,
+      onBeforeClose: options.onBeforeClose,
+      onAfterClose: options.onAfterClose,
+    }
+
+    const offsetX = options.offsetX ?? 0
+    const offsetY = options.offsetY ?? 0
+    const minWidth = Math.max(120, options.minWidth ?? 180)
+    const maxHeight = Math.max(120, options.maxHeight ?? 320)
+    const closeOnOutsideClick = options.closeOnOutsideClick ?? true
+    const closeOnEsc = options.closeOnEsc ?? true
+    const closeOnWindowBlur = options.closeOnWindowBlur ?? true
+    const closeOnScroll = options.closeOnScroll ?? true
+    const closeOnResize = options.closeOnResize ?? true
+    const preventNativeMenu = options.preventNativeMenu ?? true
+
+    const listeners: Array<() => void> = []
+    let menuItems = [...options.items]
+    let lastTriggerElement: HTMLElement | null = null
+    let lastEvent: MouseEvent | null = null
+    let open = false
+    let destroyed = false
+
+    const createHandle = (): SoContextMenuHandle => {
+      return {
+        id,
+        element: menuElement,
+        isOpen: () => open,
+        openAt: (x, y, triggerElement, event) => {
+          openMenuAt(x, y, triggerElement, event)
+        },
+        close: (reason = 'programmatic') => {
+          closeMenu(reason)
+        },
+        setItems: (items) => {
+          menuItems = [...items]
+          renderItems()
+        },
+        updateItem: (itemId, patch) => {
+          const index = menuItems.findIndex((item) => item.id === itemId)
+          if (index < 0) {
+            return false
+          }
+          menuItems[index] = { ...menuItems[index], ...patch }
+          renderItems()
+          return true
+        },
+        destroy: () => {
+          destroyMenu()
+        },
+      }
+    }
+
+    const closeMenu = (reason: Exclude<SoContextMenuCloseReason, 'destroy'>) => {
+      if (!open || destroyed) {
+        return
+      }
+
+      const lifecycleReason: SoLifecycleReason =
+        reason === 'outside'
+          ? 'outside'
+          : reason === 'item'
+            ? 'item'
+            : reason === 'esc'
+              ? 'esc'
+              : 'programmatic'
+
+      emitLifecycle(lifecycleHooks, {
+        component: 'context-menu',
+        phase: 'before-close',
+        element: menuElement,
+        id,
+        reason: lifecycleReason,
+      })
+
+      open = false
+      menuElement.hidden = true
+      menuElement.setAttribute('aria-hidden', 'true')
+      menuElement.style.display = 'none'
+      if (SoContextMenu.activeHandle === handle) {
+        SoContextMenu.activeHandle = null
+      }
+
+      options.onClose?.(reason, handle)
+
+      emitLifecycle(lifecycleHooks, {
+        component: 'context-menu',
+        phase: 'after-close',
+        element: menuElement,
+        id,
+        reason: lifecycleReason,
+      })
+    }
+
+    const destroyMenu = () => {
+      if (destroyed) {
+        return
+      }
+
+      if (open) {
+        emitLifecycle(lifecycleHooks, {
+          component: 'context-menu',
+          phase: 'before-close',
+          element: menuElement,
+          id,
+          reason: 'destroy',
+        })
+        options.onClose?.('destroy', handle)
+        emitLifecycle(lifecycleHooks, {
+          component: 'context-menu',
+          phase: 'after-close',
+          element: menuElement,
+          id,
+          reason: 'destroy',
+        })
+      }
+
+      open = false
+      destroyed = true
+      if (SoContextMenu.activeHandle === handle) {
+        SoContextMenu.activeHandle = null
+      }
+
+      listeners.splice(0).forEach((off) => off())
+      menuElement.remove()
+    }
+
+    const clampPosition = (x: number, y: number): { left: number; top: number } => {
+      const viewportPadding = 8
+      menuElement.style.left = '0px'
+      menuElement.style.top = '0px'
+      menuElement.style.maxHeight = `${maxHeight}px`
+      menuElement.style.minWidth = `${minWidth}px`
+
+      const rect = menuElement.getBoundingClientRect()
+      const maxLeft = window.innerWidth - rect.width - viewportPadding
+      const maxTop = window.innerHeight - rect.height - viewportPadding
+
+      return {
+        left: Math.max(viewportPadding, Math.min(maxLeft, x + offsetX)),
+        top: Math.max(viewportPadding, Math.min(maxTop, y + offsetY)),
+      }
+    }
+
+    const openMenuAt = (x: number, y: number, triggerElement?: HTMLElement, event?: MouseEvent) => {
+      if (destroyed) {
+        return
+      }
+
+      if (SoContextMenu.activeHandle && SoContextMenu.activeHandle !== handle) {
+        SoContextMenu.activeHandle.close('reopen')
+      }
+      SoContextMenu.activeHandle = handle
+
+      lastTriggerElement = triggerElement ?? lastTriggerElement
+      lastEvent = event ?? lastEvent
+
+      emitLifecycle(lifecycleHooks, {
+        component: 'context-menu',
+        phase: 'before-open',
+        element: menuElement,
+        id,
+      })
+
+      if (!menuElement.isConnected) {
+        const mountRoot = SoContextMenu.resolveMountRoot(lastTriggerElement ?? undefined)
+        mountRoot.append(menuElement)
+      } else {
+        const mountRoot = SoContextMenu.resolveMountRoot(lastTriggerElement ?? undefined)
+        if (menuElement.parentElement !== mountRoot) {
+          mountRoot.append(menuElement)
+        }
+      }
+
+      renderItems()
+      menuElement.hidden = false
+      menuElement.setAttribute('aria-hidden', 'false')
+      menuElement.style.display = 'grid'
+      const next = clampPosition(x, y)
+      menuElement.style.left = `${next.left}px`
+      menuElement.style.top = `${next.top}px`
+      open = true
+      menuElement.focus()
+
+      options.onOpen?.(handle)
+
+      emitLifecycle(lifecycleHooks, {
+        component: 'context-menu',
+        phase: 'after-open',
+        element: menuElement,
+        id,
+      })
+    }
+
+    const renderLabel = (button: HTMLElement, label: string | Node) => {
+      if (typeof label === 'string') {
+        button.textContent = label
+        return
+      }
+      button.append(label)
+    }
+
+    const renderItemIcon = (item: SoContextMenuItem): HTMLElement | null => {
+      if (item.icon === undefined) {
+        return null
+      }
+
+      const iconWrap = document.createElement('span')
+      iconWrap.className = 'sod-context-menu-icon'
+      if (item.iconAriaLabel?.trim()) {
+        iconWrap.setAttribute('role', 'img')
+        iconWrap.setAttribute('aria-label', item.iconAriaLabel.trim())
+      } else {
+        iconWrap.setAttribute('aria-hidden', 'true')
+      }
+
+      if (typeof item.icon === 'string') {
+        const iconNode = document.createElement('i')
+        iconNode.className = item.icon.trim()
+        iconWrap.append(iconNode)
+        return iconWrap
+      }
+
+      iconWrap.append(item.icon)
+      return iconWrap
+    }
+
+    const renderItems = () => {
+      menuElement.replaceChildren()
+
+      for (const item of menuItems) {
+        const itemElement = document.createElement('button')
+        itemElement.type = 'button'
+        itemElement.className = 'sod-context-menu-item'
+        itemElement.setAttribute('role', 'menuitem')
+
+        const content = document.createElement('span')
+        content.className = 'sod-context-menu-item-content'
+        const label = document.createElement('span')
+        label.className = 'sod-context-menu-label'
+        const iconElement = renderItemIcon(item)
+        const iconPosition = item.iconPosition ?? 'start'
+
+        if (item.id?.trim()) {
+          itemElement.dataset.itemId = item.id.trim()
+        }
+        if (item.disabled) {
+          itemElement.disabled = true
+        }
+        if (item.className?.trim()) {
+          itemElement.className = `${itemElement.className} ${item.className.trim()}`
+        }
+        if (item.attrs) {
+          Object.entries(item.attrs).forEach(([key, value]) => {
+            itemElement.setAttribute(key, value)
+          })
+        }
+
+        renderLabel(label, item.label)
+
+        if (iconElement && iconPosition === 'start') {
+          content.append(iconElement)
+        }
+        content.append(label)
+        if (iconElement && iconPosition === 'end') {
+          content.append(iconElement)
+        }
+
+        itemElement.append(content)
+
+        itemElement.addEventListener('click', () => {
+          void (async () => {
+            if (!lastTriggerElement) {
+              return
+            }
+
+            const itemId = item.id?.trim() || 'item'
+            const context: SoContextMenuActionContext = {
+              itemId,
+              item,
+              itemElement,
+              menuElement,
+              triggerElement: lastTriggerElement,
+              originalEvent: lastEvent ?? undefined,
+              handle,
+            }
+
+            const result = await item.onClick?.(context)
+            if (result === false) {
+              return
+            }
+
+            options.onAction?.(context)
+
+            if (item.closeOnClick ?? true) {
+              closeMenu('item')
+            }
+          })()
+        })
+
+        menuElement.append(itemElement)
+      }
+    }
+
+    const shouldIgnoreOutsideContextMenu = (event: MouseEvent): boolean => {
+      return event === lastEvent
+    }
+
+    const closeOnOutsideEvent = (target: EventTarget | null) => {
+      if (!open || !closeOnOutsideClick) {
+        return
+      }
+
+      const node = target as Node | null
+      if (node && menuElement.contains(node)) {
+        return
+      }
+
+      closeMenu('outside')
+    }
+
+    const onDocumentPointerDown = (event: PointerEvent) => {
+      if (!open || !closeOnOutsideClick) {
+        return
+      }
+
+      const composedPath = typeof event.composedPath === 'function' ? event.composedPath() : []
+      if (composedPath.includes(menuElement)) {
+        return
+      }
+
+      closeOnOutsideEvent(event.target)
+    }
+
+    const onDocumentMouseDown = (event: MouseEvent) => {
+      closeOnOutsideEvent(event.target)
+    }
+
+    const onDocumentContextMenuOutside = (event: MouseEvent) => {
+      if (shouldIgnoreOutsideContextMenu(event)) {
+        return
+      }
+
+      closeOnOutsideEvent(event.target)
+    }
+
+    const onDocumentKeyDown = (event: KeyboardEvent) => {
+      if (!open || !closeOnEsc) {
+        return
+      }
+
+      if (event.key === 'Escape') {
+        closeMenu('esc')
+      }
+    }
+
+    const onWindowBlur = () => {
+      if (!open || !closeOnWindowBlur) {
+        return
+      }
+
+      closeMenu('blur')
+    }
+
+    const onWindowScroll = () => {
+      if (!open || !closeOnScroll) {
+        return
+      }
+
+      closeMenu('scroll')
+    }
+
+    const onWindowResize = () => {
+      if (!open || !closeOnResize) {
+        return
+      }
+
+      closeMenu('resize')
+    }
+
+    const openFromEvent = (event: MouseEvent, triggerElement: HTMLElement) => {
+      if (preventNativeMenu) {
+        event.preventDefault()
+      }
+      openMenuAt(event.clientX, event.clientY, triggerElement, event)
+    }
+
+    const targetInfo = this.normalizeTargetElements(options.target)
+    if (targetInfo.delegatedSelector) {
+      const selector = targetInfo.delegatedSelector
+      const onContextMenu = (event: MouseEvent) => {
+        const rawTarget = event.target as Element | null
+        const matched = rawTarget?.closest(selector)
+        if (!matched || !(matched instanceof HTMLElement)) {
+          return
+        }
+        openFromEvent(event, matched)
+      }
+
+      document.addEventListener('contextmenu', onContextMenu, CAPTURE_LISTENER)
+      listeners.push(() => document.removeEventListener('contextmenu', onContextMenu, CAPTURE_LISTENER))
+    } else {
+      targetInfo.elements.forEach((element) => {
+        const onContextMenu = (event: MouseEvent) => {
+          openFromEvent(event, element)
+        }
+        element.addEventListener('contextmenu', onContextMenu, CAPTURE_LISTENER)
+        listeners.push(() => element.removeEventListener('contextmenu', onContextMenu, CAPTURE_LISTENER))
+      })
+    }
+
+    document.addEventListener('pointerdown', onDocumentPointerDown, CAPTURE_LISTENER)
+    document.addEventListener('mousedown', onDocumentMouseDown, CAPTURE_LISTENER)
+    document.addEventListener('contextmenu', onDocumentContextMenuOutside, CAPTURE_LISTENER)
+    document.addEventListener('keydown', onDocumentKeyDown, CAPTURE_LISTENER)
+    window.addEventListener('blur', onWindowBlur)
+    window.addEventListener('scroll', onWindowScroll, true)
+    window.addEventListener('resize', onWindowResize)
+    listeners.push(() => document.removeEventListener('pointerdown', onDocumentPointerDown, CAPTURE_LISTENER))
+    listeners.push(() => document.removeEventListener('mousedown', onDocumentMouseDown, CAPTURE_LISTENER))
+    listeners.push(() => document.removeEventListener('contextmenu', onDocumentContextMenuOutside, CAPTURE_LISTENER))
+    listeners.push(() => document.removeEventListener('keydown', onDocumentKeyDown, CAPTURE_LISTENER))
+    listeners.push(() => window.removeEventListener('blur', onWindowBlur))
+    listeners.push(() => window.removeEventListener('scroll', onWindowScroll, true))
+    listeners.push(() => window.removeEventListener('resize', onWindowResize))
+
+    const handle = createHandle()
+    return handle
+  }
+}
+
 export function openModal(options: SoDialogModalOptions): SoDialogHandle {
   return SoDialog.openModal(options)
 }
@@ -2484,4 +3075,8 @@ export function formModal(options: SoDialogFormOptions): Promise<Record<string, 
 
 export function toast(options: SoToastOptions): SoToastHandle {
   return SoToast.show(options)
+}
+
+export function bindContextMenu(options: SoContextMenuOptions): SoContextMenuHandle {
+  return SoContextMenu.bind(options)
 }

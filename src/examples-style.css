@@ -459,6 +459,39 @@ pre code {
   margin-top: 1.2rem;
 }
 
+.context-menu-tip {
+  margin: 0 0 0.6rem;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.context-demo-board {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.6rem;
+  border: 1px dashed rgb(24 32 31 / 24%);
+  border-radius: 10px;
+  background: rgb(255 255 255 / 72%);
+  margin-bottom: 0.65rem;
+}
+
+.context-demo-row {
+  appearance: none;
+  border: 1px solid rgb(24 32 31 / 14%);
+  border-radius: 9px;
+  padding: 0.54rem 0.6rem;
+  text-align: left;
+  background: #fff;
+  color: var(--ink);
+  font-size: 0.9rem;
+  cursor: context-menu;
+}
+
+.context-demo-row:hover {
+  border-color: rgb(220 79 36 / 45%);
+  background: rgb(220 79 36 / 8%);
+}
+
 @keyframes top-line-in {
   from {
     opacity: 0;

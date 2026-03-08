@@ -6,6 +6,7 @@
 
 - [安装](#安装)
 - [使用](#使用)
+- [右键菜单图标（Bootstrap Icons）](#右键菜单图标bootstrap-icons)
 - [API](#api)
 - [API 独立页](#api-独立页)
 - [Promise API](#promise-api)
@@ -24,7 +25,7 @@ npm install sodialog
 ## 使用
 
 ```ts
-import { openModal, openOffcanvas, confirmModal, promptModal, formModal, toast } from 'sodialog'
+import { openModal, openOffcanvas, confirmModal, promptModal, formModal, toast, bindContextMenu } from 'sodialog'
 import 'sodialog/style.css'
 
 openModal({
@@ -55,6 +56,26 @@ toast({
   variant: 'success',
   duration: 2500,
   maxVisible: 3,
+})
+
+bindContextMenu({
+  target: '.file-row',
+  items: [
+    {
+      id: 'rename',
+      label: '重命名',
+      onClick: ({ triggerElement }) => {
+        console.log('rename target:', triggerElement)
+      },
+    },
+    {
+      id: 'delete',
+      label: '删除',
+      onClick: ({ triggerElement }) => {
+        console.log('delete target:', triggerElement)
+      },
+    },
+  ],
 })
 
 const ok = await confirmModal({
@@ -91,6 +112,62 @@ const formValues = await formModal({
 
 console.log('form result:', formValues)
 ```
+
+## 右键菜单图标（Bootstrap Icons）
+
+`bindContextMenu` 支持菜单项图标，`icon` 可传字符串 class（适合 Bootstrap Icons）或自定义 Node。
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+```
+
+```ts
+bindContextMenu({
+  target: '.file-row',
+  items: [
+    {
+      id: 'copy',
+      label: '复制',
+      icon: 'bi bi-copy',
+      onClick: ({ triggerElement }) => {
+        console.log('copy:', triggerElement)
+      },
+    },
+    {
+      id: 'rename',
+      label: '重命名',
+      icon: 'bi bi-pencil-square',
+    },
+    {
+      id: 'delete',
+      label: '删除',
+      icon: 'bi bi-trash',
+      iconAriaLabel: 'Delete',
+      className: 'danger-item',
+    },
+  ],
+})
+```
+
+菜单项图标相关字段：
+
+- `icon?: string | Node`：字符串时会渲染为 `<i class="..."></i>`，可直接使用 Bootstrap Icons 类名。
+- `iconPosition?: 'start' | 'end'`：图标在文本前或后，默认 `start`。
+- `iconAriaLabel?: string`：用于无文字图标的可访问性说明；未传时自动 `aria-hidden`。
+
+关闭机制相关字段：
+
+- `closeOnEsc?: boolean`：按 `Esc` 关闭，默认 `true`。
+- `closeOnOutsideClick?: boolean`：点击菜单外关闭，默认 `true`。
+- `closeOnWindowBlur?: boolean`：窗口失焦关闭，默认 `true`。
+- `closeOnScroll?: boolean`：窗口或容器滚动时关闭，默认 `true`。
+- `closeOnResize?: boolean`：窗口尺寸变化时关闭，默认 `true`。
+- `destroy()`：销毁实例并移除全部事件监听。
+
+层级说明：
+
+- 当右键触发元素位于打开的 `dialog`（如 `openModal`）内时，菜单会自动挂载到该 `dialog`，避免 top-layer 下被遮挡。
+- 非 `dialog` 场景下，菜单默认挂载到 `document.body`。
 
 ## Modal 全功能示例（与 `examples.html` 一致）
 

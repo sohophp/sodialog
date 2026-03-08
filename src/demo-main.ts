@@ -1,9 +1,11 @@
 import './demo-style.css'
 import {
   SoToast,
+  bindContextMenu,
   formModal,
   openModal,
   openOffcanvas,
+  type SoContextMenuItem,
   type SoToastDuplicateStrategy,
   type SoToastPlacement,
   type SoToastVariant,
@@ -15,6 +17,20 @@ type DemoModalPosition = 'center' | 'top' | 'bottom'
 type DemoDragHandle = 'header' | 'title' | 'body' | 'panel'
 type DemoImagePreset = 'small' | 'medium' | 'large' | 'xlarge' | 'tall'
 type DemoScrollMode = 'body' | 'viewport' | 'none' | 'hybrid'
+
+function ensureBootstrapIconsLoaded(): void {
+  const href = 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css'
+  const existed = document.querySelector(`link[data-sod-icons="bootstrap"][href="${href}"]`)
+  if (existed) {
+    return
+  }
+
+  const link = document.createElement('link')
+  link.rel = 'stylesheet'
+  link.href = href
+  link.dataset.sodIcons = 'bootstrap'
+  document.head.append(link)
+}
 
 function getPresetImage(preset: DemoImagePreset): { src: string; label: string } {
   if (preset === 'small') {
@@ -804,7 +820,87 @@ function renderApp(root: HTMLDivElement) {
     appendLog('onAction', undefined, `formModal submit: ${JSON.stringify(values)}`)
   })
 
-  actions.append(modalButton, modalFormButton)
+  const modalContextMenuButton = document.createElement('button')
+  modalContextMenuButton.className = 'btn btn-outline'
+  modalContextMenuButton.textContent = 'Modal 内右键菜单示例'
+  modalContextMenuButton.addEventListener('click', () => {
+    ensureBootstrapIconsLoaded()
+
+    const wrapper = document.createElement('div')
+    wrapper.style.display = 'grid'
+    wrapper.style.gap = '0.5rem'
+
+    const intro = document.createElement('p')
+    intro.style.margin = '0'
+    intro.textContent = '在下方任意“文件行”点击右键，菜单会自动挂载在当前 Modal 内。'
+
+    const board = document.createElement('div')
+    board.style.display = 'grid'
+    board.style.gap = '0.45rem'
+    board.style.padding = '0.6rem'
+    board.style.border = '1px dashed #ced4da'
+    board.style.borderRadius = '0.5rem'
+    board.style.background = '#fff'
+
+    const createRow = (name: string) => {
+      const row = document.createElement('button')
+      row.type = 'button'
+      row.textContent = name
+      row.dataset.fileName = name
+      row.style.textAlign = 'left'
+      row.style.border = '1px solid #dee2e6'
+      row.style.borderRadius = '0.45rem'
+      row.style.background = '#fff'
+      row.style.padding = '0.45rem 0.55rem'
+      row.style.cursor = 'context-menu'
+      return row
+    }
+
+    const rowA = createRow('src/lib.ts')
+    const rowB = createRow('src/demo-main.ts')
+    const rowC = createRow('README.md')
+    board.append(rowA, rowB, rowC)
+
+    const hint = document.createElement('p')
+    hint.style.margin = '0'
+    hint.style.color = '#6c757d'
+    hint.style.fontSize = '0.9rem'
+    hint.textContent = '提示：Esc、点击菜单外、滚动或失焦会自动关闭菜单。'
+
+    wrapper.append(intro, board, hint)
+
+    let menuHandle: ReturnType<typeof bindContextMenu> | null = null
+
+    const modalHandle = openModal({
+      id: 'modal-context-menu-demo',
+      title: 'Modal 内 Context Menu',
+      content: wrapper,
+      confirmText: '关闭',
+      cancelText: '取消',
+      onAfterOpen: () => {
+        menuHandle = bindContextMenu({
+          target: [rowA, rowB, rowC],
+          items: [
+            { id: 'copy', label: '复制文件名', icon: 'bi bi-copy' },
+            { id: 'rename', label: '重命名', icon: 'bi bi-pencil-square' },
+            { id: 'delete', label: '删除', icon: 'bi bi-trash', iconAriaLabel: 'Delete' },
+          ],
+          onAction: ({ itemId, triggerElement }) => {
+            appendLog('onAction', modalHandle.id, `modal context menu: ${itemId} -> ${triggerElement.dataset.fileName ?? '(unknown)'}`)
+          },
+          onClose: (reason) => {
+            appendLog('onAction', modalHandle.id, `modal context menu close: ${reason}`)
+          },
+        })
+      },
+      onAfterClose: () => {
+        menuHandle?.destroy()
+        menuHandle = null
+      },
+    })
+  })
+
+  actions.append(modalButton, modalFormButton, modalContextMenuButton)
   modalSection.append(modalTitle, modalControlRow, actions)
 
   const offcanvasSection = document.createElement('section')
@@ -812,6 +908,9 @@ function renderApp(root: HTMLDivElement) {
 
   const toastSection = document.createElement('section')
   toastSection.className = 'offcanvas-demo'
+
+  const contextMenuSection = document.createElement('section')
+  contextMenuSection.className = 'offcanvas-demo'
 
   const toastTitle = document.createElement('h2')
   toastTitle.textContent = 'Toast 演示（位置 + 时长 + 队列）'
@@ -1047,6 +1146,131 @@ function renderApp(root: HTMLDivElement) {
   toastActions.append(showToastButton, queueToastButton, migrateToastButton, clearToastButton)
   toastSection.append(toastTitle, toastRow, toastActions)
 
+  const contextMenuTitle = document.createElement('h2')
+  contextMenuTitle.textContent = 'Context Menu 演示（Bootstrap Icons）'
+
+  const contextMenuHint = document.createElement('p')
+  contextMenuHint.className = 'context-menu-hint'
+  contextMenuHint.textContent = '点击“启用右键菜单”后，在下方文件行上右键可触发带图标菜单。'
+
+  const contextMenuBoard = document.createElement('div')
+  contextMenuBoard.className = 'context-menu-board'
+  contextMenuBoard.innerHTML = `
+    <button class="context-menu-row" data-file-name="README.md" type="button">README.md</button>
+    <button class="context-menu-row" data-file-name="src/lib.ts" type="button">src/lib.ts</button>
+    <button class="context-menu-row" data-file-name="src/demo-main.ts" type="button">src/demo-main.ts</button>
+  `
+
+  const contextActions = document.createElement('div')
+  contextActions.className = 'actions'
+
+  let contextMenuHandle: ReturnType<typeof bindContextMenu> | null = null
+  let contextMenuAltItems = false
+
+  const getPrimaryItems = (): SoContextMenuItem[] => {
+    return [
+      {
+        id: 'copy',
+        label: '复制文件名',
+        icon: 'bi bi-copy',
+        onClick: ({ triggerElement }) => {
+          const fileName = triggerElement.dataset.fileName ?? ''
+          if (!fileName) {
+            return
+          }
+          void navigator.clipboard.writeText(fileName)
+        },
+      },
+      {
+        id: 'rename',
+        label: '重命名',
+        icon: 'bi bi-pencil-square',
+      },
+      {
+        id: 'delete',
+        label: '删除',
+        icon: 'bi bi-trash',
+        iconAriaLabel: 'Delete',
+      },
+    ]
+  }
+
+  const getAltItems = (): SoContextMenuItem[] => {
+    return [
+      {
+        id: 'pin',
+        label: '置顶文件',
+        icon: 'bi bi-pin-angle',
+      },
+      {
+        id: 'share',
+        label: '分享链接',
+        icon: 'bi bi-share',
+      },
+      {
+        id: 'inspect',
+        label: '查看详情',
+        icon: 'bi bi-eye',
+      },
+    ]
+  }
+
+  const ensureContextMenu = () => {
+    if (contextMenuHandle) {
+      return
+    }
+
+    ensureBootstrapIconsLoaded()
+
+    contextMenuHandle = bindContextMenu({
+      target: '.context-menu-row',
+      items: getPrimaryItems(),
+      closeOnOutsideClick: true,
+      closeOnEsc: true,
+      closeOnWindowBlur: true,
+      closeOnScroll: true,
+      closeOnResize: true,
+      onAction: ({ itemId, triggerElement }) => {
+        const fileName = triggerElement.dataset.fileName ?? '(unknown)'
+        appendLog('onAction', undefined, `context menu: ${itemId} -> ${fileName}`)
+      },
+      onClose: (reason) => {
+        appendLog('onAction', undefined, `context menu close: ${reason}`)
+      },
+    })
+  }
+
+  const enableContextButton = document.createElement('button')
+  enableContextButton.className = 'btn btn-primary'
+  enableContextButton.textContent = '启用右键菜单'
+  enableContextButton.addEventListener('click', () => {
+    ensureContextMenu()
+    appendLog('onAction', undefined, 'context menu enabled')
+  })
+
+  const openManualContextButton = document.createElement('button')
+  openManualContextButton.className = 'btn btn-dark'
+  openManualContextButton.textContent = '手动打开菜单'
+  openManualContextButton.addEventListener('click', () => {
+    ensureContextMenu()
+    const trigger = contextMenuBoard.querySelector<HTMLElement>('.context-menu-row')
+    contextMenuHandle?.openAt(320, 240, trigger ?? undefined)
+    appendLog('onAction', undefined, 'context menu opened manually at 320,240')
+  })
+
+  const toggleContextItemsButton = document.createElement('button')
+  toggleContextItemsButton.className = 'btn btn-outline'
+  toggleContextItemsButton.textContent = '切换菜单项'
+  toggleContextItemsButton.addEventListener('click', () => {
+    ensureContextMenu()
+    contextMenuAltItems = !contextMenuAltItems
+    contextMenuHandle?.setItems(contextMenuAltItems ? getAltItems() : getPrimaryItems())
+    appendLog('onAction', undefined, contextMenuAltItems ? 'context menu alt items' : 'context menu primary items')
+  })
+
+  contextActions.append(enableContextButton, openManualContextButton, toggleContextItemsButton)
+  contextMenuSection.append(contextMenuTitle, contextMenuHint, contextMenuBoard, contextActions)
+
   const offcanvasTitle = document.createElement('h2')
   offcanvasTitle.textContent = 'Offcanvas 演示（位置 + 动画）'
 
@@ -1096,7 +1320,7 @@ function renderApp(root: HTMLDivElement) {
   })
 
   offcanvasSection.append(offcanvasTitle, animationRow, placementActions)
-  container.append(title, subtitle, eventLogSection, modalSection, toastSection, offcanvasSection)
+  container.append(title, subtitle, eventLogSection, modalSection, toastSection, contextMenuSection, offcanvasSection)
   root.append(container)
 }
 

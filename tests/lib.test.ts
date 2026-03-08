@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { formModal, openModal, toast } from '../src/lib'
+import { bindContextMenu, formModal, openModal, toast } from '../src/lib'
 
 describe('SoDialog modal behavior', () => {
   it('reuses explicit modal id instance', () => {
@@ -170,5 +170,278 @@ describe('SoToast behavior', () => {
     await vi.advanceTimersByTimeAsync(320)
     expect(onClose).toHaveBeenCalledTimes(1)
     expect(onClose).toHaveBeenCalledWith('timeout', expect.objectContaining({ id: 'timer-case' }))
+  })
+})
+
+describe('SoContextMenu behavior', () => {
+  it('opens on contextmenu event and triggers item action', async () => {
+    const trigger = document.createElement('div')
+    document.body.append(trigger)
+
+    const actionSpy = vi.fn()
+    const handle = bindContextMenu({
+      target: trigger,
+      items: [
+        {
+          id: 'rename',
+          label: 'Rename',
+          onClick: () => {
+            actionSpy()
+          },
+        },
+      ],
+    })
+
+    trigger.dispatchEvent(
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 24,
+        clientY: 30,
+      }),
+    )
+
+    const menu = document.querySelector<HTMLElement>('.sod-context-menu')
+    expect(menu).toBeTruthy()
+    expect(menu?.hidden).toBe(false)
+
+    const firstItem = menu?.querySelector<HTMLButtonElement>('.sod-context-menu-item')
+    firstItem?.click()
+    await Promise.resolve()
+
+    expect(actionSpy).toHaveBeenCalledTimes(1)
+    expect(handle.isOpen()).toBe(false)
+  })
+
+  it('supports delegated selector binding and closes on outside click', () => {
+    const host = document.createElement('div')
+    host.innerHTML = '<button class="row-trigger">Row</button>'
+    document.body.append(host)
+
+    bindContextMenu({
+      target: '.row-trigger',
+      items: [{ id: 'copy', label: 'Copy' }],
+    })
+
+    const rowTrigger = host.querySelector<HTMLElement>('.row-trigger')
+    expect(rowTrigger).toBeTruthy()
+
+    rowTrigger?.dispatchEvent(
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 48,
+        clientY: 52,
+      }),
+    )
+
+    const menu = document.querySelector<HTMLElement>('.sod-context-menu')
+    expect(menu?.hidden).toBe(false)
+
+    document.body.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))
+    expect(menu?.hidden).toBe(true)
+  })
+
+  it('closes on outside mousedown fallback', () => {
+    const trigger = document.createElement('div')
+    document.body.append(trigger)
+
+    const handle = bindContextMenu({
+      target: trigger,
+      items: [{ id: 'copy', label: 'Copy' }],
+    })
+
+    trigger.dispatchEvent(
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 30,
+        clientY: 30,
+      }),
+    )
+
+    expect(handle.isOpen()).toBe(true)
+
+    document.body.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
+    expect(handle.isOpen()).toBe(false)
+  })
+
+  it('mounts menu inside open dialog when triggered from dialog content', () => {
+    const dialog = document.createElement('dialog')
+    dialog.open = true
+    const trigger = document.createElement('button')
+    trigger.type = 'button'
+    trigger.textContent = 'row'
+    dialog.append(trigger)
+    document.body.append(dialog)
+
+    bindContextMenu({
+      target: trigger,
+      items: [{ id: 'copy', label: 'Copy' }],
+    })
+
+    trigger.dispatchEvent(
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 60,
+        clientY: 64,
+      }),
+    )
+
+    const menu = document.querySelector<HTMLElement>('.sod-context-menu')
+    expect(menu).toBeTruthy()
+    expect(menu?.parentElement).toBe(dialog)
+  })
+
+  it('renders icon class for menu item', () => {
+    const trigger = document.createElement('div')
+    document.body.append(trigger)
+
+    bindContextMenu({
+      target: trigger,
+      items: [{ id: 'edit', label: 'Edit', icon: 'bi bi-pencil-square' }],
+    })
+
+    trigger.dispatchEvent(
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 30,
+        clientY: 36,
+      }),
+    )
+
+    const icon = document.querySelector('.sod-context-menu-icon i')
+    expect(icon).toBeTruthy()
+    expect(icon?.className).toContain('bi bi-pencil-square')
+  })
+
+  it('closes on Escape key', () => {
+    const trigger = document.createElement('div')
+    document.body.append(trigger)
+
+    const onClose = vi.fn()
+    const handle = bindContextMenu({
+      target: trigger,
+      items: [{ id: 'copy', label: 'Copy' }],
+      onClose,
+    })
+
+    trigger.dispatchEvent(
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 20,
+        clientY: 20,
+      }),
+    )
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+
+    expect(handle.isOpen()).toBe(false)
+    expect(onClose).toHaveBeenCalledWith('esc', expect.objectContaining({ id: handle.id }))
+  })
+
+  it('closes on window blur by default', () => {
+    const trigger = document.createElement('div')
+    document.body.append(trigger)
+
+    const onClose = vi.fn()
+    const handle = bindContextMenu({
+      target: trigger,
+      items: [{ id: 'copy', label: 'Copy' }],
+      onClose,
+    })
+
+    trigger.dispatchEvent(
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 20,
+        clientY: 20,
+      }),
+    )
+
+    window.dispatchEvent(new Event('blur'))
+
+    expect(handle.isOpen()).toBe(false)
+    expect(onClose).toHaveBeenCalledWith('blur', expect.objectContaining({ id: handle.id }))
+  })
+
+  it('closes on window scroll by default', () => {
+    const trigger = document.createElement('div')
+    document.body.append(trigger)
+
+    const onClose = vi.fn()
+    const handle = bindContextMenu({
+      target: trigger,
+      items: [{ id: 'copy', label: 'Copy' }],
+      onClose,
+    })
+
+    trigger.dispatchEvent(
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 20,
+        clientY: 20,
+      }),
+    )
+
+    window.dispatchEvent(new Event('scroll'))
+
+    expect(handle.isOpen()).toBe(false)
+    expect(onClose).toHaveBeenCalledWith('scroll', expect.objectContaining({ id: handle.id }))
+  })
+
+  it('closes on window resize by default', () => {
+    const trigger = document.createElement('div')
+    document.body.append(trigger)
+
+    const onClose = vi.fn()
+    const handle = bindContextMenu({
+      target: trigger,
+      items: [{ id: 'copy', label: 'Copy' }],
+      onClose,
+    })
+
+    trigger.dispatchEvent(
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 20,
+        clientY: 20,
+      }),
+    )
+
+    window.dispatchEvent(new Event('resize'))
+
+    expect(handle.isOpen()).toBe(false)
+    expect(onClose).toHaveBeenCalledWith('resize', expect.objectContaining({ id: handle.id }))
+  })
+
+  it('removes trigger listeners after destroy', () => {
+    const trigger = document.createElement('div')
+    document.body.append(trigger)
+
+    const handle = bindContextMenu({
+      target: trigger,
+      items: [{ id: 'copy', label: 'Copy' }],
+    })
+
+    handle.destroy()
+
+    trigger.dispatchEvent(
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 40,
+        clientY: 44,
+      }),
+    )
+
+    const menu = document.querySelector<HTMLElement>('.sod-context-menu')
+    expect(menu).toBeNull()
   })
 })
