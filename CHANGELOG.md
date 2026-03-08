@@ -6,8 +6,13 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 
 ## [Unreleased]
 
+## [0.1.19] - 2026-03-08
+
 ### Commits
+- chore(release): prepare v0.1.19
+- docs(changelog): update unreleased entries
 - feat(docs): add standalone API page and pinned header UX
+- docs(changelog): update for v0.1.18
 
 ## [0.1.18] - 2026-03-08
 
@@ -126,7 +131,8 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 - release: prepare v0.1.1
 - feat: build reusable SoDialog npm library
 
-[Unreleased]: https://github.com/sohophp/sodialog/compare/v0.1.18...HEAD
+[Unreleased]: https://github.com/sohophp/sodialog/compare/v0.1.19...HEAD
+[0.1.19]: https://github.com/sohophp/sodialog/releases/tag/v0.1.19
 [0.1.18]: https://github.com/sohophp/sodialog/releases/tag/v0.1.18
 [0.1.17]: https://github.com/sohophp/sodialog/releases/tag/v0.1.17
 [0.1.16]: https://github.com/sohophp/sodialog/releases/tag/v0.1.16
