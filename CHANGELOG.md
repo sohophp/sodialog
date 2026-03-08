@@ -6,6 +6,9 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 
 ## [Unreleased]
 
+### Commits
+- feat(docs): add standalone API page and pinned header UX
+
 ## [0.1.18] - 2026-03-08
 
 ### Commits
