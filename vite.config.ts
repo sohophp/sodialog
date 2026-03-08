@@ -12,6 +12,7 @@ export default defineConfig(({ mode }) => {
             main: resolve(__dirname, 'index.html'),
             demo: resolve(__dirname, 'demo.html'),
             examples: resolve(__dirname, 'examples.html'),
+            api: resolve(__dirname, 'api.html'),
           },
         },
       },

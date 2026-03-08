@@ -6,6 +6,7 @@
   --brand: #dc4f24;
   --brand-strong: #af2f0f;
   --shadow: 0 16px 32px rgb(27 21 17 / 14%);
+  --sod-sticky-offset: 1rem;
 }
 
 * {
@@ -109,6 +110,23 @@ body {
   align-items: center;
   gap: 1rem;
   flex-wrap: wrap;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.hero-top.is-pinned {
+  position: fixed;
+  top: 0.62rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(1120px, calc(100% - 1.2rem));
+  padding: 0.56rem 0.72rem;
+  border: 1px solid rgb(24 32 31 / 18%);
+  border-radius: 14px;
+  background: rgb(255 255 255 / 72%);
+  backdrop-filter: blur(14px) saturate(132%);
+  box-shadow: 0 12px 28px rgb(0 0 0 / 14%);
+  z-index: 1200;
+  animation: top-line-in 0.24s ease;
 }
 
 .brand-block {
@@ -251,7 +269,14 @@ body {
 .layout {
   margin-top: 1.25rem;
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 0.9rem;
+  align-items: start;
+}
+
+.content-stack {
+  min-width: 0;
+  display: grid;
   gap: 0.9rem;
 }
 
@@ -265,6 +290,63 @@ body {
 .card h2 {
   margin: 0 0 0.55rem;
   font-size: 1.2rem;
+}
+
+.side-nav {
+  position: sticky;
+  top: var(--sod-sticky-offset);
+  max-height: calc(100vh - 2rem);
+  overflow: auto;
+}
+
+.side-nav h2 {
+  font-size: 1rem;
+  margin-bottom: 0.7rem;
+}
+
+.side-nav a {
+  display: block;
+  text-decoration: none;
+  color: #2f3e3b;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: rgb(255 255 255 / 72%);
+  padding: 0.42rem 0.5rem;
+  margin-bottom: 0.42rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.side-nav a:hover {
+  color: var(--brand);
+  border-color: rgb(220 79 36 / 45%);
+  background: rgb(220 79 36 / 10%);
+}
+
+.nav-group + .nav-group {
+  margin-top: 0.55rem;
+}
+
+.side-nav .nav-l1 {
+  font-size: 0.88rem;
+  color: #1f2d2a;
+  background: rgb(220 79 36 / 10%);
+  border-color: rgb(220 79 36 / 25%);
+}
+
+.side-nav .nav-l2-list {
+  margin-top: 0.38rem;
+  display: grid;
+  gap: 0.34rem;
+  padding-left: 0.55rem;
+}
+
+.side-nav .nav-l2 {
+  margin-bottom: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #41504d;
+  background: rgb(255 255 255 / 70%);
 }
 
 .card p,
@@ -282,7 +364,8 @@ body {
 .example-grid {
   display: grid;
   gap: 0.75rem;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr;
+  min-width: 0;
 }
 
 .example-card {
@@ -290,6 +373,7 @@ body {
   border-radius: 12px;
   background: rgb(255 255 255 / 72%);
   padding: 0.8rem;
+  min-width: 0;
 }
 
 .example-card h3 {
@@ -305,6 +389,8 @@ body {
   color: #32423f;
   padding: 0.45rem 0.55rem;
   font-size: 0.85rem;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .row {
@@ -327,6 +413,7 @@ body {
   background: #fff;
   padding: 0.45rem 0.55rem;
   font-size: 0.92rem;
+  max-width: 100%;
 }
 
 .code {
@@ -336,6 +423,7 @@ body {
   background: #1b2224;
   position: relative;
   overflow: hidden;
+  min-width: 0;
 }
 
 .copy-btn {
@@ -355,6 +443,7 @@ pre {
   margin: 0;
   padding: 0.85rem 0.75rem 0.75rem;
   overflow: auto;
+  max-width: 100%;
 }
 
 pre code {
@@ -370,6 +459,18 @@ pre code {
   margin-top: 1.2rem;
 }
 
+@keyframes top-line-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
 @media (width <= 700px) {
   #app {
     width: min(1120px, calc(100% - 1.2rem));
@@ -377,6 +478,15 @@ pre code {
 
   .hero {
     padding: 1.05rem;
+  }
+
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .side-nav {
+    position: static;
+    max-height: none;
   }
 
   .btn {
@@ -403,6 +513,13 @@ pre code {
   .quick-nav a {
     font-size: 0.82rem;
     border-radius: 7px;
+  }
+
+  .hero-top.is-pinned {
+    top: 0.46rem;
+    width: calc(100% - 0.9rem);
+    padding: 0.48rem 0.52rem;
+    border-radius: 12px;
   }
 
   .hero-banner::after {

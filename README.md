@@ -7,6 +7,7 @@
 - [安装](#安装)
 - [使用](#使用)
 - [API](#api)
+- [API 独立页](#api-独立页)
 - [Promise API](#promise-api)
 - [Toast 常见示例](#toast-常见示例)
 - [开发](#开发)
@@ -91,7 +92,295 @@ const formValues = await formModal({
 console.log('form result:', formValues)
 ```
 
+## Modal 全功能示例（与 `examples.html` 一致）
+
+以下代码与 `src/examples-main.ts` 中 Modal 示例保持一致，覆盖：
+
+- 基础弹窗 `openModal`
+- 确认弹窗 `confirmModal`
+- 输入弹窗 `promptModal`
+- 表单弹窗 `formModal`
+
+### 1) 基础打开：`openModal`
+
+```ts
+openModal({
+  title: '订单确认',
+  content: '<p>这是一个基础 Modal 示例，支持自定义内容和按钮。</p>',
+  animation: 'zoom',
+  confirmText: '确认',
+  cancelText: '取消',
+})
+```
+
+### 2) Promise 调用：`confirmModal`
+
+```ts
+const ok = await confirmModal({
+  title: '删除确认',
+  content: '<p>确定删除这条记录吗？该操作不可恢复。</p>',
+  confirmText: '删除',
+  cancelText: '返回',
+})
+
+toast({
+  title: ok ? '已确认' : '已取消',
+  content: ok ? '用户确认执行删除。' : '用户取消了删除。',
+  variant: ok ? 'danger' : 'info',
+  duration: 1800,
+})
+```
+
+### 3) Promise 调用：`promptModal`
+
+```ts
+const result = await promptModal({
+  title: '请输入标签名',
+  placeholder: '例如 release-note',
+  validate: (value) => (value.length < 2 ? '至少输入 2 个字符' : true),
+})
+
+if (result === null) {
+  toast({ title: '已取消', content: '你取消了输入。', variant: 'info', duration: 1700 })
+} else {
+  toast({
+    title: '输入完成',
+    content: `你输入的是: ${result}`,
+    variant: 'success',
+    duration: 2200,
+  })
+}
+```
+
+### 4) 表单调用：`formModal`
+
+```ts
+const values = await formModal({
+  title: '创建发布计划',
+  content: '<p>请填写发布信息，用于生成计划卡片。</p>',
+  submitText: '创建',
+  fields: [
+    {
+      name: 'title',
+      label: '计划标题',
+      placeholder: '例如 v0.1.18 发布',
+      required: true,
+      validate: (value) => (String(value ?? '').length < 4 ? '标题至少 4 个字符' : true),
+    },
+    {
+      name: 'owner',
+      label: '负责人',
+      placeholder: '例如 Alice',
+      required: true,
+    },
+    {
+      name: 'priority',
+      label: '优先级',
+      type: 'select',
+      options: [
+        { label: 'P0 - 紧急', value: 'p0' },
+        { label: 'P1 - 高', value: 'p1' },
+        { label: 'P2 - 常规', value: 'p2' },
+      ],
+      defaultValue: 'p1',
+    },
+    {
+      name: 'estimate',
+      label: '预估工时(小时)',
+      type: 'number',
+      defaultValue: 6,
+      required: true,
+    },
+    {
+      name: 'notes',
+      label: '备注',
+      type: 'textarea',
+      placeholder: '写下本次发布重点...',
+      rows: 3,
+    },
+    {
+      name: 'notify',
+      label: '发布后通知团队',
+      type: 'checkbox',
+      defaultValue: true,
+    },
+  ],
+  validate: (formValues) => {
+    const estimate = formValues.estimate
+    if (typeof estimate === 'number' && estimate > 24) {
+      return { estimate: '单次计划建议不超过 24 小时' }
+    }
+    return true
+  },
+})
+
+if (values === null) {
+  toast({ title: '已取消', content: '你取消了表单提交。', variant: 'info', duration: 1600 })
+} else {
+  toast({
+    title: '表单已提交',
+    content: `标题: ${String(values.title ?? '')}`,
+    variant: 'success',
+    duration: 2200,
+  })
+}
+```
+
+### 示例页面中的完整绑定代码
+
+```ts
+const modalBtn = document.querySelector<HTMLButtonElement>('#open-modal-basic')
+const confirmBtn = document.querySelector<HTMLButtonElement>('#open-confirm')
+const promptBtn = document.querySelector<HTMLButtonElement>('#open-prompt')
+const formBtn = document.querySelector<HTMLButtonElement>('#open-form')
+const modalResult = document.querySelector<HTMLDivElement>('#modal-result')
+const formResult = document.querySelector<HTMLDivElement>('#form-result')
+
+modalBtn?.addEventListener('click', () => {
+  openModal({
+    title: '订单确认',
+    content: '<p>这是一个基础 Modal 示例，支持自定义内容和按钮。</p>',
+    animation: 'zoom',
+    confirmText: '确认',
+    cancelText: '取消',
+  })
+})
+
+confirmBtn?.addEventListener('click', async () => {
+  const ok = await confirmModal({
+    title: '删除确认',
+    content: '<p>确定删除这条记录吗？该操作不可恢复。</p>',
+    confirmText: '删除',
+    cancelText: '返回',
+  })
+
+  toast({
+    title: ok ? '已确认' : '已取消',
+    content: ok ? '用户确认执行删除。' : '用户取消了删除。',
+    variant: ok ? 'danger' : 'info',
+    duration: 1800,
+  })
+
+  if (modalResult) {
+    modalResult.textContent = `结果输出：confirmModal => ${ok ? 'true' : 'false'}`
+  }
+})
+
+promptBtn?.addEventListener('click', async () => {
+  const result = await promptModal({
+    title: '请输入标签名',
+    placeholder: '例如 release-note',
+    validate: (value) => (value.length < 2 ? '至少输入 2 个字符' : true),
+  })
+
+  if (result === null) {
+    toast({ title: '已取消', content: '你取消了输入。', variant: 'info', duration: 1700 })
+    if (modalResult) {
+      modalResult.textContent = '结果输出：promptModal => null'
+    }
+    return
+  }
+
+  toast({
+    title: '输入完成',
+    content: `你输入的是: ${result}`,
+    variant: 'success',
+    duration: 2200,
+  })
+
+  if (modalResult) {
+    modalResult.textContent = `结果输出：promptModal => "${result}"`
+  }
+})
+
+formBtn?.addEventListener('click', async () => {
+  const values = await formModal({
+    title: '创建发布计划',
+    content: '<p>请填写发布信息，用于生成计划卡片。</p>',
+    submitText: '创建',
+    fields: [
+      {
+        name: 'title',
+        label: '计划标题',
+        placeholder: '例如 v0.1.18 发布',
+        required: true,
+        validate: (value) => (String(value ?? '').length < 4 ? '标题至少 4 个字符' : true),
+      },
+      {
+        name: 'owner',
+        label: '负责人',
+        placeholder: '例如 Alice',
+        required: true,
+      },
+      {
+        name: 'priority',
+        label: '优先级',
+        type: 'select',
+        options: [
+          { label: 'P0 - 紧急', value: 'p0' },
+          { label: 'P1 - 高', value: 'p1' },
+          { label: 'P2 - 常规', value: 'p2' },
+        ],
+        defaultValue: 'p1',
+      },
+      {
+        name: 'estimate',
+        label: '预估工时(小时)',
+        type: 'number',
+        defaultValue: 6,
+        required: true,
+      },
+      {
+        name: 'notes',
+        label: '备注',
+        type: 'textarea',
+        placeholder: '写下本次发布重点...',
+        rows: 3,
+      },
+      {
+        name: 'notify',
+        label: '发布后通知团队',
+        type: 'checkbox',
+        defaultValue: true,
+      },
+    ],
+    validate: (formValues) => {
+      const estimate = formValues.estimate
+      if (typeof estimate === 'number' && estimate > 24) {
+        return { estimate: '单次计划建议不超过 24 小时' }
+      }
+      return true
+    },
+  })
+
+  if (values === null) {
+    toast({ title: '已取消', content: '你取消了表单提交。', variant: 'info', duration: 1600 })
+    if (formResult) {
+      formResult.textContent = '结果输出：formModal => null'
+    }
+    return
+  }
+
+  toast({
+    title: '表单已提交',
+    content: `标题: ${String(values.title ?? '')}`,
+    variant: 'success',
+    duration: 2200,
+  })
+  if (formResult) {
+    formResult.textContent = `结果输出：formModal => ${JSON.stringify(values)}`
+  }
+})
+```
+
 ## API
+
+### API 独立页
+
+- 本地开发访问：`/api.html`
+- Pages 构建后访问：`https://sohophp.github.io/sodialog/api.html`
+
+该页面包含全部公开方法、参数、返回值和类型说明，可作为查询手册使用。
 
 ### `openModal(options)`
 

@@ -114,6 +114,23 @@ body {
   align-items: center;
   gap: 1rem;
   flex-wrap: wrap;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.hero-top.is-pinned {
+  position: fixed;
+  top: 0.62rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(1120px, calc(100% - 1.2rem));
+  padding: 0.56rem 0.72rem;
+  border: 1px solid rgb(24 32 31 / 18%);
+  border-radius: 14px;
+  background: rgb(255 255 255 / 72%);
+  backdrop-filter: blur(14px) saturate(132%);
+  box-shadow: 0 12px 28px rgb(0 0 0 / 14%);
+  z-index: 1200;
+  animation: top-line-in 0.24s ease;
 }
 
 .brand-block {
@@ -506,6 +523,18 @@ h3 code {
   }
 }
 
+@keyframes top-line-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
 @media (width <= 900px) {
   #app {
     width: min(1120px, calc(100% - 1.2rem));
@@ -544,6 +573,13 @@ h3 code {
   .quick-nav a {
     font-size: 0.82rem;
     border-radius: 7px;
+  }
+
+  .hero-top.is-pinned {
+    top: 0.46rem;
+    width: calc(100% - 0.9rem);
+    padding: 0.48rem 0.52rem;
+    border-radius: 12px;
   }
 
   .btn {

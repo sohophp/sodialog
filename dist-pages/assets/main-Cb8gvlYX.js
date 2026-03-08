@@ -1,13 +1,4 @@
-import './style.css'
-import { setupPinnedHeroTop } from './pinned-hero-top'
-
-const app = document.querySelector<HTMLDivElement>('#app')
-
-if (!app) {
-  throw new Error('Cannot find #app root element')
-}
-
-app.innerHTML = `
+import"./modulepreload-polyfill-B5Qt9EMX.js";import{s as c}from"./pinned-hero-top-PAvN5BGZ.js";const t=document.querySelector("#app");if(!t)throw new Error("Cannot find #app root element");t.innerHTML=`
   <div class="page-bg" aria-hidden="true">
     <span class="shape shape-a"></span>
     <span class="shape shape-b"></span>
@@ -236,35 +227,4 @@ git push --follow-tags</code></pre>
   <footer class="footer">
     <p>SoDialog · GitHub Pages 首页</p>
   </footer>
-`
-
-const copyButtons = document.querySelectorAll<HTMLButtonElement>('.copy-btn')
-
-copyButtons.forEach((button) => {
-  button.addEventListener('click', async () => {
-    const targetId = button.dataset.copyTarget
-    if (!targetId) {
-      return
-    }
-
-    const codeEl = document.querySelector(`#${targetId} code`)
-    if (!codeEl) {
-      return
-    }
-
-    try {
-      await navigator.clipboard.writeText(codeEl.textContent ?? '')
-      button.textContent = '已复制'
-      window.setTimeout(() => {
-        button.textContent = '复制'
-      }, 1200)
-    } catch {
-      button.textContent = '复制失败'
-      window.setTimeout(() => {
-        button.textContent = '复制'
-      }, 1200)
-    }
-  })
-})
-
-setupPinnedHeroTop()
+`;const s=document.querySelectorAll(".copy-btn");s.forEach(e=>{e.addEventListener("click",async()=>{const o=e.dataset.copyTarget;if(!o)return;const a=document.querySelector(`#${o} code`);if(a)try{await navigator.clipboard.writeText(a.textContent??""),e.textContent="已复制",window.setTimeout(()=>{e.textContent="复制"},1200)}catch{e.textContent="复制失败",window.setTimeout(()=>{e.textContent="复制"},1200)}})});c();
