@@ -319,6 +319,8 @@ npm run docs:changelog
 
 默认线上地址：`https://sohophp.github.io/sodialog/`
 
+独立示例页（按功能拆分演示）：`https://sohophp.github.io/sodialog/examples.html`
+
 ## 文档体系
 
 - `README.md`：使用方式、API、发布流程总览

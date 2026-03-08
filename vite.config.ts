@@ -11,6 +11,7 @@ export default defineConfig(({ mode }) => {
           input: {
             main: resolve(__dirname, 'index.html'),
             demo: resolve(__dirname, 'demo.html'),
+            examples: resolve(__dirname, 'examples.html'),
           },
         },
       },

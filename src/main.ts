@@ -23,12 +23,12 @@ app.innerHTML = `
         </div>
       </div>
       <nav class="quick-nav">
-        <a href="#quick-start">快速开始</a>
-        <a href="#toast-playbook">Toast 指南</a>
-        <a href="#live-demo">原版 Demo</a>
-        <a href="#api">API</a>
-        <a href="#dev-flow">开发流程</a>
-        <a href="#release-flow">发布流程</a>
+        <a href="./index.html#quick-start">快速开始</a>
+        <a href="./examples.html#modal-example">功能示例</a>
+        <a href="./demo.html">原版 Demo</a>
+        <a href="./index.html#api">API</a>
+        <a href="./index.html#dev-flow">开发流程</a>
+        <a href="./index.html#release-flow">发布流程</a>
       </nav>
     </div>
 
@@ -46,6 +46,7 @@ app.innerHTML = `
 
     <div class="hero-actions">
       <a class="btn primary" href="https://www.npmjs.com/package/sodialog" target="_blank" rel="noreferrer">NPM 包</a>
+      <a class="btn secondary" href="./examples.html">Examples 页</a>
       <a class="btn secondary" href="https://github.com/sohophp/sodialog" target="_blank" rel="noreferrer">GitHub 仓库</a>
       <a class="btn secondary" href="https://github.com/sohophp/sodialog/blob/master/CHANGELOG.md" target="_blank" rel="noreferrer">更新日志</a>
     </div>
@@ -174,6 +175,7 @@ SoToast.configure({
       <h2>原版 Demo 演示</h2>
       <p>文档页内嵌了原有完整交互 Demo。你可以在下方直接操作，也可以新窗口打开。</p>
       <div class="demo-actions">
+        <a class="btn secondary" href="./examples.html" target="_blank" rel="noreferrer">打开 Examples 页</a>
         <a class="btn secondary" href="./demo.html" target="_blank" rel="noreferrer">新窗口打开 Demo</a>
       </div>
       <div class="demo-frame-wrap">
