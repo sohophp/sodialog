@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { openModal, toast } from '../src/lib'
+import { formModal, openModal, toast } from '../src/lib'
 
 describe('SoDialog modal behavior', () => {
   it('reuses explicit modal id instance', () => {
@@ -43,6 +43,45 @@ describe('SoDialog modal behavior', () => {
     await vi.runAllTimersAsync()
 
     expect(handle.dialog.isConnected).toBe(false)
+  })
+
+  it('submits structured values via formModal', async () => {
+    const resultPromise = formModal({
+      title: 'create task',
+      fields: [
+        { name: 'title', label: 'Title', required: true },
+        {
+          name: 'level',
+          label: 'Level',
+          type: 'select',
+          options: [
+            { label: 'P0', value: 'p0' },
+            { label: 'P1', value: 'p1' },
+          ],
+        },
+        { name: 'needReview', label: 'Need review', type: 'checkbox', defaultValue: false },
+      ],
+    })
+
+    const titleInput = document.querySelector<HTMLInputElement>('#sod-form-title')
+    const levelSelect = document.querySelector<HTMLSelectElement>('#sod-form-level')
+    const reviewCheckbox = document.querySelector<HTMLInputElement>('#sod-form-needReview')
+
+    expect(titleInput).toBeTruthy()
+    titleInput!.value = 'release prep'
+    levelSelect!.value = 'p0'
+    reviewCheckbox!.checked = true
+
+    const confirmButton = document.querySelector<HTMLButtonElement>('.sod-btn-primary')
+    confirmButton?.click()
+
+    await vi.runAllTimersAsync()
+
+    await expect(resultPromise).resolves.toEqual({
+      title: 'release prep',
+      level: 'p0',
+      needReview: true,
+    })
   })
 })
 

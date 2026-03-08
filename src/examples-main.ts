@@ -2,6 +2,7 @@ import './examples-style.css'
 import {
   SoToast,
   confirmModal,
+  formModal,
   openModal,
   openOffcanvas,
   promptModal,
@@ -101,6 +102,35 @@ const name = await promptModal({
   title: '请输入备注',
   placeholder: '最少 2 个字符',
   validate: (value) => (value.length &lt; 2 ? '至少输入 2 个字符' : true),
+})</code></pre>
+          </div>
+        </article>
+
+        <article class="example-card">
+          <h3>表单调用：<code>formModal</code></h3>
+          <p>声明式字段配置，适合在同一个弹窗内采集多字段并返回结构化结果。</p>
+          <div class="row">
+            <button class="btn primary" id="open-form">formModal</button>
+          </div>
+          <div id="form-result" class="result-box">结果输出：等待执行...</div>
+          <div class="code">
+            <button class="copy-btn" data-copy-target="modal-form-code" type="button">复制</button>
+            <pre id="modal-form-code"><code>const values = await formModal({
+  title: '创建发布计划',
+  fields: [
+    { name: 'title', label: '标题', required: true },
+    { name: 'owner', label: '负责人', required: true },
+    {
+      name: 'priority',
+      label: '优先级',
+      type: 'select',
+      options: [
+        { label: 'P0', value: 'p0' },
+        { label: 'P1', value: 'p1' },
+      ],
+    },
+    { name: 'notify', label: '通知团队', type: 'checkbox', defaultValue: true },
+  ],
 })</code></pre>
           </div>
         </article>
@@ -224,7 +254,9 @@ const name = await promptModal({
 const modalBtn = document.querySelector<HTMLButtonElement>('#open-modal-basic')
 const confirmBtn = document.querySelector<HTMLButtonElement>('#open-confirm')
 const promptBtn = document.querySelector<HTMLButtonElement>('#open-prompt')
+const formBtn = document.querySelector<HTMLButtonElement>('#open-form')
 const modalResult = document.querySelector<HTMLDivElement>('#modal-result')
+const formResult = document.querySelector<HTMLDivElement>('#form-result')
 
 modalBtn?.addEventListener('click', () => {
   openModal({
@@ -280,6 +312,85 @@ promptBtn?.addEventListener('click', async () => {
 
   if (modalResult) {
     modalResult.textContent = `结果输出：promptModal => "${result}"`
+  }
+})
+
+formBtn?.addEventListener('click', async () => {
+  const values = await formModal({
+    title: '创建发布计划',
+    content: '<p>请填写发布信息，用于生成计划卡片。</p>',
+    submitText: '创建',
+    fields: [
+      {
+        name: 'title',
+        label: '计划标题',
+        placeholder: '例如 v0.1.18 发布',
+        required: true,
+        validate: (value) => (String(value ?? '').length < 4 ? '标题至少 4 个字符' : true),
+      },
+      {
+        name: 'owner',
+        label: '负责人',
+        placeholder: '例如 Alice',
+        required: true,
+      },
+      {
+        name: 'priority',
+        label: '优先级',
+        type: 'select',
+        options: [
+          { label: 'P0 - 紧急', value: 'p0' },
+          { label: 'P1 - 高', value: 'p1' },
+          { label: 'P2 - 常规', value: 'p2' },
+        ],
+        defaultValue: 'p1',
+      },
+      {
+        name: 'estimate',
+        label: '预估工时(小时)',
+        type: 'number',
+        defaultValue: 6,
+        required: true,
+      },
+      {
+        name: 'notes',
+        label: '备注',
+        type: 'textarea',
+        placeholder: '写下本次发布重点...',
+        rows: 3,
+      },
+      {
+        name: 'notify',
+        label: '发布后通知团队',
+        type: 'checkbox',
+        defaultValue: true,
+      },
+    ],
+    validate: (formValues) => {
+      const estimate = formValues.estimate
+      if (typeof estimate === 'number' && estimate > 24) {
+        return { estimate: '单次计划建议不超过 24 小时' }
+      }
+      return true
+    },
+  })
+
+  if (values === null) {
+    toast({ title: '已取消', content: '你取消了表单提交。', variant: 'info', duration: 1600 })
+    if (formResult) {
+      formResult.textContent = '结果输出：formModal => null'
+    }
+    return
+  }
+
+  toast({
+    title: '表单已提交',
+    content: `标题: ${String(values.title ?? '')}`,
+    variant: 'success',
+    duration: 2200,
+  })
+  if (formResult) {
+    formResult.textContent = `结果输出：formModal => ${JSON.stringify(values)}`
   }
 })
 

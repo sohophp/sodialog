@@ -23,7 +23,7 @@ npm install sodialog
 ## 使用
 
 ```ts
-import { openModal, openOffcanvas, confirmModal, promptModal, toast } from 'sodialog'
+import { openModal, openOffcanvas, confirmModal, promptModal, formModal, toast } from 'sodialog'
 import 'sodialog/style.css'
 
 openModal({
@@ -69,6 +69,26 @@ if (ok) {
   })
   console.log('prompt result:', name)
 }
+
+const formValues = await formModal({
+  title: '创建发布计划',
+  submitText: '提交',
+  fields: [
+    { name: 'title', label: '标题', required: true },
+    {
+      name: 'priority',
+      label: '优先级',
+      type: 'select',
+      options: [
+        { label: 'P0', value: 'p0' },
+        { label: 'P1', value: 'p1' },
+      ],
+    },
+    { name: 'notify', label: '通知团队', type: 'checkbox', defaultValue: true },
+  ],
+})
+
+console.log('form result:', formValues)
 ```
 
 ## API
@@ -198,6 +218,50 @@ openOffcanvas({ title: 'Bottom', placement: 'bottom', animation: 'zoom', content
 - 支持 `defaultValue`、`placeholder`、`inputType`
 - 支持 `trimResult`（默认 `true`）
 - 支持 `validate(value)`，返回 `string`/`false` 可阻止关闭并显示错误
+
+### `SoDialog.form(options)` / `formModal(options)`
+
+- 返回 `Promise<Record<string, SoDialogFormValue> | null>`
+- 确认返回结构化表单对象，取消返回 `null`
+- 支持字段类型：`text/password/email/search/url/tel/number/textarea/select/checkbox`
+- 每个字段支持 `required`、`defaultValue`、`helpText`、`attrs`、`validate`
+- 支持表单级 `validate(values)`，可返回：
+  - `true/void`：通过
+  - `false|string`：阻止提交（显示通用错误）
+  - `Record<string, string>`：按字段显示错误
+
+示例：
+
+```ts
+const values = await formModal({
+  title: '创建任务单',
+  fields: [
+    {
+      name: 'title',
+      label: '任务标题',
+      required: true,
+      validate: (value) => (String(value ?? '').length < 4 ? '至少 4 个字符' : true),
+    },
+    {
+      name: 'level',
+      label: '优先级',
+      type: 'select',
+      options: [
+        { label: 'P0', value: 'p0' },
+        { label: 'P1', value: 'p1' },
+      ],
+      defaultValue: 'p1',
+    },
+    { name: 'needReview', label: '需要 Review', type: 'checkbox', defaultValue: true },
+  ],
+  validate: (formValues) => {
+    if (formValues.level === 'p0' && !formValues.needReview) {
+      return { needReview: 'P0 任务必须开启 Review' }
+    }
+    return true
+  },
+})
+```
 
 ### `toast(options)` / `SoToast.show(options)`
 

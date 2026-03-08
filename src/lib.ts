@@ -118,6 +118,28 @@ export interface SoDialogConfirmOptions
 }
 
 export type SoPromptInputType = 'text' | 'password' | 'email' | 'search' | 'url' | 'tel'
+export type SoFormFieldType = SoPromptInputType | 'number' | 'textarea' | 'select' | 'checkbox'
+
+export type SoDialogFormValue = string | number | boolean | null
+
+export interface SoDialogFormFieldOption {
+  label: string
+  value: string
+}
+
+export interface SoDialogFormField {
+  name: string
+  label: string
+  type?: SoFormFieldType
+  placeholder?: string
+  defaultValue?: string | number | boolean
+  required?: boolean
+  helpText?: string
+  rows?: number
+  options?: SoDialogFormFieldOption[]
+  attrs?: Record<string, string>
+  validate?: (value: SoDialogFormValue, values: Record<string, SoDialogFormValue>) => string | boolean | void
+}
 
 export interface SoDialogPromptOptions extends SoDialogConfirmOptions {
   defaultValue?: string
@@ -125,6 +147,21 @@ export interface SoDialogPromptOptions extends SoDialogConfirmOptions {
   inputType?: SoPromptInputType
   trimResult?: boolean
   validate?: (value: string) => string | boolean | void
+}
+
+export interface SoDialogFormOptions
+  extends Omit<
+    SoDialogConfirmOptions,
+    'content' | 'onConfirm' | 'onCancel' | 'confirmText' | 'cancelText' | 'hideFooter' | 'footerButtons'
+  > {
+  content?: string | Node
+  fields: SoDialogFormField[]
+  trimText?: boolean
+  submitText?: string
+  cancelText?: string
+  onConfirm?: (values: Record<string, SoDialogFormValue>) => void
+  onCancel?: () => void
+  validate?: (values: Record<string, SoDialogFormValue>) => string | boolean | Record<string, string> | void
 }
 
 export type SoDialogOptions = SoDialogModalOptions | SoDialogOffcanvasOptions
@@ -1313,6 +1350,299 @@ export class SoDialog {
       })
     })
   }
+
+  static form(options: SoDialogFormOptions): Promise<Record<string, SoDialogFormValue> | null> {
+    const {
+      title = '填写表单',
+      content,
+      fields,
+      trimText = true,
+      submitText = '提交',
+      cancelText = '取消',
+      onConfirm,
+      onCancel,
+      validate,
+      onAfterOpen,
+      onAfterClose,
+      ...rest
+    } = options
+
+    return new Promise<Record<string, SoDialogFormValue> | null>((resolve) => {
+      let settled = false
+      let submittedValues: Record<string, SoDialogFormValue> | null = null
+
+      const settle = (result: Record<string, SoDialogFormValue> | null) => {
+        if (settled) {
+          return
+        }
+        settled = true
+        resolve(result)
+      }
+
+      const wrapper = document.createElement('div')
+      wrapper.className = 'sod-form-wrap'
+
+      if (content !== undefined) {
+        const intro = document.createElement('div')
+        intro.className = 'sod-form-intro'
+        appendContent(intro, content)
+        wrapper.append(intro)
+      }
+
+      const formGrid = document.createElement('div')
+      formGrid.className = 'sod-form-grid'
+      wrapper.append(formGrid)
+
+      const fieldElements = new Map<
+        string,
+        {
+          field: SoDialogFormField
+          input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+          error: HTMLParagraphElement
+        }
+      >()
+
+      fields.forEach((field) => {
+        const fieldType = field.type ?? 'text'
+        const fieldRow = document.createElement('label')
+        fieldRow.className = fieldType === 'checkbox' ? 'sod-form-field sod-form-field-checkbox' : 'sod-form-field'
+
+        const labelText = document.createElement('span')
+        labelText.className = 'sod-form-label'
+        labelText.textContent = field.required ? `${field.label} *` : field.label
+
+        let inputEl: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+        if (fieldType === 'textarea') {
+          const textarea = document.createElement('textarea')
+          textarea.className = 'sod-form-control sod-form-textarea'
+          textarea.rows = Math.max(2, field.rows ?? 4)
+          textarea.value = typeof field.defaultValue === 'string' ? field.defaultValue : ''
+          if (field.placeholder) {
+            textarea.placeholder = field.placeholder
+          }
+          inputEl = textarea
+        } else if (fieldType === 'select') {
+          const select = document.createElement('select')
+          select.className = 'sod-form-control sod-form-select'
+          const optionsList = field.options ?? []
+          optionsList.forEach((option) => {
+            const optionEl = document.createElement('option')
+            optionEl.value = option.value
+            optionEl.textContent = option.label
+            select.append(optionEl)
+          })
+          if (typeof field.defaultValue === 'string') {
+            select.value = field.defaultValue
+          }
+          inputEl = select
+        } else {
+          const input = document.createElement('input')
+          input.className = fieldType === 'checkbox' ? 'sod-form-checkbox' : 'sod-form-control'
+          input.type = fieldType
+          if (fieldType === 'checkbox') {
+            input.checked = Boolean(field.defaultValue)
+          } else {
+            input.value = field.defaultValue === undefined ? '' : String(field.defaultValue)
+            if (field.placeholder) {
+              input.placeholder = field.placeholder
+            }
+          }
+          inputEl = input
+        }
+
+        inputEl.id = `sod-form-${field.name}`
+        if (field.required) {
+          inputEl.setAttribute('aria-required', 'true')
+        }
+
+        if (field.attrs) {
+          Object.entries(field.attrs).forEach(([attrKey, attrValue]) => {
+            inputEl.setAttribute(attrKey, attrValue)
+          })
+        }
+
+        const help = document.createElement('small')
+        help.className = 'sod-form-help'
+        help.textContent = field.helpText ?? ''
+        help.hidden = !field.helpText
+
+        const error = document.createElement('p')
+        error.className = 'sod-form-error'
+        error.hidden = true
+
+        fieldRow.append(labelText, inputEl, help, error)
+        formGrid.append(fieldRow)
+
+        fieldElements.set(field.name, { field, input: inputEl, error })
+      })
+
+      const readFieldValue = (field: SoDialogFormField, input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement) => {
+        const fieldType = field.type ?? 'text'
+        if (fieldType === 'checkbox' && input instanceof HTMLInputElement) {
+          return input.checked
+        }
+        if (fieldType === 'number' && input instanceof HTMLInputElement) {
+          if (input.value.trim() === '') {
+            return null
+          }
+          return Number.isNaN(input.valueAsNumber) ? null : input.valueAsNumber
+        }
+
+        const rawValue = input.value
+        return trimText ? rawValue.trim() : rawValue
+      }
+
+      const setFieldError = (name: string, message: string | null) => {
+        const fieldRef = fieldElements.get(name)
+        if (!fieldRef) {
+          return
+        }
+
+        fieldRef.error.hidden = !message
+        fieldRef.error.textContent = message ?? ''
+      }
+
+      const clearAllErrors = () => {
+        fieldElements.forEach((_, fieldName) => setFieldError(fieldName, null))
+      }
+
+      const validateRequired = (field: SoDialogFormField, value: SoDialogFormValue): string | null => {
+        if (!field.required) {
+          return null
+        }
+
+        if (typeof value === 'string') {
+          return value.length > 0 ? null : '该字段为必填项。'
+        }
+
+        if (typeof value === 'number') {
+          return Number.isFinite(value) ? null : '请输入有效数字。'
+        }
+
+        if (typeof value === 'boolean') {
+          return value ? null : '请先勾选该项。'
+        }
+
+        return '该字段为必填项。'
+      }
+
+      this.openModal({
+        ...rest,
+        title,
+        content: wrapper,
+        footerButtons: [
+          {
+            id: 'cancel',
+            label: cancelText,
+            role: 'cancel',
+            variant: 'outline',
+            action: 'hide',
+            onClick: () => {
+              submittedValues = null
+              onCancel?.()
+            },
+          },
+          {
+            id: 'confirm',
+            label: submitText,
+            role: 'confirm',
+            variant: 'primary',
+            action: 'hide',
+            onClick: () => {
+              clearAllErrors()
+
+              const values: Record<string, SoDialogFormValue> = {}
+              let firstInvalidName: string | null = null
+
+              fieldElements.forEach(({ field, input }, name) => {
+                values[name] = readFieldValue(field, input)
+              })
+
+              fieldElements.forEach(({ field }, name) => {
+                const value = values[name]
+                const requiredError = validateRequired(field, value)
+                if (requiredError) {
+                  setFieldError(name, requiredError)
+                  if (!firstInvalidName) {
+                    firstInvalidName = name
+                  }
+                  return
+                }
+
+                if (field.validate) {
+                  const result = field.validate(value, values)
+                  if (result === false) {
+                    setFieldError(name, '输入不符合要求。')
+                    if (!firstInvalidName) {
+                      firstInvalidName = name
+                    }
+                    return
+                  }
+                  if (typeof result === 'string') {
+                    setFieldError(name, result)
+                    if (!firstInvalidName) {
+                      firstInvalidName = name
+                    }
+                  }
+                }
+              })
+
+              if (validate) {
+                const result = validate(values)
+                if (result === false) {
+                  const first = fields[0]
+                  if (first) {
+                    setFieldError(first.name, '表单校验未通过。')
+                    firstInvalidName = first.name
+                  }
+                } else if (typeof result === 'string') {
+                  const first = fields[0]
+                  if (first) {
+                    setFieldError(first.name, result)
+                    firstInvalidName = first.name
+                  }
+                } else if (result && typeof result === 'object') {
+                  Object.entries(result).forEach(([fieldName, message]) => {
+                    if (!message) {
+                      return
+                    }
+                    setFieldError(fieldName, message)
+                    if (!firstInvalidName) {
+                      firstInvalidName = fieldName
+                    }
+                  })
+                }
+              }
+
+              if (firstInvalidName) {
+                const invalidField = fieldElements.get(firstInvalidName)
+                invalidField?.input.focus()
+                return false
+              }
+
+              submittedValues = values
+              onConfirm?.(values)
+              return true
+            },
+          },
+        ],
+        onAfterOpen: (context) => {
+          onAfterOpen?.(context)
+          window.setTimeout(() => {
+            const firstField = fields[0]
+            if (!firstField) {
+              return
+            }
+            fieldElements.get(firstField.name)?.input.focus()
+          }, 0)
+        },
+        onAfterClose: (context) => {
+          onAfterClose?.(context)
+          settle(submittedValues)
+        },
+      })
+    })
+  }
 }
 
 export class SoToast {
@@ -2146,6 +2476,10 @@ export function confirmModal(options: SoDialogConfirmOptions = {}): Promise<bool
 
 export function promptModal(options: SoDialogPromptOptions = {}): Promise<string | null> {
   return SoDialog.prompt(options)
+}
+
+export function formModal(options: SoDialogFormOptions): Promise<Record<string, SoDialogFormValue> | null> {
+  return SoDialog.form(options)
 }
 
 export function toast(options: SoToastOptions): SoToastHandle {

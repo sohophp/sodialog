@@ -1,6 +1,7 @@
 import './demo-style.css'
 import {
   SoToast,
+  formModal,
   openModal,
   openOffcanvas,
   type SoToastDuplicateStrategy,
@@ -753,7 +754,57 @@ function renderApp(root: HTMLDivElement) {
     }
   })
 
-  actions.append(modalButton)
+  const modalFormButton = document.createElement('button')
+  modalFormButton.className = 'btn btn-dark'
+  modalFormButton.textContent = '打开 Form Modal'
+  modalFormButton.addEventListener('click', async () => {
+    const values = await formModal({
+      title: '创建任务单',
+      content: '<p>演示 SoDialog.form：一次输入多字段并返回结构化数据。</p>',
+      submitText: '提交任务',
+      fields: [
+        {
+          name: 'title',
+          label: '任务标题',
+          placeholder: '例如 修复发布页导航',
+          required: true,
+          validate: (value) => (String(value ?? '').length < 4 ? '标题至少 4 个字符' : true),
+        },
+        {
+          name: 'assignee',
+          label: '负责人',
+          placeholder: '例如 Bob',
+          required: true,
+        },
+        {
+          name: 'priority',
+          label: '优先级',
+          type: 'select',
+          options: [
+            { label: 'P0', value: 'p0' },
+            { label: 'P1', value: 'p1' },
+            { label: 'P2', value: 'p2' },
+          ],
+          defaultValue: 'p1',
+        },
+        {
+          name: 'needReview',
+          label: '需要 Code Review',
+          type: 'checkbox',
+          defaultValue: true,
+        },
+      ],
+    })
+
+    if (values === null) {
+      appendLog('onAction', undefined, 'formModal canceled')
+      return
+    }
+
+    appendLog('onAction', undefined, `formModal submit: ${JSON.stringify(values)}`)
+  })
+
+  actions.append(modalButton, modalFormButton)
   modalSection.append(modalTitle, modalControlRow, actions)
 
   const offcanvasSection = document.createElement('section')
