@@ -1,4 +1,4 @@
-import"./modulepreload-polyfill-B5Qt9EMX.js";/* empty css                  */import{e,S as a,t as s}from"./lib-BD9zQoIA.js";import{r as n,w as c}from"./lab-shared-C3tuUAEJ.js";const o=document.querySelector("#app");if(!o)throw new Error("Cannot find #app root element");o.innerHTML=`
+import"./modulepreload-polyfill-B5Qt9EMX.js";/* empty css                  */import{e,S as a,t as s}from"./lib-C5w3ISyN.js";import{r as n,w as c}from"./lab-shared-C3tuUAEJ.js";const o=document.querySelector("#app");if(!o)throw new Error("Cannot find #app root element");o.innerHTML=`
 ${n("toast","Toast Lab","独立页面展示 Toast 的样式、队列与重复策略。")}
 <main class="grid">
   <section class="card">

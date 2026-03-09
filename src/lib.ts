@@ -3552,7 +3552,7 @@ export type SoMessageLevel = 'default' | 'info' | 'success' | 'warning' | 'dange
 
 export interface SoAdapterLogEvent {
   action: string
-  phase?: SoLifecyclePhase | 'action' | 'layout-stable'
+  phase?: SoLifecyclePhase | 'action' | 'layout-stable' | 'focus' | 'typeahead'
   component?: SoLifecycleComponent | 'adapter'
   reason?: string
   id?: string
@@ -3714,6 +3714,34 @@ export class SoAdapter {
           id: context.handle.id,
           traceId: context.traceId,
           detail: {
+            itemId: context.itemId,
+          },
+        })
+      },
+      onFocusItem: (context) => {
+        options.onFocusItem?.(context)
+        this.emitDiagnostic({
+          action: 'bindDialogContextMenu',
+          phase: 'focus',
+          component: 'context-menu',
+          id: context.handle.id,
+          traceId: context.traceId,
+          detail: {
+            itemId: context.itemId,
+          },
+        })
+      },
+      onTypeahead: (context) => {
+        options.onTypeahead?.(context)
+        this.emitDiagnostic({
+          action: 'bindDialogContextMenu',
+          phase: 'typeahead',
+          component: 'context-menu',
+          id: context.handle.id,
+          traceId: context.traceId,
+          detail: {
+            query: context.query,
+            matched: context.matched,
             itemId: context.itemId,
           },
         })

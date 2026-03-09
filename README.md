@@ -182,7 +182,8 @@ pushMessage('success', 'Saved', { traceId: 'trace-order-001' })
 
 `openDialogFromContextMenu` 会先关闭菜单，再打开 Dialog，可避免层级和焦点冲突。
 
-`diagnosticsEnabled + logger` 用于统一诊断链路，推荐记录字段：`action`、`phase`、`reason`、`id`、`traceId`。
+`diagnosticsEnabled + logger` 用于统一诊断链路，推荐记录字段：`action`、`phase`、`reason`、`id`、`traceId`、`detail`。
+`bindDialogContextMenu` 诊断会额外输出 `phase='focus' | 'typeahead'`，并在 `detail` 中提供 `itemId/query/matched`。
 
 ## 全局 configure（非 adapter 场景）
 

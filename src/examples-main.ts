@@ -832,7 +832,8 @@ adapterDiagnosticsBtn?.addEventListener('click', () => {
       if (adapterResult) {
         const phase = event.phase ?? '-'
         const trace = event.traceId ?? '-'
-        adapterResult.textContent = `结果输出：log action=${event.action} phase=${phase} traceId=${trace}`
+        const detail = event.detail ? JSON.stringify(event.detail) : '{}'
+        adapterResult.textContent = `结果输出：log action=${event.action} phase=${phase} traceId=${trace} detail=${detail}`
       }
     },
   })

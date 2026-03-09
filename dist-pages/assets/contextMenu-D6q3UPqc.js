@@ -1,4 +1,4 @@
-import"./modulepreload-polyfill-B5Qt9EMX.js";/* empty css                  */import{b as l,e as i,o as u,i as m}from"./lib-BD9zQoIA.js";import{r as p,w as b}from"./lab-shared-C3tuUAEJ.js";const d=document.querySelector("#app");if(!d)throw new Error("Cannot find #app root element");d.innerHTML=`
+import"./modulepreload-polyfill-B5Qt9EMX.js";/* empty css                  */import{b as l,e as i,o as u,i as m}from"./lib-C5w3ISyN.js";import{r as p,w as b}from"./lab-shared-C3tuUAEJ.js";const d=document.querySelector("#app");if(!d)throw new Error("Cannot find #app root element");d.innerHTML=`
 ${p("context-menu","ContextMenu Lab","独立页面展示 ContextMenu 的基础绑定、关闭策略和菜单触发弹窗时序。")}
 
 <main class="grid">

@@ -652,7 +652,7 @@ toast({ id: 'sync-task', content: '策略 stack', duplicateStrategy: 'stack' })<
               <tr><td><code>SoDialogFormValue</code></td><td><code>string | number | boolean | null</code></td></tr>
               <tr><td><code>SoLayoutStableContext</code></td><td><code>{ component: 'modal' | 'offcanvas'; element: HTMLElement; id?: string; traceId?: string }</code></td></tr>
               <tr><td><code>SoMessageLevel</code></td><td><code>'default' | 'info' | 'success' | 'warning' | 'danger'</code></td></tr>
-              <tr><td><code>SoAdapterLogEvent</code></td><td><code>{ action; phase?; component?; reason?; id?; traceId?; detail? }</code></td></tr>
+              <tr><td><code>SoAdapterLogEvent</code></td><td><code>{ action; phase?: before-open/after-open/before-close/after-close/action/layout-stable/focus/typeahead; component?; reason?; id?; traceId?; detail? }</code></td></tr>
               <tr><td><code>SoDialogGlobalConfig</code></td><td><code>{ modalDefaults?: Partial&lt;SoDialogModalOptions&gt;; offcanvasDefaults?: Partial&lt;Omit&lt;SoDialogOffcanvasOptions, 'kind'&gt;&gt; }</code></td></tr>
               <tr><td><code>SoContextMenuGlobalConfig</code></td><td><code>{ closeOnEsc?; closeOnOutsideClick?; minWidth?; maxHeight?; offsetX?; offsetY?; className?; attrs?; ... }</code></td></tr>
               <tr><td><code>SoContextMenuCloseReason</code></td><td><code>'outside' | 'esc' | 'item' | 'programmatic' | 'destroy' | 'reopen' | 'blur' | 'scroll' | 'resize'</code></td></tr>

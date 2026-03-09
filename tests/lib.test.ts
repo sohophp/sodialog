@@ -891,6 +891,54 @@ describe('Adapter behavior', () => {
     expect(hasDialogEvent).toBe(true)
     expect(hasToastEvent).toBe(true)
   })
+
+  it('emits context-menu focus and typeahead diagnostics through adapter logger', () => {
+    const events: Array<Record<string, unknown>> = []
+    configureAdapter({
+      diagnosticsEnabled: true,
+      logger: (event) => {
+        events.push(event as unknown as Record<string, unknown>)
+      },
+    })
+
+    const trigger = document.createElement('button')
+    trigger.type = 'button'
+    trigger.textContent = 'menu'
+    document.body.append(trigger)
+
+    const handle = bindDialogContextMenu({
+      target: trigger,
+      traceId: 'trace-diag-ctx-1',
+      items: [
+        { id: 'download', label: '下载 Download' },
+        { id: 'rename', label: '重命名 Rename' },
+        { id: 'delete', label: '删除 Delete' },
+      ],
+    })
+
+    trigger.dispatchEvent(
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 24,
+        clientY: 18,
+      }),
+    )
+
+    const menu = handle.element
+    menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }))
+    menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'd', bubbles: true }))
+
+    const hasFocusEvent = events.some(
+      (event) => event.action === 'bindDialogContextMenu' && event.phase === 'focus' && event.traceId === 'trace-diag-ctx-1',
+    )
+    const hasTypeaheadEvent = events.some(
+      (event) => event.action === 'bindDialogContextMenu' && event.phase === 'typeahead' && event.traceId === 'trace-diag-ctx-1',
+    )
+
+    expect(hasFocusEvent).toBe(true)
+    expect(hasTypeaheadEvent).toBe(true)
+  })
 })
 
 describe('Global configure behavior', () => {
