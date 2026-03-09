@@ -75,6 +75,16 @@ export interface SoContextMenuActionContext {
   handle: SoContextMenuHandle
 }
 
+export interface SoContextMenuFocusContext {
+  itemId: string
+  item: SoContextMenuItem
+  itemElement: HTMLButtonElement
+  menuElement: HTMLElement
+  triggerElement: HTMLElement
+  traceId?: string
+  handle: SoContextMenuHandle
+}
+
 export interface SoContextMenuOptions extends SoLifecycleHooks {
   id?: string
   traceId?: string
@@ -95,6 +105,7 @@ export interface SoContextMenuOptions extends SoLifecycleHooks {
   onOpen?: (handle: SoContextMenuHandle) => void
   onClose?: (reason: SoContextMenuCloseReason, handle: SoContextMenuHandle) => void
   onAction?: (context: SoContextMenuActionContext) => void
+  onFocusItem?: (context: SoContextMenuFocusContext) => void
 }
 
 export interface SoContextMenuHandle {
@@ -3068,11 +3079,12 @@ export class SoContextMenu {
     const renderItems = () => {
       menuElement.replaceChildren()
 
-      for (const item of menuItems) {
+      menuItems.forEach((item, itemIndex) => {
         const itemElement = document.createElement('button')
         itemElement.type = 'button'
         itemElement.className = 'sod-context-menu-item'
         itemElement.setAttribute('role', 'menuitem')
+        itemElement.dataset.itemIndex = String(itemIndex)
 
         const content = document.createElement('span')
         content.className = 'sod-context-menu-item-content'
@@ -3081,9 +3093,7 @@ export class SoContextMenu {
         const iconElement = renderItemIcon(item)
         const iconPosition = item.iconPosition ?? 'start'
 
-        if (item.id?.trim()) {
-          itemElement.dataset.itemId = item.id.trim()
-        }
+        itemElement.dataset.itemId = item.id?.trim() || 'item'
         if (item.disabled) {
           itemElement.disabled = true
         }
@@ -3140,7 +3150,7 @@ export class SoContextMenu {
         })
 
         menuElement.append(itemElement)
-      }
+      })
     }
 
     const getFocusableItems = (): HTMLButtonElement[] => {
@@ -3156,6 +3166,24 @@ export class SoContextMenu {
       const nextIndex = ((index % items.length) + items.length) % items.length
       const nextItem = items[nextIndex]
       focusElementIfPossible(nextItem)
+
+      const triggerElement = lastTriggerElement
+      const itemIndex = Number.parseInt(nextItem.dataset.itemIndex ?? '-1', 10)
+      if (triggerElement && !Number.isNaN(itemIndex)) {
+        const item = menuItems[itemIndex]
+        if (item) {
+          options.onFocusItem?.({
+            itemId: item.id?.trim() || 'item',
+            item,
+            itemElement: nextItem,
+            menuElement,
+            triggerElement,
+            traceId,
+            handle,
+          })
+        }
+      }
+
       menuElement.dispatchEvent(
         new CustomEvent('sod:context-menu-focus-item', {
           detail: {

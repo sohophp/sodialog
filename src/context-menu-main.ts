@@ -51,10 +51,10 @@ ${renderLabHeader('context-menu', 'ContextMenu Lab', '独立页面展示 Context
     { id: 'delete', label: '删除 Delete' },
   ],
   onOpen: (handle) => {
-    // 监听焦点定位回显
-    handle.element.addEventListener('sod:context-menu-focus-item', (event) => {
-      console.log(event.detail)
-    })
+    console.log(handle.id)
+  },
+  onFocusItem: ({ itemId, itemElement }) => {
+    console.log(itemId, itemElement.textContent)
   },
   onClose: (reason) => {
     console.log('close reason', reason)
@@ -123,15 +123,14 @@ bindContextMenu({
     if (focusResult) {
       focusResult.textContent = '焦点定位：菜单已打开，使用方向键或字母进行定位。'
     }
-
-    handle.element.addEventListener('sod:context-menu-focus-item', (event: Event) => {
-      const customEvent = event as CustomEvent<{ itemId?: string; label?: string }>
-      const itemId = customEvent.detail?.itemId ?? '-'
-      const label = customEvent.detail?.label ?? '-'
-      if (focusResult) {
-        focusResult.textContent = `焦点定位：${itemId} (${label})`
-      }
-    })
+    void handle
+  },
+  onFocusItem: ({ itemId, itemElement }) => {
+    const focusResult = document.querySelector<HTMLDivElement>('#cm-policy-focus-result')
+    const label = (itemElement.textContent ?? '').trim()
+    if (focusResult) {
+      focusResult.textContent = `焦点定位：${itemId} (${label})`
+    }
   },
   onAction: ({ itemId }) => {
     const actionResult = document.querySelector<HTMLDivElement>('#cm-policy-action-result')

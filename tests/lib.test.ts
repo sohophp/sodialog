@@ -622,6 +622,40 @@ describe('SoContextMenu behavior', () => {
     expect(handle.isOpen()).toBe(false)
   })
 
+  it('emits onFocusItem during keyboard focus changes', () => {
+    const trigger = document.createElement('button')
+    trigger.type = 'button'
+    trigger.textContent = 'menu'
+    document.body.append(trigger)
+
+    const focused: string[] = []
+    const handle = bindContextMenu({
+      target: trigger,
+      items: [
+        { id: 'download', label: '下载 Download' },
+        { id: 'rename', label: '重命名 Rename' },
+      ],
+      onFocusItem: ({ itemId }) => {
+        focused.push(itemId)
+      },
+    })
+
+    trigger.dispatchEvent(
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 24,
+        clientY: 18,
+      }),
+    )
+
+    const menu = handle.element
+    menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }))
+
+    expect(focused).toContain('download')
+    expect(focused).toContain('rename')
+  })
+
   it('supports typeahead focus by first character', () => {
     const trigger = document.createElement('button')
     trigger.type = 'button'
