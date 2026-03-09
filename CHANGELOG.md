@@ -35,6 +35,7 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 - context-menu "关闭策略与键盘交互" demo now matches the displayed source snippet (multi-item policy menu)
 - context-menu demo now includes keyboard feedback panels for current focused item and latest action
 - fixed context-menu typeahead matching for mixed labels like `删除 Delete` and improved forward cycling across matched items
+- API/README/ContextMenu Lab docs now explicitly describe mixed-label matching and same-letter cycling behavior
 
 ## [0.1.20] - 2026-03-09
 
