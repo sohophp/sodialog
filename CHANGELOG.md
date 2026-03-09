@@ -23,6 +23,7 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 - context-menu first-character typeahead navigation for faster keyboard selection
 - context-menu `onFocusItem` callback for observing keyboard/script-driven focus changes via public API
 - context-menu `onTypeahead` callback for observing typeahead query/match results via public API
+- context-menu `typeaheadResetMs` option for controlling typeahead query reset timing
 
 ### Changed
 - package version bumped to `0.2.0` for major capability upgrade line
@@ -42,6 +43,7 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 - ContextMenu Lab focus feedback now uses public `onFocusItem` callback instead of internal custom event wiring
 - ContextMenu Lab now shows typeahead feedback panel (query + matched/missed item) using `onTypeahead`
 - adapter diagnostics now include context-menu keyboard focus/typeahead events with `detail.itemId/query/matched`
+- ContextMenu Lab/API/README now document and demonstrate configurable typeahead reset window behavior
 
 ## [0.1.20] - 2026-03-09
 
