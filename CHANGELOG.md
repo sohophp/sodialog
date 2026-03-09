@@ -6,6 +6,8 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-03-09
+
 ### Added
 - adapter-first APIs: `configureAdapter`, `openDialog`, `bindDialogContextMenu`, `pushMessage`
 - dialog `onLayoutStable` hook and timing controls (`layoutStableFrames`, `layoutStableOnRefit`)
@@ -187,7 +189,8 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 - release: prepare v0.1.1
 - feat: build reusable SoDialog npm library
 
-[Unreleased]: https://github.com/sohophp/sodialog/compare/v0.1.20...HEAD
+[Unreleased]: https://github.com/sohophp/sodialog/compare/v0.2.2...HEAD
+[0.2.2]: https://github.com/sohophp/sodialog/releases/tag/v0.2.2
 [0.1.20]: https://github.com/sohophp/sodialog/releases/tag/v0.1.20
 [0.1.19]: https://github.com/sohophp/sodialog/releases/tag/v0.1.19
 [0.1.18]: https://github.com/sohophp/sodialog/releases/tag/v0.1.18
