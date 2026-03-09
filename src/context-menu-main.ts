@@ -31,8 +31,8 @@ ${renderLabHeader('context-menu', 'ContextMenu Lab', '独立页面展示 Context
 
   <section class="card">
     <h2>关闭策略与键盘交互</h2>
-    <p>验证 Esc、滚动、窗口失焦等关闭路径；并观察方向键与字母快速定位。</p>
-    <div class="result" id="cm-policy-zone" tabindex="0">右键此区域后，按 ArrowUp/ArrowDown 或输入字母 d/r 快速定位</div>
+    <p>验证 Esc、滚动、窗口失焦等关闭路径；并观察方向键与字母快速定位（支持混合标签）。</p>
+    <div class="result" id="cm-policy-zone" tabindex="0">右键此区域后，按 ArrowUp/ArrowDown，或按 d/r 定位；连续按 d 会在 Download/Delete 间轮转</div>
     <div class="result" id="cm-policy-focus-result">焦点定位：等待菜单打开...</div>
     <div class="result" id="cm-policy-action-result">最近动作：等待触发...</div>
     <div class="row"><button class="btn" id="cm-open-modal">打开普通 Modal（对比入口）</button></div>
@@ -56,7 +56,7 @@ ${renderLabHeader('context-menu', 'ContextMenu Lab', '独立页面展示 Context
     })
   },
 })</pre></div>
-      <p class="note">说明：当前支持 ArrowUp/ArrowDown/Home/End/Tab 导航，Enter/Space 激活，输入首字母可快速定位菜单项。</p>
+      <p class="note">说明：当前支持 ArrowUp/ArrowDown/Home/End/Tab 导航，Enter/Space 激活；字母定位支持混合标签（如 删除 Delete），并在匹配项间循环。</p>
     </details>
   </section>
 

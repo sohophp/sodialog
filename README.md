@@ -286,6 +286,12 @@ bindContextMenu({
 - `closeOnResize?: boolean`：窗口尺寸变化时关闭，默认 `true`。
 - `destroy()`：销毁实例并移除全部事件监听。
 
+键盘交互补充：
+
+- 支持 `ArrowUp/ArrowDown/Home/End/Tab` 在菜单项之间导航，`Enter/Space` 激活当前项。
+- 支持首字母快速定位（typeahead）。
+- 混合标签（如 `删除 Delete`）会按词匹配，连续按同一字母会在命中项间轮转。
+
 层级说明：
 
 - 当右键触发元素位于打开的 `dialog`（如 `openModal`）内时，菜单会自动挂载到该 `dialog`，避免 top-layer 下被遮挡。
