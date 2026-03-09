@@ -3173,11 +3173,23 @@ export function bindContextMenu(options: SoContextMenuOptions): SoContextMenuHan
 
 export type SoMessageLevel = 'default' | 'info' | 'success' | 'warning' | 'danger'
 
+export interface SoAdapterLogEvent {
+  action: string
+  phase?: SoLifecyclePhase | 'action' | 'layout-stable'
+  component?: SoLifecycleComponent | 'adapter'
+  reason?: string
+  id?: string
+  traceId?: string
+  detail?: Record<string, unknown>
+}
+
 export interface SoAdapterConfig {
   modalDefaults?: Partial<SoDialogModalOptions>
   offcanvasDefaults?: Partial<Omit<SoDialogOffcanvasOptions, 'kind'>>
   contextMenuDefaults?: Partial<Omit<SoContextMenuOptions, 'target' | 'items'>>
   toastDefaults?: Partial<SoToastOptions>
+  diagnosticsEnabled?: boolean
+  logger?: (event: SoAdapterLogEvent) => void
 }
 
 export interface SoPushMessageOptions extends Omit<SoToastOptions, 'content' | 'variant'> {
@@ -3193,6 +3205,29 @@ export class SoAdapter {
       duplicateStrategy: 'stack',
       duration: 3800,
     },
+    diagnosticsEnabled: false,
+  }
+
+  private static emitDiagnostic(event: SoAdapterLogEvent): void {
+    this.config.logger?.(event)
+
+    if (!this.config.diagnosticsEnabled || typeof window === 'undefined') {
+      return
+    }
+
+    const host = window as Window & {
+      __SOD_ADAPTER_DEV_LOGS__?: SoAdapterLogEvent[]
+      __SOD_ADAPTER_DEBUG__?: boolean
+    }
+    if (!Array.isArray(host.__SOD_ADAPTER_DEV_LOGS__)) {
+      host.__SOD_ADAPTER_DEV_LOGS__ = []
+    }
+    host.__SOD_ADAPTER_DEV_LOGS__.push(event)
+
+    if (host.__SOD_ADAPTER_DEBUG__) {
+      // Opt-in noisy debug output for local diagnosis only.
+      console.debug('[SoAdapter]', event)
+    }
   }
 
   static configure(nextConfig: SoAdapterConfig): void {
@@ -3223,10 +3258,48 @@ export class SoAdapter {
   }
 
   static openDialog(options: SoDialogOptions): SoDialogHandle {
+    const wrappedOptions: SoDialogOptions = {
+      ...options,
+      onLifecycle: (context) => {
+        options.onLifecycle?.(context)
+        this.emitDiagnostic({
+          action: 'openDialog',
+          phase: context.phase,
+          component: context.component,
+          reason: context.reason,
+          id: context.id,
+          traceId: context.traceId,
+        })
+      },
+      onLayoutStable: (context) => {
+        options.onLayoutStable?.(context)
+        this.emitDiagnostic({
+          action: 'openDialog',
+          phase: 'layout-stable',
+          component: context.component,
+          id: context.id,
+          traceId: context.traceId,
+        })
+      },
+      onAction: (context) => {
+        options.onAction?.(context)
+        this.emitDiagnostic({
+          action: 'openDialog',
+          phase: 'action',
+          component: 'adapter',
+          id: context.handle.id,
+          traceId: context.traceId,
+          detail: {
+            footerAction: context.action,
+          },
+        })
+      },
+    }
+
     if (options.kind === 'offcanvas') {
       const merged = {
         ...(this.config.offcanvasDefaults ?? {}),
-        ...options,
+        ...wrappedOptions,
       }
       const { kind, ...rest } = merged as SoDialogOffcanvasOptions
       void kind
@@ -3235,7 +3308,7 @@ export class SoAdapter {
 
     return openModal({
       ...(this.config.modalDefaults ?? {}),
-      ...options,
+      ...wrappedOptions,
       kind: 'modal',
     })
   }
@@ -3244,6 +3317,30 @@ export class SoAdapter {
     return bindContextMenu({
       ...(this.config.contextMenuDefaults ?? {}),
       ...options,
+      onLifecycle: (context) => {
+        options.onLifecycle?.(context)
+        this.emitDiagnostic({
+          action: 'bindDialogContextMenu',
+          phase: context.phase,
+          component: context.component,
+          reason: context.reason,
+          id: context.id,
+          traceId: context.traceId,
+        })
+      },
+      onAction: (context) => {
+        options.onAction?.(context)
+        this.emitDiagnostic({
+          action: 'bindDialogContextMenu',
+          phase: 'action',
+          component: 'context-menu',
+          id: context.handle.id,
+          traceId: context.traceId,
+          detail: {
+            itemId: context.itemId,
+          },
+        })
+      },
     })
   }
 
@@ -3253,6 +3350,17 @@ export class SoAdapter {
       ...options,
       content,
       variant: level,
+      onLifecycle: (context) => {
+        options.onLifecycle?.(context)
+        this.emitDiagnostic({
+          action: 'pushMessage',
+          phase: context.phase,
+          component: context.component,
+          reason: context.reason,
+          id: context.id,
+          traceId: context.traceId,
+        })
+      },
     }
     return toast(resolvedOptions)
   }

@@ -378,6 +378,7 @@ if (formResult) {
           <h3>示例 1：<code>configureAdapter + openDialog + pushMessage</code></h3>
           <div class="row">
             <button class="btn primary" id="run-adapter-open">运行示例</button>
+            <button class="btn secondary" id="enable-adapter-diagnostics">启用诊断日志</button>
           </div>
           <div id="adapter-result" class="result-box">结果输出：等待执行...</div>
           <div class="code">
@@ -394,6 +395,10 @@ if (formResult) {
     newestOnTop: true,
     duplicateStrategy: 'stack',
     duration: 3800,
+  },
+  diagnosticsEnabled: true,
+  logger: (event) =&gt; {
+    console.log('[adapter-log]', event)
   },
 })
 
@@ -733,6 +738,7 @@ const formBtn = document.querySelector<HTMLButtonElement>('#open-form')
 const modalResult = document.querySelector<HTMLDivElement>('#modal-result')
 const formResult = document.querySelector<HTMLDivElement>('#form-result')
 const adapterOpenBtn = document.querySelector<HTMLButtonElement>('#run-adapter-open')
+const adapterDiagnosticsBtn = document.querySelector<HTMLButtonElement>('#enable-adapter-diagnostics')
 const adapterLegacyToggleBtn = document.querySelector<HTMLButtonElement>('#toggle-legacy-skin')
 const adapterEnableContextBtn = document.querySelector<HTMLButtonElement>('#enable-adapter-context')
 const adapterResult = document.querySelector<HTMLDivElement>('#adapter-result')
@@ -810,6 +816,32 @@ modalAdvancedBtn?.addEventListener('click', () => {
 })
 
 let adapterContextReady = false
+let adapterDiagnosticsReady = false
+
+adapterDiagnosticsBtn?.addEventListener('click', () => {
+  if (adapterDiagnosticsReady) {
+    if (adapterResult) {
+      adapterResult.textContent = '结果输出：诊断日志已启用，继续操作会输出结构化日志。'
+    }
+    return
+  }
+
+  configureAdapter({
+    diagnosticsEnabled: true,
+    logger: (event) => {
+      if (adapterResult) {
+        const phase = event.phase ?? '-'
+        const trace = event.traceId ?? '-'
+        adapterResult.textContent = `结果输出：log action=${event.action} phase=${phase} traceId=${trace}`
+      }
+    },
+  })
+
+  adapterDiagnosticsReady = true
+  if (adapterResult) {
+    adapterResult.textContent = '结果输出：诊断日志已启用，请继续触发 Dialog/Toast/ContextMenu。'
+  }
+})
 
 adapterOpenBtn?.addEventListener('click', () => {
   openDialog({

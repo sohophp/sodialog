@@ -17,6 +17,7 @@
 ## Cannot trace issue chain
 - Pass a stable `traceId` when opening dialog/menu/toast.
 - Log `action`, `phase`, `reason`, `id`, `traceId` in callbacks.
+- Enable adapter diagnostics: `configureAdapter({ diagnosticsEnabled: true, logger })`.
 
 ## Legacy visual mismatch
 - Apply `.legacy-skin` to a scoped container.

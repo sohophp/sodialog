@@ -43,6 +43,21 @@ configureAdapter({
 Use `traceId` to correlate user actions across dialog/context-menu/toast callbacks.
 Recommended fields: `action`, `phase`, `reason`, `id`, `traceId`.
 
+## Diagnostics Logger
+You can enable adapter-level diagnostics:
+
+```ts
+configureAdapter({
+  diagnosticsEnabled: true,
+  logger: (event) => {
+    // event: { action, phase, component, reason, id, traceId, detail }
+    console.log(event)
+  },
+})
+```
+
+Use this to centralize issue tracing instead of scattering console logs in business modules.
+
 ## Context Menu to Dialog Timing
 When a menu action should open a dialog, use `openDialogFromContextMenu`.
 This enforces close-first-open-next order and reduces layer/focus conflicts.

@@ -140,6 +140,11 @@ configureAdapter({
     duplicateStrategy: 'stack',
     duration: 3800,
   },
+  diagnosticsEnabled: true,
+  logger: (event) => {
+    // action / phase / reason / id / traceId
+    console.log('[adapter-log]', event)
+  },
 })
 
 openDialog({
@@ -173,6 +178,8 @@ pushMessage('success', 'Saved', { traceId: 'trace-order-001' })
 ```
 
 `openDialogFromContextMenu` 会先关闭菜单，再打开 Dialog，可避免层级和焦点冲突。
+
+`diagnosticsEnabled + logger` 用于统一诊断链路，推荐记录字段：`action`、`phase`、`reason`、`id`、`traceId`。
 
 ## 右键菜单图标（Bootstrap Icons）
 

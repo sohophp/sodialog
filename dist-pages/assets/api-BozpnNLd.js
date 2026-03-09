@@ -220,6 +220,15 @@ import"./modulepreload-polyfill-B5Qt9EMX.js";import{s as d}from"./pinned-hero-to
       <section class="card" id="adapter-api">
         <h2 class="section-title">Adapter First</h2>
         <p class="desc">推荐业务层优先使用适配层：<code>configureAdapter</code>、<code>openDialog</code>、<code>bindDialogContextMenu</code>、<code>pushMessage</code>，用于统一默认策略与行为。</p>
+        <div class="table-wrap">
+          <table class="api-table">
+            <thead><tr><th>配置项</th><th>类型</th><th>说明</th></tr></thead>
+            <tbody>
+              <tr><td><code>diagnosticsEnabled</code></td><td><code>boolean</code></td><td>启用适配层诊断日志聚合（默认关闭）。</td></tr>
+              <tr><td><code>logger</code></td><td><code>(event: SoAdapterLogEvent) =&gt; void</code></td><td>自定义日志出口，建议对接业务日志系统。</td></tr>
+            </tbody>
+          </table>
+        </div>
       </section>
 
       <section class="card" id="dialog-core">
@@ -564,6 +573,7 @@ import"./modulepreload-polyfill-B5Qt9EMX.js";import{s as d}from"./pinned-hero-to
               <tr><td><code>SoDialogFormValue</code></td><td><code>string | number | boolean | null</code></td></tr>
               <tr><td><code>SoLayoutStableContext</code></td><td><code>{ component: 'modal' | 'offcanvas'; element: HTMLElement; id?: string; traceId?: string }</code></td></tr>
               <tr><td><code>SoMessageLevel</code></td><td><code>'default' | 'info' | 'success' | 'warning' | 'danger'</code></td></tr>
+              <tr><td><code>SoAdapterLogEvent</code></td><td><code>{ action; phase?; component?; reason?; id?; traceId?; detail? }</code></td></tr>
               <tr><td><code>SoContextMenuCloseReason</code></td><td><code>'outside' | 'esc' | 'item' | 'programmatic' | 'destroy' | 'reopen' | 'blur' | 'scroll' | 'resize'</code></td></tr>
             </tbody>
           </table>

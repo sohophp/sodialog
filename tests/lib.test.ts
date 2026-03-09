@@ -585,6 +585,33 @@ describe('Adapter behavior', () => {
     expect(menuHandle.isOpen()).toBe(false)
     expect(document.querySelector('dialog.sod-dialog')).toBeTruthy()
   })
+
+  it('emits structured diagnostics through adapter logger', () => {
+    const events: Array<Record<string, unknown>> = []
+    configureAdapter({
+      diagnosticsEnabled: true,
+      logger: (event) => {
+        events.push(event as unknown as Record<string, unknown>)
+      },
+    })
+
+    openDialog({
+      title: 'diagnostics',
+      content: 'x',
+      traceId: 'trace-diag-1',
+    })
+
+    pushMessage('info', 'hello', {
+      traceId: 'trace-diag-1',
+      duration: false,
+    })
+
+    const hasDialogEvent = events.some((event) => event.action === 'openDialog' && event.traceId === 'trace-diag-1')
+    const hasToastEvent = events.some((event) => event.action === 'pushMessage' && event.traceId === 'trace-diag-1')
+
+    expect(hasDialogEvent).toBe(true)
+    expect(hasToastEvent).toBe(true)
+  })
 })
 
 describe('Dialog layout-stable and trace', () => {
