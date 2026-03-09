@@ -121,6 +121,8 @@ console.log('form result:', formValues)
 
 ```ts
 import {
+  configureContextMenu,
+  configureDialog,
   configureAdapter,
   openDialog,
   openDialogFromContextMenu,
@@ -181,6 +183,33 @@ pushMessage('success', 'Saved', { traceId: 'trace-order-001' })
 `openDialogFromContextMenu` 会先关闭菜单，再打开 Dialog，可避免层级和焦点冲突。
 
 `diagnosticsEnabled + logger` 用于统一诊断链路，推荐记录字段：`action`、`phase`、`reason`、`id`、`traceId`。
+
+## 全局 configure（非 adapter 场景）
+
+如果项目不使用 adapter，也可以直接设置全局默认值：
+
+```ts
+import { configureDialog, configureContextMenu, openModal, bindContextMenu } from 'sodialog'
+
+configureDialog({
+  modalDefaults: {
+    footerAlign: 'center',
+    closeOnEsc: false,
+  },
+  offcanvasDefaults: {
+    placement: 'start',
+  },
+})
+
+configureContextMenu({
+  closeOnEsc: false,
+  minWidth: 220,
+  attrs: { 'data-menu-scope': 'global' },
+})
+
+openModal({ title: '默认配置生效', content: '<p>无需重复传默认参数</p>' })
+bindContextMenu({ target: '#row', items: [{ label: '删除' }] })
+```
 
 ## CSS Tokens
 

@@ -14,6 +14,10 @@ import"./modulepreload-polyfill-B5Qt9EMX.js";import{s as d}from"./pinned-hero-to
       </div>
 
       <div class="nav-group">
+        <a class="nav-l1" href="#global-config">全局配置</a>
+      </div>
+
+      <div class="nav-group">
         <a class="nav-l1" href="#dialog-core">Dialog 核心</a>
         <div class="nav-l2-list">
           <a class="nav-l2" href="#open-modal">openModal</a>
@@ -70,6 +74,16 @@ import"./modulepreload-polyfill-B5Qt9EMX.js";import{s as d}from"./pinned-hero-to
               <tr>
                 <td><code>configureAdapter</code></td>
                 <td><code>(config: SoAdapterConfig)</code></td>
+                <td><code>void</code></td>
+              </tr>
+              <tr>
+                <td><code>configureDialog</code></td>
+                <td><code>(config: SoDialogGlobalConfig)</code></td>
+                <td><code>void</code></td>
+              </tr>
+              <tr>
+                <td><code>configureContextMenu</code></td>
+                <td><code>(config: SoContextMenuGlobalConfig)</code></td>
                 <td><code>void</code></td>
               </tr>
               <tr>
@@ -231,6 +245,35 @@ openDialog({
 
 pushMessage('success', '操作成功', { traceId: 'trace-order-001' })</pre></div>
           <p class="note">说明：业务层统一走 adapter API，后续切换默认策略时只需修改一处。</p>
+        </details>
+      </section>
+
+      <section class="card" id="global-config">
+        <h2 class="section-title">全局配置（Global Configure）</h2>
+        <p class="desc">用于直接配置 SoDialog / SoContextMenu 默认行为，适合不走 adapter 的场景。</p>
+        <div class="table-wrap">
+          <table class="api-table">
+            <thead><tr><th>方法</th><th>签名</th><th>说明</th></tr></thead>
+            <tbody>
+              <tr><td><code>configureDialog</code></td><td><code>(config: SoDialogGlobalConfig) =&gt; void</code></td><td>配置 modal/offcanvas 默认参数。</td></tr>
+              <tr><td><code>configureContextMenu</code></td><td><code>(config: SoContextMenuGlobalConfig) =&gt; void</code></td><td>配置菜单关闭策略、偏移、尺寸、attrs 等默认参数。</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <details class="code-panel">
+          <summary>查看原始代码：全局默认值</summary>
+          <div class="code-toolbar"><button class="code-copy-btn" data-copy-target="api-global-config-code" type="button">复制代码</button></div>
+          <div class="code"><pre id="api-global-config-code">configureDialog({
+  modalDefaults: { footerAlign: 'center', closeOnEsc: true },
+  offcanvasDefaults: { placement: 'start' },
+})
+
+configureContextMenu({
+  closeOnEsc: false,
+  minWidth: 220,
+  attrs: { 'data-menu-scope': 'global-default' },
+})</pre></div>
+          <p class="note">说明：业务层可将这组配置放在 app 启动入口，一次设置全局生效。</p>
         </details>
       </section>
 
@@ -608,6 +651,8 @@ toast({ id: 'sync-task', content: '策略 stack', duplicateStrategy: 'stack' })<
               <tr><td><code>SoLayoutStableContext</code></td><td><code>{ component: 'modal' | 'offcanvas'; element: HTMLElement; id?: string; traceId?: string }</code></td></tr>
               <tr><td><code>SoMessageLevel</code></td><td><code>'default' | 'info' | 'success' | 'warning' | 'danger'</code></td></tr>
               <tr><td><code>SoAdapterLogEvent</code></td><td><code>{ action; phase?; component?; reason?; id?; traceId?; detail? }</code></td></tr>
+              <tr><td><code>SoDialogGlobalConfig</code></td><td><code>{ modalDefaults?: Partial&lt;SoDialogModalOptions&gt;; offcanvasDefaults?: Partial&lt;Omit&lt;SoDialogOffcanvasOptions, 'kind'&gt;&gt; }</code></td></tr>
+              <tr><td><code>SoContextMenuGlobalConfig</code></td><td><code>{ closeOnEsc?; closeOnOutsideClick?; minWidth?; maxHeight?; offsetX?; offsetY?; className?; attrs?; ... }</code></td></tr>
               <tr><td><code>SoContextMenuCloseReason</code></td><td><code>'outside' | 'esc' | 'item' | 'programmatic' | 'destroy' | 'reopen' | 'blur' | 'scroll' | 'resize'</code></td></tr>
             </tbody>
           </table>

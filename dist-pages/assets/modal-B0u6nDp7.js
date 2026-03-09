@@ -1,12 +1,5 @@
-import './lab-style.css'
-import { bindContextMenu, configureContextMenu, configureDialog, confirmModal, formModal, openDialog, openModal, promptModal, pushMessage } from './lib'
-import { renderLabHeader, wireCodeCopyButtons } from './lab-shared'
-
-const app = document.querySelector<HTMLDivElement>('#app')
-if (!app) throw new Error('Cannot find #app root element')
-
-app.innerHTML = `
-${renderLabHeader('modal', 'Modal Lab', '独立页面展示 Modal 常见与进阶用法。')}
+import"./modulepreload-polyfill-B5Qt9EMX.js";/* empty css                  */import{o as e,c as s,d,p as i,f as r,e as n,g as u,h as p,b as m}from"./lib-Bc5ttuc5.js";import{r as b,w as f}from"./lab-shared-hq1WzFWt.js";const l=document.querySelector("#app");if(!l)throw new Error("Cannot find #app root element");l.innerHTML=`
+${b("modal","Modal Lab","独立页面展示 Modal 常见与进阶用法。")}
 
 <main class="grid">
   <section class="card">
@@ -96,92 +89,4 @@ configureContextMenu({
     </details>
   </section>
 </main>
-`
-
-wireCodeCopyButtons()
-
-document.querySelector<HTMLButtonElement>('#modal-basic')?.addEventListener('click', () => {
-  openModal({
-    title: '基础示例',
-    content: '<p>这是 Modal Lab 的基础示例。</p>',
-    confirmText: '确认',
-    cancelText: '取消',
-  })
-})
-
-document.querySelector<HTMLButtonElement>('#modal-stable')?.addEventListener('click', () => {
-  const result = document.querySelector<HTMLDivElement>('#modal-result')
-  openDialog({
-    title: '稳定时机示例',
-    content: '<p>观察 onLayoutStable 与 action 回调输出。</p>',
-    traceId: 'trace-modal-lab-001',
-    onLayoutStable: ({ traceId }) => {
-      if (result) result.textContent = `结果输出：onLayoutStable 已触发（traceId=${traceId ?? '-'})`
-      pushMessage('success', '布局已稳定', { traceId, duration: 1300 })
-    },
-    onAction: ({ action, traceId }) => {
-      if (result) result.textContent = `结果输出：action=${action}（traceId=${traceId ?? '-'})`
-    },
-  })
-})
-
-document.querySelector<HTMLButtonElement>('#modal-flow')?.addEventListener('click', async () => {
-  const ok = await confirmModal({ title: '确认', content: '<p>继续执行串行流程？</p>' })
-  if (!ok) return
-  const note = await promptModal({ title: '输入备注', placeholder: '请输入内容' })
-  if (note === null) return
-  await formModal({
-    title: '补充信息',
-    fields: [{ name: 'owner', label: '负责人', required: true }],
-  })
-  pushMessage('info', `流程完成，备注：${note}`, { duration: 1400, traceId: 'trace-modal-lab-001' })
-})
-
-let menuBound = false
-document.querySelector<HTMLButtonElement>('#modal-config-apply')?.addEventListener('click', () => {
-  configureDialog({
-    modalDefaults: {
-      footerAlign: 'center',
-      closeOnEsc: false,
-    },
-  })
-
-  configureContextMenu({
-    closeOnEsc: false,
-    minWidth: 220,
-  })
-
-  if (!menuBound) {
-    const zone = document.querySelector<HTMLElement>('#modal-menu-zone')
-    if (zone) {
-      bindContextMenu({
-        target: zone,
-        items: [
-          {
-            id: 'open-via-global',
-            label: '打开默认 Modal',
-            onClick: () => {
-              openModal({
-                title: '来自全局配置',
-                content: '<p>footerAlign 与 closeOnEsc 已由全局配置接管。</p>',
-              })
-            },
-          },
-        ],
-      })
-      menuBound = true
-    }
-  }
-
-  const result = document.querySelector<HTMLDivElement>('#modal-config-result')
-  if (result) {
-    result.textContent = '结果输出：全局配置已应用（Dialog + ContextMenu）'
-  }
-})
-
-document.querySelector<HTMLButtonElement>('#modal-config-open')?.addEventListener('click', () => {
-  openModal({
-    title: '默认配置生效验证',
-    content: '<p>本次调用未传 footerAlign/closeOnEsc，使用 configureDialog 默认值。</p>',
-  })
-})
+`;f();document.querySelector("#modal-basic")?.addEventListener("click",()=>{e({title:"基础示例",content:"<p>这是 Modal Lab 的基础示例。</p>",confirmText:"确认",cancelText:"取消"})});document.querySelector("#modal-stable")?.addEventListener("click",()=>{const o=document.querySelector("#modal-result");s({title:"稳定时机示例",content:"<p>观察 onLayoutStable 与 action 回调输出。</p>",traceId:"trace-modal-lab-001",onLayoutStable:({traceId:t})=>{o&&(o.textContent=`结果输出：onLayoutStable 已触发（traceId=${t??"-"})`),n("success","布局已稳定",{traceId:t,duration:1300})},onAction:({action:t,traceId:c})=>{o&&(o.textContent=`结果输出：action=${t}（traceId=${c??"-"})`)}})});document.querySelector("#modal-flow")?.addEventListener("click",async()=>{if(!await d({title:"确认",content:"<p>继续执行串行流程？</p>"}))return;const t=await i({title:"输入备注",placeholder:"请输入内容"});t!==null&&(await r({title:"补充信息",fields:[{name:"owner",label:"负责人",required:!0}]}),n("info",`流程完成，备注：${t}`,{duration:1400,traceId:"trace-modal-lab-001"}))});let a=!1;document.querySelector("#modal-config-apply")?.addEventListener("click",()=>{if(u({modalDefaults:{footerAlign:"center",closeOnEsc:!1}}),p({closeOnEsc:!1,minWidth:220}),!a){const t=document.querySelector("#modal-menu-zone");t&&(m({target:t,items:[{id:"open-via-global",label:"打开默认 Modal",onClick:()=>{e({title:"来自全局配置",content:"<p>footerAlign 与 closeOnEsc 已由全局配置接管。</p>"})}}]}),a=!0)}const o=document.querySelector("#modal-config-result");o&&(o.textContent="结果输出：全局配置已应用（Dialog + ContextMenu）")});document.querySelector("#modal-config-open")?.addEventListener("click",()=>{e({title:"默认配置生效验证",content:"<p>本次调用未传 footerAlign/closeOnEsc，使用 configureDialog 默认值。</p>"})});
