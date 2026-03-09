@@ -6,6 +6,65 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-03-10
+
+### Commits
+- chore(release): prepare v0.2.2
+- docs(changelog): note typeahead enable switch
+- feat(context-menu): add configurable typeahead enable switch
+- 修改主页网址为github pages
+- docs(changelog): note global typeaheadResetMs support
+- feat(context-menu): support global typeaheadResetMs default
+- docs(changelog): note typeahead reset option
+- feat(context-menu): add configurable typeahead reset window
+- docs(changelog): note adapter context-menu diagnostics
+- feat(adapter): add context-menu focus and typeahead diagnostics
+- docs(changelog): note onTypeahead callback rollout
+- feat(context-menu): add onTypeahead callback and demo feedback
+- docs(changelog): note onFocusItem callback rollout
+- feat(context-menu): add onFocusItem callback for focus telemetry
+- docs(changelog): note context-menu close-reason feedback
+- feat(examples): add context-menu close-reason feedback
+- docs(changelog): note mixed-label typeahead documentation
+- docs(examples): clarify mixed-label typeahead behavior
+- docs(changelog): note mixed-label typeahead fix
+- fix(context-menu): make typeahead work with mixed labels
+- docs(changelog): record context-menu keyboard feedback demo
+- feat(examples): add context-menu keyboard feedback panel
+- docs(changelog): note context-menu example consistency fix
+- fix(examples): align context-menu policy demo with shown code
+- docs(changelog): record context-menu keyboard visibility fix
+- fix(context-menu): improve keyboard navigation visibility
+- docs(changelog): add context-menu typeahead notes
+- feat(context-menu): add keyboard typeahead navigation
+- docs(changelog): note context-menu lab availability
+- feat(examples): add dedicated context-menu lab page
+- docs(changelog): note context-menu keyboard support
+- feat(context-menu): add keyboard navigation and activation
+- docs(changelog): record global-config and a11y/theme updates
+- docs(examples): sync api page and global-config demos
+- feat(config): add global defaults for dialog and context menu
+- feat(theme): expose css tokens and add scenario playbook
+- feat(a11y): add aria links and trigger state for context menu
+- chore(hooks): make post-commit demo sync opt-in
+- feat(a11y): restore focus after dialog and menu close
+- feat(api): add collapsible copyable quick snippets
+- feat(lab): unify page shell and collapsible source panels
+- feat(docs): split examples into per-tool pages and add unified workflow page
+- feat(observability): add adapter diagnostics logger with docs and demo
+
+## [0.2.1] - 2026-03-09
+
+### Commits
+- chore(release): bump version to 0.2.1
+- feat(adapter): add close-first menu-to-dialog helper and sync docs
+- docs(demo): sync adapter-first APIs in docs and examples
+
+## [0.2.0] - 2026-03-09
+
+### Commits
+- feat: adapter-first 0.2 foundation with layout-stable and trace
+
 ## [0.1.20] - 2026-03-09
 
 ### Commits
@@ -137,7 +196,10 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 - release: prepare v0.1.1
 - feat: build reusable SoDialog npm library
 
-[Unreleased]: https://github.com/sohophp/sodialog/compare/v0.1.20...HEAD
+[Unreleased]: https://github.com/sohophp/sodialog/compare/v0.2.2...HEAD
+[0.2.2]: https://github.com/sohophp/sodialog/releases/tag/v0.2.2
+[0.2.1]: https://github.com/sohophp/sodialog/releases/tag/v0.2.1
+[0.2.0]: https://github.com/sohophp/sodialog/releases/tag/v0.2.0
 [0.1.20]: https://github.com/sohophp/sodialog/releases/tag/v0.1.20
 [0.1.19]: https://github.com/sohophp/sodialog/releases/tag/v0.1.19
 [0.1.18]: https://github.com/sohophp/sodialog/releases/tag/v0.1.18
