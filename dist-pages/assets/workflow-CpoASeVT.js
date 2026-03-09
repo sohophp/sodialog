@@ -1,4 +1,4 @@
-import"./modulepreload-polyfill-B5Qt9EMX.js";/* empty css                  */import{r as i}from"./lab-shared-hq1WzFWt.js";const e=document.querySelector("#app");if(!e)throw new Error("Cannot find #app root element");e.innerHTML=`
+import"./modulepreload-polyfill-B5Qt9EMX.js";/* empty css                  */import{r as i}from"./lab-shared-C3tuUAEJ.js";const e=document.querySelector("#app");if(!e)throw new Error("Cannot find #app root element");e.innerHTML=`
 ${i("workflow","开发与发布流程","将开发流程和发布流程合并到一页，并补充 API 同步机制。")}
 
 <main class="stack">

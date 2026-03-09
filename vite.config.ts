@@ -16,6 +16,7 @@ export default defineConfig(({ mode }) => {
             modal: resolve(__dirname, 'modal.html'),
             offcanvas: resolve(__dirname, 'offcanvas.html'),
             toast: resolve(__dirname, 'toast.html'),
+            contextMenu: resolve(__dirname, 'context-menu.html'),
             workflow: resolve(__dirname, 'workflow.html'),
           },
         },

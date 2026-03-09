@@ -1,10 +1,11 @@
-export type LabPageKey = 'hub' | 'modal' | 'offcanvas' | 'toast' | 'workflow' | 'api'
+export type LabPageKey = 'hub' | 'modal' | 'offcanvas' | 'toast' | 'context-menu' | 'workflow' | 'api'
 
 const LINKS: Array<{ key: LabPageKey; href: string; label: string }> = [
   { key: 'hub', href: './examples.html', label: 'Examples Hub' },
   { key: 'modal', href: './modal.html', label: 'Modal Lab' },
   { key: 'offcanvas', href: './offcanvas.html', label: 'Offcanvas Lab' },
   { key: 'toast', href: './toast.html', label: 'Toast Lab' },
+  { key: 'context-menu', href: './context-menu.html', label: 'ContextMenu Lab' },
   { key: 'workflow', href: './workflow.html', label: '开发/发布流程' },
   { key: 'api', href: './api.html', label: 'API' },
 ]
