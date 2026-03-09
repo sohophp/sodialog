@@ -35,6 +35,7 @@ ${renderLabHeader('context-menu', 'ContextMenu Lab', '独立页面展示 Context
     <div class="result" id="cm-policy-zone" tabindex="0">右键此区域后，按 ArrowUp/ArrowDown，或按 d/r 定位；连续按 d 会在 Download/Delete 间轮转</div>
     <div class="result" id="cm-policy-focus-result">焦点定位：等待菜单打开...</div>
     <div class="result" id="cm-policy-action-result">最近动作：等待触发...</div>
+    <div class="result" id="cm-policy-close-result">关闭原因：等待关闭...</div>
     <div class="row"><button class="btn" id="cm-open-modal">打开普通 Modal（对比入口）</button></div>
     <details class="code-panel">
       <summary>查看原始代码</summary>
@@ -55,8 +56,11 @@ ${renderLabHeader('context-menu', 'ContextMenu Lab', '独立页面展示 Context
       console.log(event.detail)
     })
   },
+  onClose: (reason) => {
+    console.log('close reason', reason)
+  },
 })</pre></div>
-      <p class="note">说明：当前支持 ArrowUp/ArrowDown/Home/End/Tab 导航，Enter/Space 激活；字母定位支持混合标签（如 删除 Delete），并在匹配项间循环。</p>
+      <p class="note">说明：当前支持 ArrowUp/ArrowDown/Home/End/Tab 导航，Enter/Space 激活；字母定位支持混合标签（如 删除 Delete），并在匹配项间循环。回显区会显示 focus/action/close reason。</p>
     </details>
   </section>
 
@@ -135,6 +139,12 @@ bindContextMenu({
       actionResult.textContent = `最近动作：${itemId}`
     }
     pushMessage('warning', `已触发动作: ${itemId}`, { duration: 1200 })
+  },
+  onClose: (reason) => {
+    const closeResult = document.querySelector<HTMLDivElement>('#cm-policy-close-result')
+    if (closeResult) {
+      closeResult.textContent = `关闭原因：${reason}`
+    }
   },
 })
 

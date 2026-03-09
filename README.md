@@ -291,6 +291,7 @@ bindContextMenu({
 - 支持 `ArrowUp/ArrowDown/Home/End/Tab` 在菜单项之间导航，`Enter/Space` 激活当前项。
 - 支持首字母快速定位（typeahead）。
 - 混合标签（如 `删除 Delete`）会按词匹配，连续按同一字母会在命中项间轮转。
+- 可在 `onClose(reason)` 里记录关闭原因（如 `esc`、`outside`、`item`、`blur`、`scroll`、`resize`），便于排查交互路径。
 
 层级说明：
 

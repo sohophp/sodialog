@@ -414,7 +414,7 @@ toast({ id: 'sync-task', content: '策略 stack', duplicateStrategy: 'stack' })<
             </tbody>
           </table>
         </div>
-        <p class="desc">Bootstrap Icons 示例：先引入 <code>bootstrap-icons.min.css</code>，然后使用 <code>icon: 'bi bi-pencil-square'</code>。键盘支持 ArrowUp/ArrowDown/Home/End/Tab 导航，Enter/Space 激活，输入首字母可快速定位菜单项；混合标签（如 <code>删除 Delete</code>）也可匹配，并会在同字母命中项间循环。</p>
+        <p class="desc">Bootstrap Icons 示例：先引入 <code>bootstrap-icons.min.css</code>，然后使用 <code>icon: 'bi bi-pencil-square'</code>。键盘支持 ArrowUp/ArrowDown/Home/End/Tab 导航，Enter/Space 激活，输入首字母可快速定位菜单项；混合标签（如 <code>删除 Delete</code>）也可匹配，并会在同字母命中项间循环。可在 <code>onClose(reason)</code> 中观察关闭原因（<code>esc/outside/item/blur/scroll/resize/programmatic</code>）。</p>
       </section>
 
       <section class="card" id="dialog-open">
