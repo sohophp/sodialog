@@ -2,6 +2,8 @@ import { describe, expect, it, vi } from 'vitest'
 import {
   bindContextMenu,
   bindDialogContextMenu,
+  configureContextMenu,
+  configureDialog,
   configureAdapter,
   formModal,
   openDialogFromContextMenu,
@@ -704,6 +706,65 @@ describe('Adapter behavior', () => {
 
     expect(hasDialogEvent).toBe(true)
     expect(hasToastEvent).toBe(true)
+  })
+})
+
+describe('Global configure behavior', () => {
+  it('applies dialog global defaults for modal and offcanvas', () => {
+    configureDialog({
+      modalDefaults: {
+        footerAlign: 'center',
+      },
+      offcanvasDefaults: {
+        placement: 'start',
+      },
+    })
+
+    const modal = openModal({
+      title: 'global modal',
+      content: 'x',
+    })
+    const offcanvas = openDialog({
+      kind: 'offcanvas',
+      title: 'global offcanvas',
+      content: 'x',
+    })
+
+    expect(modal.dialog.querySelector<HTMLElement>('.sod-footer')?.dataset.align).toBe('center')
+    expect(offcanvas.dialog.querySelector('.sod-placement-start')).toBeTruthy()
+
+  })
+
+  it('applies context menu global defaults', () => {
+    configureContextMenu({
+      closeOnEsc: false,
+      attrs: {
+        'data-cm-global': 'yes',
+      },
+    })
+
+    const trigger = document.createElement('div')
+    document.body.append(trigger)
+
+    const handle = bindContextMenu({
+      target: trigger,
+      items: [{ id: 'copy', label: 'Copy' }],
+    })
+
+    trigger.dispatchEvent(
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 14,
+        clientY: 14,
+      }),
+    )
+
+    expect(handle.element.getAttribute('data-cm-global')).toBe('yes')
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+    expect(handle.isOpen()).toBe(true)
+
   })
 })
 

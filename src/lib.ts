@@ -248,6 +248,26 @@ export interface SoDialogFormOptions
   validate?: (values: Record<string, SoDialogFormValue>) => string | boolean | Record<string, string> | void
 }
 
+export interface SoDialogGlobalConfig {
+  modalDefaults?: Partial<SoDialogModalOptions>
+  offcanvasDefaults?: Partial<Omit<SoDialogOffcanvasOptions, 'kind'>>
+}
+
+export interface SoContextMenuGlobalConfig {
+  className?: string
+  attrs?: Record<string, string>
+  offsetX?: number
+  offsetY?: number
+  minWidth?: number
+  maxHeight?: number
+  closeOnOutsideClick?: boolean
+  closeOnEsc?: boolean
+  closeOnWindowBlur?: boolean
+  closeOnScroll?: boolean
+  closeOnResize?: boolean
+  preventNativeMenu?: boolean
+}
+
 export type SoDialogOptions = SoDialogModalOptions | SoDialogOffcanvasOptions
 
 export interface SoDialogHandle {
@@ -857,6 +877,7 @@ export class SoDialog {
   private static modalRegistry = new Map<string, HTMLDialogElement>()
   private static handleRegistry = new WeakMap<HTMLDialogElement, () => SoDialogHandle>()
   private static focusRestoreRegistry = new WeakMap<HTMLDialogElement, HTMLElement | null>()
+  private static globalConfig: SoDialogGlobalConfig = {}
   private static modalIdSeed = 0
   private static ariaIdSeed = 0
 
@@ -1357,11 +1378,34 @@ export class SoDialog {
   }
 
   static openModal(options: SoDialogModalOptions): SoDialogHandle {
-    return this.open({ ...options, kind: 'modal' })
+    return this.open({
+      ...(this.globalConfig.modalDefaults ?? {}),
+      ...options,
+      kind: 'modal',
+    })
   }
 
   static openOffcanvas(options: Omit<SoDialogOffcanvasOptions, 'kind'>): SoDialogHandle {
-    return this.open({ ...options, kind: 'offcanvas' })
+    return this.open({
+      ...(this.globalConfig.offcanvasDefaults ?? {}),
+      ...options,
+      kind: 'offcanvas',
+    })
+  }
+
+  static configure(nextConfig: SoDialogGlobalConfig): void {
+    this.globalConfig = {
+      ...this.globalConfig,
+      ...nextConfig,
+      modalDefaults: {
+        ...this.globalConfig.modalDefaults,
+        ...nextConfig.modalDefaults,
+      },
+      offcanvasDefaults: {
+        ...this.globalConfig.offcanvasDefaults,
+        ...nextConfig.offcanvasDefaults,
+      },
+    }
   }
 
   static confirm(options: SoDialogConfirmOptions = {}): Promise<boolean> {
@@ -2650,6 +2694,7 @@ export class SoToast {
 
 export class SoContextMenu {
   private static activeHandle: SoContextMenuHandle | null = null
+  private static globalConfig: SoContextMenuGlobalConfig = {}
   private static idSeed = 0
   private static triggerIdSeed = 0
 
@@ -2739,12 +2784,20 @@ export class SoContextMenu {
     menuElement.dataset.contextMenuId = id
     menuElement.id = `sod-context-menu-${id}`
 
-    if (options.className?.trim()) {
-      menuElement.className = `${menuElement.className} ${options.className.trim()}`
+    const resolvedClassName = options.className ?? this.globalConfig.className
+    if (resolvedClassName?.trim()) {
+      menuElement.className = `${menuElement.className} ${resolvedClassName.trim()}`
     }
 
-    if (options.attrs) {
-      Object.entries(options.attrs).forEach(([key, value]) => {
+    const resolvedAttrs = {
+      ...(this.globalConfig.attrs ?? {}),
+      ...(options.attrs ?? {}),
+    }
+    if (Object.keys(resolvedAttrs).length > 0) {
+      Object.entries(resolvedAttrs).forEach(([key, value]) => {
+        if (value === undefined) {
+          return
+        }
         menuElement.setAttribute(key, value)
       })
     }
@@ -2758,16 +2811,16 @@ export class SoContextMenu {
     }
     const traceId = options.traceId?.trim() || undefined
 
-    const offsetX = options.offsetX ?? 0
-    const offsetY = options.offsetY ?? 0
-    const minWidth = Math.max(120, options.minWidth ?? 180)
-    const maxHeight = Math.max(120, options.maxHeight ?? 320)
-    const closeOnOutsideClick = options.closeOnOutsideClick ?? true
-    const closeOnEsc = options.closeOnEsc ?? true
-    const closeOnWindowBlur = options.closeOnWindowBlur ?? true
-    const closeOnScroll = options.closeOnScroll ?? true
-    const closeOnResize = options.closeOnResize ?? true
-    const preventNativeMenu = options.preventNativeMenu ?? true
+    const offsetX = options.offsetX ?? this.globalConfig.offsetX ?? 0
+    const offsetY = options.offsetY ?? this.globalConfig.offsetY ?? 0
+    const minWidth = Math.max(120, options.minWidth ?? this.globalConfig.minWidth ?? 180)
+    const maxHeight = Math.max(120, options.maxHeight ?? this.globalConfig.maxHeight ?? 320)
+    const closeOnOutsideClick = options.closeOnOutsideClick ?? this.globalConfig.closeOnOutsideClick ?? true
+    const closeOnEsc = options.closeOnEsc ?? this.globalConfig.closeOnEsc ?? true
+    const closeOnWindowBlur = options.closeOnWindowBlur ?? this.globalConfig.closeOnWindowBlur ?? true
+    const closeOnScroll = options.closeOnScroll ?? this.globalConfig.closeOnScroll ?? true
+    const closeOnResize = options.closeOnResize ?? this.globalConfig.closeOnResize ?? true
+    const preventNativeMenu = options.preventNativeMenu ?? this.globalConfig.preventNativeMenu ?? true
 
     const listeners: Array<() => void> = []
     let menuItems = [...options.items]
@@ -3213,6 +3266,17 @@ export class SoContextMenu {
     const handle = createHandle()
     return handle
   }
+
+  static configure(nextConfig: SoContextMenuGlobalConfig): void {
+    this.globalConfig = {
+      ...this.globalConfig,
+      ...nextConfig,
+      attrs: {
+        ...this.globalConfig.attrs,
+        ...nextConfig.attrs,
+      },
+    }
+  }
 }
 
 export function openModal(options: SoDialogModalOptions): SoDialogHandle {
@@ -3241,6 +3305,14 @@ export function toast(options: SoToastOptions): SoToastHandle {
 
 export function bindContextMenu(options: SoContextMenuOptions): SoContextMenuHandle {
   return SoContextMenu.bind(options)
+}
+
+export function configureDialog(config: SoDialogGlobalConfig): void {
+  SoDialog.configure(config)
+}
+
+export function configureContextMenu(config: SoContextMenuGlobalConfig): void {
+  SoContextMenu.configure(config)
 }
 
 export type SoMessageLevel = 'default' | 'info' | 'success' | 'warning' | 'danger'
