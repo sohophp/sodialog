@@ -115,6 +115,21 @@ describe('SoDialog modal behavior', () => {
 
     expect(document.activeElement).toBe(trigger)
   })
+
+  it('sets aria-labelledby and aria-describedby on dialog', () => {
+    const handle = openModal({
+      title: 'a11y labels',
+      content: '<p>modal body</p>',
+    })
+
+    const labelledBy = handle.dialog.getAttribute('aria-labelledby')
+    const describedBy = handle.dialog.getAttribute('aria-describedby')
+
+    expect(labelledBy).toBeTruthy()
+    expect(describedBy).toBeTruthy()
+    expect(handle.dialog.querySelector(`#${labelledBy}`)?.textContent).toBe('a11y labels')
+    expect(handle.dialog.querySelector(`#${describedBy}`)?.textContent).toContain('modal body')
+  })
 })
 
 describe('SoToast behavior', () => {
@@ -531,6 +546,34 @@ describe('SoContextMenu behavior', () => {
 
     expect(handle.isOpen()).toBe(false)
     expect(document.activeElement).toBe(trigger)
+  })
+
+  it('tracks trigger aria-expanded and aria-controls', () => {
+    const trigger = document.createElement('button')
+    trigger.type = 'button'
+    trigger.textContent = 'menu'
+    document.body.append(trigger)
+
+    const handle = bindContextMenu({
+      target: trigger,
+      items: [{ id: 'copy', label: 'Copy' }],
+    })
+
+    trigger.dispatchEvent(
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 22,
+        clientY: 22,
+      }),
+    )
+
+    expect(trigger.getAttribute('aria-expanded')).toBe('true')
+    expect(trigger.getAttribute('aria-controls')).toBe(handle.element.id)
+
+    handle.close('programmatic')
+
+    expect(trigger.getAttribute('aria-expanded')).toBe('false')
   })
 })
 

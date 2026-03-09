@@ -858,10 +858,16 @@ export class SoDialog {
   private static handleRegistry = new WeakMap<HTMLDialogElement, () => SoDialogHandle>()
   private static focusRestoreRegistry = new WeakMap<HTMLDialogElement, HTMLElement | null>()
   private static modalIdSeed = 0
+  private static ariaIdSeed = 0
 
   private static createAutoModalId(): string {
     this.modalIdSeed += 1
     return `sod-modal-${this.modalIdSeed}`
+  }
+
+  private static createAutoAriaId(prefix: string): string {
+    this.ariaIdSeed += 1
+    return `${prefix}-${this.ariaIdSeed}`
   }
 
   private static revealExisting(dialog: HTMLDialogElement, useModal: boolean): SoDialogHandle {
@@ -1071,6 +1077,7 @@ export class SoDialog {
     const title = document.createElement('h2')
     title.className = 'sod-title'
     title.textContent = options.title
+    title.id = SoDialog.createAutoAriaId('sod-title')
 
     const closeButton = document.createElement('button')
     closeButton.type = 'button'
@@ -1083,7 +1090,12 @@ export class SoDialog {
 
     const body = document.createElement('div')
     body.className = 'sod-body'
+    body.id = SoDialog.createAutoAriaId('sod-body')
     appendContent(body, options.content)
+
+    dialog.setAttribute('aria-labelledby', title.id)
+    dialog.setAttribute('aria-describedby', body.id)
+    dialog.setAttribute('aria-modal', useModal ? 'true' : 'false')
 
     const footer = document.createElement('footer')
     footer.className = 'sod-footer'
@@ -2639,10 +2651,21 @@ export class SoToast {
 export class SoContextMenu {
   private static activeHandle: SoContextMenuHandle | null = null
   private static idSeed = 0
+  private static triggerIdSeed = 0
 
   private static createAutoId(): string {
     this.idSeed += 1
     return `socm-${this.idSeed}`
+  }
+
+  private static ensureTriggerId(triggerElement: HTMLElement): string {
+    if (triggerElement.id.trim()) {
+      return triggerElement.id.trim()
+    }
+    this.triggerIdSeed += 1
+    const nextId = `socm-trigger-${this.triggerIdSeed}`
+    triggerElement.id = nextId
+    return nextId
   }
 
   private static normalizeTargetElements(
@@ -2714,6 +2737,7 @@ export class SoContextMenu {
 
     const id = options.id?.trim() || this.createAutoId()
     menuElement.dataset.contextMenuId = id
+    menuElement.id = `sod-context-menu-${id}`
 
     if (options.className?.trim()) {
       menuElement.className = `${menuElement.className} ${options.className.trim()}`
@@ -2828,6 +2852,10 @@ export class SoContextMenu {
       if (reason !== 'reopen') {
         focusElementIfPossible(lastTriggerElement ?? lastFocusedBeforeOpen)
       }
+
+      if (lastTriggerElement) {
+        lastTriggerElement.setAttribute('aria-expanded', 'false')
+      }
     }
 
     const destroyMenu = () => {
@@ -2855,6 +2883,11 @@ export class SoContextMenu {
         })
 
         focusElementIfPossible(lastTriggerElement ?? lastFocusedBeforeOpen)
+      }
+
+      if (lastTriggerElement) {
+        lastTriggerElement.removeAttribute('aria-expanded')
+        lastTriggerElement.removeAttribute('aria-controls')
       }
 
       open = false
@@ -2897,6 +2930,13 @@ export class SoContextMenu {
       lastFocusedBeforeOpen = document.activeElement instanceof HTMLElement ? document.activeElement : null
       lastTriggerElement = triggerElement ?? lastTriggerElement
       lastEvent = event ?? lastEvent
+
+      if (lastTriggerElement) {
+        const triggerId = SoContextMenu.ensureTriggerId(lastTriggerElement)
+        lastTriggerElement.setAttribute('aria-controls', menuElement.id)
+        lastTriggerElement.setAttribute('aria-expanded', 'true')
+        menuElement.setAttribute('aria-labelledby', triggerId)
+      }
 
       emitLifecycle(lifecycleHooks, {
         component: 'context-menu',
