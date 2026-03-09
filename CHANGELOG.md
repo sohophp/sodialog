@@ -21,6 +21,7 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 - context-menu keyboard navigation and activation support (`ArrowUp/ArrowDown/Home/End/Tab/Enter/Space`)
 - dedicated `ContextMenu Lab` examples page with basic binding, close strategy, and close-first-open-next dialog flow demo
 - context-menu first-character typeahead navigation for faster keyboard selection
+- context-menu `onFocusItem` callback for observing keyboard/script-driven focus changes via public API
 
 ### Changed
 - package version bumped to `0.2.0` for major capability upgrade line
@@ -37,6 +38,7 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 - fixed context-menu typeahead matching for mixed labels like `删除 Delete` and improved forward cycling across matched items
 - API/README/ContextMenu Lab docs now explicitly describe mixed-label matching and same-letter cycling behavior
 - ContextMenu Lab now surfaces close reason feedback (`esc/outside/item/blur/scroll/resize/...`) for easier interaction-path diagnosis
+- ContextMenu Lab focus feedback now uses public `onFocusItem` callback instead of internal custom event wiring
 
 ## [0.1.20] - 2026-03-09
 
