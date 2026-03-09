@@ -577,6 +577,50 @@ describe('SoContextMenu behavior', () => {
 
     expect(trigger.getAttribute('aria-expanded')).toBe('false')
   })
+
+  it('supports keyboard navigation and activation', async () => {
+    const trigger = document.createElement('button')
+    trigger.type = 'button'
+    trigger.textContent = 'menu'
+    document.body.append(trigger)
+
+    const actionSpy = vi.fn()
+    const handle = bindContextMenu({
+      target: trigger,
+      items: [
+        { id: 'rename', label: 'Rename' },
+        {
+          id: 'delete',
+          label: 'Delete',
+          onClick: () => {
+            actionSpy()
+          },
+        },
+      ],
+    })
+
+    trigger.dispatchEvent(
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 24,
+        clientY: 20,
+      }),
+    )
+
+    const menu = handle.element
+    const items = Array.from(menu.querySelectorAll<HTMLButtonElement>('.sod-context-menu-item'))
+    expect(document.activeElement).toBe(items[0])
+
+    menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }))
+    expect(document.activeElement).toBe(items[1])
+
+    menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }))
+    await Promise.resolve()
+
+    expect(actionSpy).toHaveBeenCalledTimes(1)
+    expect(handle.isOpen()).toBe(false)
+  })
 })
 
 describe('Adapter behavior', () => {

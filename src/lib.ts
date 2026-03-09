@@ -3017,7 +3017,7 @@ export class SoContextMenu {
       menuElement.style.left = `${next.left}px`
       menuElement.style.top = `${next.top}px`
       open = true
-      menuElement.focus()
+      focusFirstItem()
 
       options.onOpen?.(handle)
 
@@ -3141,6 +3141,79 @@ export class SoContextMenu {
       }
     }
 
+    const getFocusableItems = (): HTMLButtonElement[] => {
+      return Array.from(menuElement.querySelectorAll<HTMLButtonElement>('.sod-context-menu-item:not(:disabled)'))
+    }
+
+    const focusItemAt = (index: number) => {
+      const items = getFocusableItems()
+      if (items.length === 0) {
+        return
+      }
+
+      const nextIndex = ((index % items.length) + items.length) % items.length
+      focusElementIfPossible(items[nextIndex])
+    }
+
+    const focusFirstItem = () => {
+      focusItemAt(0)
+    }
+
+    const onMenuKeyDown = (event: KeyboardEvent) => {
+      if (!open) {
+        return
+      }
+
+      const items = getFocusableItems()
+      if (items.length === 0) {
+        return
+      }
+
+      const active = document.activeElement
+      const currentIndex = active instanceof HTMLButtonElement ? items.indexOf(active) : -1
+
+      if (event.key === 'ArrowDown') {
+        event.preventDefault()
+        focusItemAt(currentIndex < 0 ? 0 : currentIndex + 1)
+        return
+      }
+
+      if (event.key === 'ArrowUp') {
+        event.preventDefault()
+        focusItemAt(currentIndex < 0 ? items.length - 1 : currentIndex - 1)
+        return
+      }
+
+      if (event.key === 'Home') {
+        event.preventDefault()
+        focusItemAt(0)
+        return
+      }
+
+      if (event.key === 'End') {
+        event.preventDefault()
+        focusItemAt(items.length - 1)
+        return
+      }
+
+      if (event.key === 'Tab') {
+        event.preventDefault()
+        if (event.shiftKey) {
+          focusItemAt(currentIndex < 0 ? items.length - 1 : currentIndex - 1)
+        } else {
+          focusItemAt(currentIndex < 0 ? 0 : currentIndex + 1)
+        }
+        return
+      }
+
+      if (event.key === 'Enter' || event.key === ' ') {
+        if (active instanceof HTMLButtonElement && active.classList.contains('sod-context-menu-item')) {
+          event.preventDefault()
+          active.click()
+        }
+      }
+    }
+
     const shouldIgnoreOutsideContextMenu = (event: MouseEvent): boolean => {
       return event === lastEvent
     }
@@ -3252,6 +3325,7 @@ export class SoContextMenu {
     document.addEventListener('mousedown', onDocumentMouseDown, CAPTURE_LISTENER)
     document.addEventListener('contextmenu', onDocumentContextMenuOutside, CAPTURE_LISTENER)
     document.addEventListener('keydown', onDocumentKeyDown, CAPTURE_LISTENER)
+    menuElement.addEventListener('keydown', onMenuKeyDown)
     window.addEventListener('blur', onWindowBlur)
     window.addEventListener('scroll', onWindowScroll, true)
     window.addEventListener('resize', onWindowResize)
@@ -3259,6 +3333,7 @@ export class SoContextMenu {
     listeners.push(() => document.removeEventListener('mousedown', onDocumentMouseDown, CAPTURE_LISTENER))
     listeners.push(() => document.removeEventListener('contextmenu', onDocumentContextMenuOutside, CAPTURE_LISTENER))
     listeners.push(() => document.removeEventListener('keydown', onDocumentKeyDown, CAPTURE_LISTENER))
+    listeners.push(() => menuElement.removeEventListener('keydown', onMenuKeyDown))
     listeners.push(() => window.removeEventListener('blur', onWindowBlur))
     listeners.push(() => window.removeEventListener('scroll', onWindowScroll, true))
     listeners.push(() => window.removeEventListener('resize', onWindowResize))
