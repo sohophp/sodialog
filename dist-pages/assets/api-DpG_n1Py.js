@@ -392,6 +392,7 @@ toast({ id: 'sync-task', content: '策略 stack', duplicateStrategy: 'stack' })<
               <tr><td><code>closeOnScroll</code></td><td><code>boolean</code></td><td><code>true</code></td><td>窗口或容器滚动时关闭。</td></tr>
               <tr><td><code>closeOnResize</code></td><td><code>boolean</code></td><td><code>true</code></td><td>窗口尺寸变化时关闭。</td></tr>
               <tr><td><code>preventNativeMenu</code></td><td><code>boolean</code></td><td><code>true</code></td><td>阻止浏览器原生右键菜单。</td></tr>
+              <tr><td><code>typeaheadResetMs</code></td><td><code>number</code></td><td><code>450</code></td><td>字母定位 query 重置时间（毫秒，最小 120）。</td></tr>
               <tr><td><code>onOpen</code></td><td><code>(handle: SoContextMenuHandle) =&gt; void</code></td><td>-</td><td>打开后回调。</td></tr>
               <tr><td><code>onClose</code></td><td><code>(reason, handle) =&gt; void</code></td><td>-</td><td>关闭后回调。</td></tr>
               <tr><td><code>onAction</code></td><td><code>(context) =&gt; void</code></td><td>-</td><td>菜单项点击回调。</td></tr>
@@ -416,7 +417,7 @@ toast({ id: 'sync-task', content: '策略 stack', duplicateStrategy: 'stack' })<
             </tbody>
           </table>
         </div>
-        <p class="desc">Bootstrap Icons 示例：先引入 <code>bootstrap-icons.min.css</code>，然后使用 <code>icon: 'bi bi-pencil-square'</code>。键盘支持 ArrowUp/ArrowDown/Home/End/Tab 导航，Enter/Space 激活，输入首字母可快速定位菜单项；混合标签（如 <code>删除 Delete</code>）也可匹配，并会在同字母命中项间循环。可在 <code>onFocusItem(context)</code> 中观察定位项，在 <code>onTypeahead(context)</code> 中观察当前 query 与命中结果，在 <code>onClose(reason)</code> 中观察关闭原因（<code>esc/outside/item/blur/scroll/resize/programmatic</code>）。</p>
+        <p class="desc">Bootstrap Icons 示例：先引入 <code>bootstrap-icons.min.css</code>，然后使用 <code>icon: 'bi bi-pencil-square'</code>。键盘支持 ArrowUp/ArrowDown/Home/End/Tab 导航，Enter/Space 激活，输入首字母可快速定位菜单项；混合标签（如 <code>删除 Delete</code>）也可匹配，并会在同字母命中项间循环。可通过 <code>typeaheadResetMs</code> 调整 query 重置窗口；可在 <code>onFocusItem(context)</code> 中观察定位项，在 <code>onTypeahead(context)</code> 中观察当前 query 与命中结果，在 <code>onClose(reason)</code> 中观察关闭原因（<code>esc/outside/item/blur/scroll/resize/programmatic</code>）。</p>
       </section>
 
       <section class="card" id="dialog-open">

@@ -114,6 +114,7 @@ export interface SoContextMenuOptions extends SoLifecycleHooks {
   closeOnScroll?: boolean
   closeOnResize?: boolean
   preventNativeMenu?: boolean
+  typeaheadResetMs?: number
   onOpen?: (handle: SoContextMenuHandle) => void
   onClose?: (reason: SoContextMenuCloseReason, handle: SoContextMenuHandle) => void
   onAction?: (context: SoContextMenuActionContext) => void
@@ -2845,6 +2846,7 @@ export class SoContextMenu {
     const closeOnScroll = options.closeOnScroll ?? this.globalConfig.closeOnScroll ?? true
     const closeOnResize = options.closeOnResize ?? this.globalConfig.closeOnResize ?? true
     const preventNativeMenu = options.preventNativeMenu ?? this.globalConfig.preventNativeMenu ?? true
+    const typeaheadResetMs = Math.max(120, options.typeaheadResetMs ?? this.globalConfig.typeaheadResetMs ?? 450)
 
     const listeners: Array<() => void> = []
     let menuItems = [...options.items]
@@ -3294,7 +3296,7 @@ export class SoContextMenu {
       typeaheadTimerId = window.setTimeout(() => {
         typeaheadQuery = ''
         typeaheadTimerId = null
-      }, 450)
+      }, typeaheadResetMs)
     }
 
     const onMenuKeyDown = (event: KeyboardEvent) => {

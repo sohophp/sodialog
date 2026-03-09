@@ -761,6 +761,42 @@ describe('SoContextMenu behavior', () => {
     expect(traces[0]).toEqual({ query: 'd', matched: true, itemId: 'delete' })
     expect(traces[1]).toEqual({ query: 'z', matched: false, itemId: undefined })
   })
+
+  it('resets typeahead query by typeaheadResetMs window', async () => {
+    const trigger = document.createElement('button')
+    trigger.type = 'button'
+    trigger.textContent = 'menu'
+    document.body.append(trigger)
+
+    const queries: string[] = []
+    const handle = bindContextMenu({
+      target: trigger,
+      typeaheadResetMs: 120,
+      items: [
+        { id: 'download', label: '下载 Download' },
+        { id: 'delete', label: '删除 Delete' },
+      ],
+      onTypeahead: ({ query }) => {
+        queries.push(query)
+      },
+    })
+
+    trigger.dispatchEvent(
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 30,
+        clientY: 20,
+      }),
+    )
+
+    const menu = handle.element
+    menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'd', bubbles: true }))
+    await vi.advanceTimersByTimeAsync(160)
+    menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'e', bubbles: true }))
+
+    expect(queries).toEqual(['d', 'e'])
+  })
 })
 
 describe('Adapter behavior', () => {

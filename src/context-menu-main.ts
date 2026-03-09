@@ -46,6 +46,7 @@ ${renderLabHeader('context-menu', 'ContextMenu Lab', '独立页面展示 Context
   closeOnEsc: true,
   closeOnScroll: true,
   closeOnWindowBlur: true,
+  typeaheadResetMs: 700,
   items: [
     { id: 'download', label: '下载 Download' },
     { id: 'rename', label: '重命名 Rename' },
@@ -117,6 +118,7 @@ bindContextMenu({
   closeOnEsc: true,
   closeOnScroll: true,
   closeOnWindowBlur: true,
+  typeaheadResetMs: 700,
   items: [
     { id: 'download', label: '下载 Download' },
     { id: 'rename', label: '重命名 Rename' },
