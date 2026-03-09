@@ -20,6 +20,7 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 - scenario playbook entries in troubleshooting docs for migration and behavior tuning
 - context-menu keyboard navigation and activation support (`ArrowUp/ArrowDown/Home/End/Tab/Enter/Space`)
 - dedicated `ContextMenu Lab` examples page with basic binding, close strategy, and close-first-open-next dialog flow demo
+- context-menu first-character typeahead navigation for faster keyboard selection
 
 ### Changed
 - package version bumped to `0.2.0` for major capability upgrade line
@@ -28,6 +29,7 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 - examples synced with runnable global-config demo scenario
 - tests expanded with context-menu keyboard interaction coverage
 - examples hub and shared lab navigation now include `ContextMenu Lab`
+- API and examples docs now describe typeahead behavior in context-menu keyboard interactions
 
 ## [0.1.20] - 2026-03-09
 
