@@ -6,6 +6,18 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 
 ## [Unreleased]
 
+### Added
+- adapter-first APIs: `configureAdapter`, `openDialog`, `bindDialogContextMenu`, `pushMessage`
+- dialog `onLayoutStable` hook and timing controls (`layoutStableFrames`, `layoutStableOnRefit`)
+- optional `traceId` passthrough for dialog/toast/context-menu lifecycle and action contexts
+- scoped `.legacy-skin` compat styles for legacy UI alignment
+- migration docs: `adapter-guidelines.md`, `migration-guide.md`, `troubleshooting.md`
+- implementation plan document: `IMPLEMENTATION_PLAN_0.2.md`
+
+### Changed
+- package version bumped to `0.2.0` for major capability upgrade line
+- tests expanded for adapter behavior, layout-stable callback, and trace propagation
+
 ## [0.1.20] - 2026-03-09
 
 ### Commits

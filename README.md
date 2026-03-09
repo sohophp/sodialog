@@ -7,6 +7,7 @@
 - [安装](#安装)
 - [使用](#使用)
 - [右键菜单图标（Bootstrap Icons）](#右键菜单图标bootstrap-icons)
+- [Adapter First](#adapter-first)
 - [API](#api)
 - [API 独立页](#api-独立页)
 - [Promise API](#promise-api)
@@ -111,6 +112,51 @@ const formValues = await formModal({
 })
 
 console.log('form result:', formValues)
+```
+
+## Adapter First
+
+推荐业务层优先使用 adapter API，统一默认行为并降低迁移成本。
+
+```ts
+import {
+  configureAdapter,
+  openDialog,
+  bindDialogContextMenu,
+  pushMessage,
+} from 'sodialog'
+
+configureAdapter({
+  modalDefaults: {
+    closeOnEsc: true,
+    closeOnBackdrop: true,
+    footerAlign: 'center',
+  },
+  toastDefaults: {
+    placement: 'top-end',
+    maxVisible: 4,
+    newestOnTop: true,
+    duplicateStrategy: 'stack',
+    duration: 3800,
+  },
+})
+
+openDialog({
+  title: 'Delete Item',
+  content: 'Confirm delete?',
+  traceId: 'trace-order-001',
+  onLayoutStable: ({ traceId }) => {
+    console.log('layout stable', traceId)
+  },
+})
+
+bindDialogContextMenu({
+  target: '.file-row',
+  traceId: 'trace-order-001',
+  items: [{ id: 'remove', label: 'Remove' }],
+})
+
+pushMessage('success', 'Saved', { traceId: 'trace-order-001' })
 ```
 
 ## 右键菜单图标（Bootstrap Icons）
@@ -756,6 +802,9 @@ npm run docs:changelog
 - `README.md`：使用方式、API、发布流程总览
 - `CHANGELOG.md`：版本变更记录（按 git tag 自动生成）
 - `RELEASE_CHECKLIST.md`：发布前人工检查清单
+- `adapter-guidelines.md`：推荐接入路径与反例
+- `migration-guide.md`：从旧系统迁移到 SoDialog
+- `troubleshooting.md`：排障手册与检查清单
 
 ### 文档自动更新
 

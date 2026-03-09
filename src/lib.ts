@@ -71,11 +71,13 @@ export interface SoContextMenuActionContext {
   menuElement: HTMLElement
   triggerElement: HTMLElement
   originalEvent?: MouseEvent
+  traceId?: string
   handle: SoContextMenuHandle
 }
 
 export interface SoContextMenuOptions extends SoLifecycleHooks {
   id?: string
+  traceId?: string
   target: string | Element | Iterable<Element> | ArrayLike<Element>
   items: SoContextMenuItem[]
   className?: string
@@ -112,9 +114,19 @@ export interface SoLifecycleContext {
   element: HTMLElement
   id?: string
   reason?: SoLifecycleReason
+  traceId?: string
 }
 
 export type SoLifecycleHook = (context: SoLifecycleContext) => void
+
+export interface SoLayoutStableContext {
+  component: 'modal' | 'offcanvas'
+  element: HTMLElement
+  id?: string
+  traceId?: string
+}
+
+export type SoLayoutStableHook = (context: SoLayoutStableContext) => void
 
 export interface SoLifecycleHooks {
   onLifecycle?: SoLifecycleHook
@@ -139,6 +151,7 @@ export interface SoDialogFooterButton {
 export interface SoDialogBaseOptions extends SoLifecycleHooks {
   title: string
   content: string | Node
+  traceId?: string
   confirmText?: string
   cancelText?: string
   confirmAction?: 'hide' | 'destroy'
@@ -149,6 +162,9 @@ export interface SoDialogBaseOptions extends SoLifecycleHooks {
   footerButtons?: SoDialogFooterButton[]
   hideFooter?: boolean
   footerAlign?: SoFooterAlign
+  onLayoutStable?: SoLayoutStableHook
+  layoutStableFrames?: number
+  layoutStableOnRefit?: boolean
   onAction?: SoDialogActionListener
 }
 
@@ -250,6 +266,7 @@ export interface SoDialogFooterActionContext {
   buttonElement: HTMLButtonElement
   dialog: HTMLDialogElement
   event: MouseEvent
+  traceId?: string
   handle: SoDialogHandle
 }
 
@@ -257,6 +274,7 @@ export type SoDialogActionListener = (context: SoDialogFooterActionContext) => v
 
 export interface SoToastOptions extends SoLifecycleHooks {
   id?: string
+  traceId?: string
   title?: string
   content: string | Node
   placement?: SoToastPlacement
@@ -302,6 +320,7 @@ interface SoToastResolvedOptions
       | 'onAfterOpen'
       | 'onBeforeClose'
       | 'onAfterClose'
+      | 'traceId'
     > {
   content: string | Node
   duration: number | false
@@ -875,6 +894,7 @@ export class SoDialog {
 
   static open(options: SoDialogOptions): SoDialogHandle {
     const kind: SoPanelKind = options.kind ?? 'modal'
+    const traceId = options.traceId?.trim() || undefined
     const lifecycleHooks: SoLifecycleHooks = {
       onLifecycle: options.onLifecycle,
       onBeforeOpen: options.onBeforeOpen,
@@ -908,6 +928,7 @@ export class SoDialog {
             element: existed,
             id: modalId,
             reason: 'reused',
+            traceId,
           })
           const reusedHandle = this.revealExisting(existed, useModal)
 
@@ -926,6 +947,7 @@ export class SoDialog {
             element: existed,
             id: modalId,
             reason: 'reused',
+            traceId,
           })
           return reusedHandle
         }
@@ -937,6 +959,9 @@ export class SoDialog {
     const dialog = document.createElement('dialog')
     dialog.className = `sod-dialog sod-${kind}`
     const cleanups: Array<() => void> = []
+    const layoutStableFrames = Math.max(1, options.layoutStableFrames ?? 2)
+    const layoutStableOnRefit = options.layoutStableOnRefit ?? false
+    let layoutStableTimerId: number | null = null
     if (modalId) {
       dialog.dataset.sodId = modalId
       if (isExplicitModalId) {
@@ -952,9 +977,55 @@ export class SoDialog {
         element: dialog,
         id: modalId,
         reason,
+        traceId,
       })
       closeDialog(dialog, action)
     }
+
+    const emitLayoutStable = () => {
+      if (!dialog.open || !dialog.isConnected) {
+        return
+      }
+
+      options.onLayoutStable?.({
+        component: kind,
+        element: dialog,
+        id: modalId,
+        traceId,
+      })
+    }
+
+    const scheduleLayoutStable = () => {
+      if (!options.onLayoutStable) {
+        return
+      }
+
+      if (layoutStableTimerId !== null) {
+        window.clearTimeout(layoutStableTimerId)
+      }
+
+      layoutStableTimerId = window.setTimeout(() => {
+        layoutStableTimerId = null
+        emitLayoutStable()
+      }, layoutStableFrames * 16)
+    }
+
+    const onRefitLayoutStable = () => {
+      if (!layoutStableOnRefit) {
+        return
+      }
+
+      scheduleLayoutStable()
+    }
+
+    dialog.addEventListener('sod:refit', onRefitLayoutStable as EventListener)
+    cleanups.push(() => {
+      dialog.removeEventListener('sod:refit', onRefitLayoutStable as EventListener)
+      if (layoutStableTimerId !== null) {
+        window.clearTimeout(layoutStableTimerId)
+        layoutStableTimerId = null
+      }
+    })
 
     const panel = document.createElement('section')
     panel.className = 'sod-panel'
@@ -1109,6 +1180,7 @@ export class SoDialog {
               buttonElement,
               dialog,
               event,
+              traceId,
               handle,
             }
 
@@ -1176,6 +1248,7 @@ export class SoDialog {
         element: dialog,
         id: modalId,
         reason: 'esc',
+        traceId,
       })
     })
 
@@ -1187,6 +1260,7 @@ export class SoDialog {
         element: dialog,
         id: modalId,
         reason,
+        traceId,
       })
 
       const keepInstance = dialog.dataset.sodPersistent === 'true'
@@ -1211,6 +1285,7 @@ export class SoDialog {
       phase: 'before-open',
       element: dialog,
       id: modalId,
+      traceId,
     })
 
     document.body.append(dialog)
@@ -1227,7 +1302,9 @@ export class SoDialog {
       phase: 'after-open',
       element: dialog,
       id: modalId,
+      traceId,
     })
+    scheduleLayoutStable()
 
     if (modalId) {
       this.modalRegistry.set(modalId, dialog)
@@ -1768,6 +1845,7 @@ export class SoToast {
       onAfterOpen: options.onAfterOpen,
       onBeforeClose: options.onBeforeClose,
       onAfterClose: options.onAfterClose,
+      traceId: options.traceId?.trim() || undefined,
     }
   }
 
@@ -1812,6 +1890,7 @@ export class SoToast {
         element: record.element,
         id: record.id,
         reason,
+        traceId: record.options.traceId,
       },
     )
   }
@@ -2421,6 +2500,9 @@ export class SoToast {
       if (options.onAfterClose !== undefined) {
         existed.options.onAfterClose = normalizedOptions.onAfterClose
       }
+      if (options.traceId !== undefined) {
+        existed.options.traceId = normalizedOptions.traceId
+      }
       this.emitToastLifecycle(existed, 'before-open', 'reused')
       this.emitToastLifecycle(existed, 'after-open', 'reused')
       return existed.handle
@@ -2626,6 +2708,7 @@ export class SoContextMenu {
       onBeforeClose: options.onBeforeClose,
       onAfterClose: options.onAfterClose,
     }
+    const traceId = options.traceId?.trim() || undefined
 
     const offsetX = options.offsetX ?? 0
     const offsetY = options.offsetY ?? 0
@@ -2695,6 +2778,7 @@ export class SoContextMenu {
         element: menuElement,
         id,
         reason: lifecycleReason,
+        traceId,
       })
 
       open = false
@@ -2713,6 +2797,7 @@ export class SoContextMenu {
         element: menuElement,
         id,
         reason: lifecycleReason,
+        traceId,
       })
     }
 
@@ -2728,6 +2813,7 @@ export class SoContextMenu {
           element: menuElement,
           id,
           reason: 'destroy',
+          traceId,
         })
         options.onClose?.('destroy', handle)
         emitLifecycle(lifecycleHooks, {
@@ -2736,6 +2822,7 @@ export class SoContextMenu {
           element: menuElement,
           id,
           reason: 'destroy',
+          traceId,
         })
       }
 
@@ -2784,6 +2871,7 @@ export class SoContextMenu {
         phase: 'before-open',
         element: menuElement,
         id,
+        traceId,
       })
 
       if (!menuElement.isConnected) {
@@ -2813,6 +2901,7 @@ export class SoContextMenu {
         phase: 'after-open',
         element: menuElement,
         id,
+        traceId,
       })
     }
 
@@ -2906,6 +2995,7 @@ export class SoContextMenu {
               menuElement,
               triggerElement: lastTriggerElement,
               originalEvent: lastEvent ?? undefined,
+              traceId,
               handle,
             }
 
@@ -3079,4 +3169,107 @@ export function toast(options: SoToastOptions): SoToastHandle {
 
 export function bindContextMenu(options: SoContextMenuOptions): SoContextMenuHandle {
   return SoContextMenu.bind(options)
+}
+
+export type SoMessageLevel = 'default' | 'info' | 'success' | 'warning' | 'danger'
+
+export interface SoAdapterConfig {
+  modalDefaults?: Partial<SoDialogModalOptions>
+  offcanvasDefaults?: Partial<Omit<SoDialogOffcanvasOptions, 'kind'>>
+  contextMenuDefaults?: Partial<Omit<SoContextMenuOptions, 'target' | 'items'>>
+  toastDefaults?: Partial<SoToastOptions>
+}
+
+export interface SoPushMessageOptions extends Omit<SoToastOptions, 'content' | 'variant'> {
+  title?: string
+}
+
+export class SoAdapter {
+  private static config: SoAdapterConfig = {
+    toastDefaults: {
+      placement: 'top-end',
+      maxVisible: 4,
+      newestOnTop: true,
+      duplicateStrategy: 'stack',
+      duration: 3800,
+    },
+  }
+
+  static configure(nextConfig: SoAdapterConfig): void {
+    this.config = {
+      ...this.config,
+      ...nextConfig,
+      modalDefaults: {
+        ...this.config.modalDefaults,
+        ...nextConfig.modalDefaults,
+      },
+      offcanvasDefaults: {
+        ...this.config.offcanvasDefaults,
+        ...nextConfig.offcanvasDefaults,
+      },
+      contextMenuDefaults: {
+        ...this.config.contextMenuDefaults,
+        ...nextConfig.contextMenuDefaults,
+      },
+      toastDefaults: {
+        ...this.config.toastDefaults,
+        ...nextConfig.toastDefaults,
+      },
+    }
+
+    if (this.config.toastDefaults) {
+      SoToast.configure(this.config.toastDefaults)
+    }
+  }
+
+  static openDialog(options: SoDialogOptions): SoDialogHandle {
+    if (options.kind === 'offcanvas') {
+      const merged = {
+        ...(this.config.offcanvasDefaults ?? {}),
+        ...options,
+      }
+      const { kind, ...rest } = merged as SoDialogOffcanvasOptions
+      void kind
+      return openOffcanvas(rest)
+    }
+
+    return openModal({
+      ...(this.config.modalDefaults ?? {}),
+      ...options,
+      kind: 'modal',
+    })
+  }
+
+  static bindContextMenu(options: SoContextMenuOptions): SoContextMenuHandle {
+    return bindContextMenu({
+      ...(this.config.contextMenuDefaults ?? {}),
+      ...options,
+    })
+  }
+
+  static pushMessage(level: SoMessageLevel, content: string | Node, options: SoPushMessageOptions = {}): SoToastHandle {
+    const resolvedOptions: SoToastOptions = {
+      ...(this.config.toastDefaults ?? {}),
+      ...options,
+      content,
+      variant: level,
+    }
+    return toast(resolvedOptions)
+  }
+}
+
+export function configureAdapter(config: SoAdapterConfig): void {
+  SoAdapter.configure(config)
+}
+
+export function openDialog(options: SoDialogOptions): SoDialogHandle {
+  return SoAdapter.openDialog(options)
+}
+
+export function bindDialogContextMenu(options: SoContextMenuOptions): SoContextMenuHandle {
+  return SoAdapter.bindContextMenu(options)
+}
+
+export function pushMessage(level: SoMessageLevel, content: string | Node, options: SoPushMessageOptions = {}): SoToastHandle {
+  return SoAdapter.pushMessage(level, content, options)
 }

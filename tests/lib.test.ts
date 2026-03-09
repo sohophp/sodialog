@@ -1,5 +1,14 @@
 import { describe, expect, it, vi } from 'vitest'
-import { bindContextMenu, formModal, openModal, toast } from '../src/lib'
+import {
+  bindContextMenu,
+  bindDialogContextMenu,
+  configureAdapter,
+  formModal,
+  openDialog,
+  openModal,
+  pushMessage,
+  toast,
+} from '../src/lib'
 
 describe('SoDialog modal behavior', () => {
   it('reuses explicit modal id instance', () => {
@@ -443,5 +452,128 @@ describe('SoContextMenu behavior', () => {
 
     const menu = document.querySelector<HTMLElement>('.sod-context-menu')
     expect(menu).toBeNull()
+  })
+
+  it('passes traceId into lifecycle and action contexts', async () => {
+    const trigger = document.createElement('div')
+    document.body.append(trigger)
+
+    const traces: Array<string | undefined> = []
+
+    bindContextMenu({
+      target: trigger,
+      traceId: 'trace-cm-1',
+      items: [{ id: 'copy', label: 'Copy', onClick: ({ traceId }) => traces.push(traceId) }],
+      onLifecycle: (context) => traces.push(context.traceId),
+    })
+
+    trigger.dispatchEvent(
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 20,
+        clientY: 20,
+      }),
+    )
+
+    document.querySelector<HTMLButtonElement>('.sod-context-menu-item')?.click()
+    await Promise.resolve()
+
+    expect(traces.every((value) => value === 'trace-cm-1')).toBe(true)
+  })
+})
+
+describe('Adapter behavior', () => {
+  it('opens modal via openDialog with adapter defaults', () => {
+    configureAdapter({
+      modalDefaults: {
+        footerAlign: 'center',
+      },
+    })
+
+    const handle = openDialog({
+      title: 'adapter modal',
+      content: 'hello',
+    })
+
+    const footer = handle.dialog.querySelector<HTMLElement>('.sod-footer')
+    expect(footer?.dataset.align).toBe('center')
+  })
+
+  it('binds context menu via adapter helper', () => {
+    configureAdapter({
+      contextMenuDefaults: {
+        closeOnEsc: false,
+      },
+    })
+
+    const trigger = document.createElement('div')
+    document.body.append(trigger)
+
+    const handle = bindDialogContextMenu({
+      target: trigger,
+      items: [{ id: 'x', label: 'x' }],
+    })
+
+    trigger.dispatchEvent(
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 10,
+        clientY: 10,
+      }),
+    )
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+    expect(handle.isOpen()).toBe(true)
+  })
+
+  it('pushMessage applies level and defaults', () => {
+    configureAdapter({
+      toastDefaults: {
+        placement: 'bottom-end',
+        maxVisible: 2,
+      },
+    })
+
+    const handle = pushMessage('warning', 'watch out', {
+      duration: false,
+    })
+
+    expect(handle.element.className).toContain('sod-toast-warning')
+    expect(document.querySelector('.sod-toast-layer-bottom-end')).toBeTruthy()
+  })
+})
+
+describe('Dialog layout-stable and trace', () => {
+  it('fires onLayoutStable after open', async () => {
+    const spy = vi.fn()
+    openModal({
+      title: 'stable',
+      content: 'body',
+      layoutStableFrames: 1,
+      onLayoutStable: spy,
+    })
+
+    await vi.advanceTimersByTimeAsync(20)
+    expect(spy).toHaveBeenCalledTimes(1)
+  })
+
+  it('passes traceId through dialog lifecycle and action', async () => {
+    const traces: Array<string | undefined> = []
+    const handle = openModal({
+      title: 'trace',
+      content: 'x',
+      traceId: 'trace-dialog-1',
+      onLifecycle: (context) => traces.push(context.traceId),
+      onAction: (context) => traces.push(context.traceId),
+      layoutStableFrames: 1,
+    })
+
+    handle.dialog.querySelector<HTMLButtonElement>('.sod-btn-primary')?.click()
+    await vi.runAllTimersAsync()
+
+    expect(traces.length).toBeGreaterThan(0)
+    expect(traces.every((value) => value === 'trace-dialog-1')).toBe(true)
   })
 })
