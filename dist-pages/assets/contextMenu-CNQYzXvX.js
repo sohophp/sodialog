@@ -1,4 +1,4 @@
-import"./modulepreload-polyfill-B5Qt9EMX.js";/* empty css                  */import{b as t,e as c,o as s,i}from"./lib-hafOWZFC.js";import{r as l,w as d}from"./lab-shared-C3tuUAEJ.js";const a=document.querySelector("#app");if(!a)throw new Error("Cannot find #app root element");a.innerHTML=`
+import"./modulepreload-polyfill-B5Qt9EMX.js";/* empty css                  */import{b as t,e as c,o as s,i}from"./lib-C5vjBdt8.js";import{r as l,w as d}from"./lab-shared-C3tuUAEJ.js";const a=document.querySelector("#app");if(!a)throw new Error("Cannot find #app root element");a.innerHTML=`
 ${l("context-menu","ContextMenu Lab","独立页面展示 ContextMenu 的基础绑定、关闭策略和菜单触发弹窗时序。")}
 
 <main class="grid">
@@ -37,7 +37,7 @@ ${l("context-menu","ContextMenu Lab","独立页面展示 ContextMenu 的基础�
   closeOnWindowBlur: true,
   items: [{ id: 'delete', label: '删除' }],
 })</pre></div>
-      <p class="note">说明：当前支持 ArrowUp/ArrowDown/Home/End/Tab 导航，Enter/Space 激活。</p>
+      <p class="note">说明：当前支持 ArrowUp/ArrowDown/Home/End/Tab 导航，Enter/Space 激活，输入首字母可快速定位菜单项。</p>
     </details>
   </section>
 

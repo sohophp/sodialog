@@ -44,7 +44,7 @@ ${renderLabHeader('context-menu', 'ContextMenu Lab', '独立页面展示 Context
   closeOnWindowBlur: true,
   items: [{ id: 'delete', label: '删除' }],
 })</pre></div>
-      <p class="note">说明：当前支持 ArrowUp/ArrowDown/Home/End/Tab 导航，Enter/Space 激活。</p>
+      <p class="note">说明：当前支持 ArrowUp/ArrowDown/Home/End/Tab 导航，Enter/Space 激活，输入首字母可快速定位菜单项。</p>
     </details>
   </section>
 

@@ -1,4 +1,4 @@
-import"./modulepreload-polyfill-B5Qt9EMX.js";/* empty css                  */import{a,e as n}from"./lib-hafOWZFC.js";import{r as s,w as c}from"./lab-shared-C3tuUAEJ.js";const o=document.querySelector("#app");if(!o)throw new Error("Cannot find #app root element");o.innerHTML=`
+import"./modulepreload-polyfill-B5Qt9EMX.js";/* empty css                  */import{a,e as n}from"./lib-C5vjBdt8.js";import{r as s,w as c}from"./lab-shared-C3tuUAEJ.js";const o=document.querySelector("#app");if(!o)throw new Error("Cannot find #app root element");o.innerHTML=`
 ${s("offcanvas","Offcanvas Lab","独立页面展示 Offcanvas 的位置、动画和交互策略。")}
 <main class="grid">
   <section class="card">

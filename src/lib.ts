@@ -2887,6 +2887,7 @@ export class SoContextMenu {
       menuElement.hidden = true
       menuElement.setAttribute('aria-hidden', 'true')
       menuElement.style.display = 'none'
+      clearTypeahead()
       if (SoContextMenu.activeHandle === handle) {
         SoContextMenu.activeHandle = null
       }
@@ -2945,6 +2946,7 @@ export class SoContextMenu {
 
       open = false
       destroyed = true
+      clearTypeahead()
       if (SoContextMenu.activeHandle === handle) {
         SoContextMenu.activeHandle = null
       }
@@ -3159,6 +3161,50 @@ export class SoContextMenu {
       focusItemAt(0)
     }
 
+    let typeaheadQuery = ''
+    let typeaheadTimerId: number | null = null
+
+    const clearTypeahead = () => {
+      typeaheadQuery = ''
+      if (typeaheadTimerId !== null) {
+        window.clearTimeout(typeaheadTimerId)
+        typeaheadTimerId = null
+      }
+    }
+
+    const runTypeahead = (rawKey: string) => {
+      const key = rawKey.toLowerCase()
+      const items = getFocusableItems()
+      if (items.length === 0) {
+        return
+      }
+
+      typeaheadQuery += key
+
+      const startsWithQuery = (item: HTMLButtonElement) => {
+        const text = (item.textContent ?? '').trim().toLowerCase()
+        return text.startsWith(typeaheadQuery)
+      }
+
+      const startsWithKey = (item: HTMLButtonElement) => {
+        const text = (item.textContent ?? '').trim().toLowerCase()
+        return text.startsWith(key)
+      }
+
+      const target = items.find(startsWithQuery) ?? items.find(startsWithKey)
+      if (target) {
+        focusElementIfPossible(target)
+      }
+
+      if (typeaheadTimerId !== null) {
+        window.clearTimeout(typeaheadTimerId)
+      }
+      typeaheadTimerId = window.setTimeout(() => {
+        typeaheadQuery = ''
+        typeaheadTimerId = null
+      }, 450)
+    }
+
     const onMenuKeyDown = (event: KeyboardEvent) => {
       if (!open) {
         return
@@ -3211,6 +3257,11 @@ export class SoContextMenu {
           event.preventDefault()
           active.click()
         }
+        return
+      }
+
+      if (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
+        runTypeahead(event.key)
       }
     }
 

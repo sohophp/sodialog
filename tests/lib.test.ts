@@ -621,6 +621,38 @@ describe('SoContextMenu behavior', () => {
     expect(actionSpy).toHaveBeenCalledTimes(1)
     expect(handle.isOpen()).toBe(false)
   })
+
+  it('supports typeahead focus by first character', () => {
+    const trigger = document.createElement('button')
+    trigger.type = 'button'
+    trigger.textContent = 'menu'
+    document.body.append(trigger)
+
+    const handle = bindContextMenu({
+      target: trigger,
+      items: [
+        { id: 'copy', label: 'Copy' },
+        { id: 'delete', label: 'Delete' },
+        { id: 'rename', label: 'Rename' },
+      ],
+    })
+
+    trigger.dispatchEvent(
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 26,
+        clientY: 20,
+      }),
+    )
+
+    const menu = handle.element
+    const items = Array.from(menu.querySelectorAll<HTMLButtonElement>('.sod-context-menu-item'))
+    expect(document.activeElement).toBe(items[0])
+
+    menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'd', bubbles: true }))
+    expect(document.activeElement).toBe(items[1])
+  })
 })
 
 describe('Adapter behavior', () => {
