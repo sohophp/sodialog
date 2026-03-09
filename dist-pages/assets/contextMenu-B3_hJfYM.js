@@ -1,5 +1,5 @@
-import"./modulepreload-polyfill-B5Qt9EMX.js";/* empty css                  */import{b as t,e as c,o as s,i}from"./lib-C5vjBdt8.js";import{r as l,w as d}from"./lab-shared-C3tuUAEJ.js";const a=document.querySelector("#app");if(!a)throw new Error("Cannot find #app root element");a.innerHTML=`
-${l("context-menu","ContextMenu Lab","独立页面展示 ContextMenu 的基础绑定、关闭策略和菜单触发弹窗时序。")}
+import"./modulepreload-polyfill-B5Qt9EMX.js";/* empty css                  */import{b as o,e as a,o as i,i as l}from"./lib-Bg_MuV9o.js";import{r as s,w as d}from"./lab-shared-C3tuUAEJ.js";const c=document.querySelector("#app");if(!c)throw new Error("Cannot find #app root element");c.innerHTML=`
+${s("context-menu","ContextMenu Lab","独立页面展示 ContextMenu 的基础绑定、关闭策略和菜单触发弹窗时序。")}
 
 <main class="grid">
   <section class="card">
@@ -24,8 +24,8 @@ ${l("context-menu","ContextMenu Lab","独立页面展示 ContextMenu 的基础�
 
   <section class="card">
     <h2>关闭策略与键盘交互</h2>
-    <p>验证 Esc、滚动、窗口失焦等关闭路径。</p>
-    <div class="result" id="cm-policy-zone" tabindex="0">右键此区域（Esc 关闭已启用）</div>
+    <p>验证 Esc、滚动、窗口失焦等关闭路径；并观察方向键与字母快速定位。</p>
+    <div class="result" id="cm-policy-zone" tabindex="0">右键此区域后，按 ArrowUp/ArrowDown 或输入字母 d/r 快速定位</div>
     <div class="row"><button class="btn" id="cm-open-modal">打开普通 Modal（对比入口）</button></div>
     <details class="code-panel">
       <summary>查看原始代码</summary>
@@ -35,7 +35,11 @@ ${l("context-menu","ContextMenu Lab","独立页面展示 ContextMenu 的基础�
   closeOnEsc: true,
   closeOnScroll: true,
   closeOnWindowBlur: true,
-  items: [{ id: 'delete', label: '删除' }],
+  items: [
+    { id: 'download', label: '下载 Download' },
+    { id: 'rename', label: '重命名 Rename' },
+    { id: 'delete', label: '删除 Delete' },
+  ],
 })</pre></div>
       <p class="note">说明：当前支持 ArrowUp/ArrowDown/Home/End/Tab 导航，Enter/Space 激活，输入首字母可快速定位菜单项。</p>
     </details>
@@ -65,4 +69,4 @@ ${l("context-menu","ContextMenu Lab","独立页面展示 ContextMenu 的基础�
     </details>
   </section>
 </main>
-`;d();const n=document.querySelector("#cm-basic-result");t({target:"#cm-basic-zone",items:[{id:"copy",label:"复制"},{id:"rename",label:"重命名"}],onAction:({itemId:o})=>{n&&(n.textContent=`结果输出：执行 action=${o}`),c("success",`已执行 ${o}`,{duration:1100})}});t({target:"#cm-policy-zone",closeOnEsc:!0,closeOnScroll:!0,closeOnWindowBlur:!0,items:[{id:"delete",label:"删除"}],onAction:()=>{c("warning","已触发删除动作（示例）",{duration:1200})}});document.querySelector("#cm-open-modal")?.addEventListener("click",()=>{s({title:"普通入口 Modal",content:"<p>用于与 ContextMenu 入口对比。</p>"})});let e=null;e=t({target:"#cm-dialog-zone",items:[{id:"open-dialog",label:"打开确认弹窗",onClick:()=>{e&&i(e,{title:"来自 ContextMenu",content:"<p>已执行 close-first-open-next。</p>"})}}]});
+`;d();const n=document.querySelector("#cm-basic-result");o({target:"#cm-basic-zone",items:[{id:"copy",label:"复制"},{id:"rename",label:"重命名"}],onAction:({itemId:t})=>{n&&(n.textContent=`结果输出：执行 action=${t}`),a("success",`已执行 ${t}`,{duration:1100})}});o({target:"#cm-policy-zone",closeOnEsc:!0,closeOnScroll:!0,closeOnWindowBlur:!0,items:[{id:"delete",label:"删除"}],onAction:()=>{a("warning","已触发删除动作（示例）",{duration:1200})}});document.querySelector("#cm-open-modal")?.addEventListener("click",()=>{i({title:"普通入口 Modal",content:"<p>用于与 ContextMenu 入口对比。</p>"})});let e=null;e=o({target:"#cm-dialog-zone",items:[{id:"open-dialog",label:"打开确认弹窗",onClick:()=>{e&&l(e,{title:"来自 ContextMenu",content:"<p>已执行 close-first-open-next。</p>"})}}]});

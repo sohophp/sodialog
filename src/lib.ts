@@ -3261,6 +3261,7 @@ export class SoContextMenu {
       }
 
       if (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
+        event.preventDefault()
         runTypeahead(event.key)
       }
     }
@@ -3308,13 +3309,27 @@ export class SoContextMenu {
     }
 
     const onDocumentKeyDown = (event: KeyboardEvent) => {
-      if (!open || !closeOnEsc) {
+      if (!open) {
         return
       }
 
       if (event.key === 'Escape') {
-        closeMenu('esc')
+        if (closeOnEsc) {
+          closeMenu('esc')
+        }
+        return
       }
+
+      if (event.defaultPrevented) {
+        return
+      }
+
+      const target = event.target
+      if (target instanceof Node && menuElement.contains(target)) {
+        return
+      }
+
+      onMenuKeyDown(event)
     }
 
     const onWindowBlur = () => {
