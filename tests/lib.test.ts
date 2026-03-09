@@ -1034,6 +1034,45 @@ describe('Global configure behavior', () => {
     expect(handle.isOpen()).toBe(true)
 
   })
+
+  it('applies context menu global typeaheadResetMs default', async () => {
+    configureContextMenu({
+      typeaheadResetMs: 120,
+    })
+
+    const trigger = document.createElement('button')
+    trigger.type = 'button'
+    trigger.textContent = 'menu'
+    document.body.append(trigger)
+
+    const queries: string[] = []
+    const handle = bindContextMenu({
+      target: trigger,
+      items: [
+        { id: 'download', label: '下载 Download' },
+        { id: 'delete', label: '删除 Delete' },
+      ],
+      onTypeahead: ({ query }) => {
+        queries.push(query)
+      },
+    })
+
+    trigger.dispatchEvent(
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 16,
+        clientY: 16,
+      }),
+    )
+
+    const menu = handle.element
+    menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'd', bubbles: true }))
+    await vi.advanceTimersByTimeAsync(160)
+    menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'e', bubbles: true }))
+
+    expect(queries).toEqual(['d', 'e'])
+  })
 })
 
 describe('Dialog layout-stable and trace', () => {

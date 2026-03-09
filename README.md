@@ -205,6 +205,7 @@ configureDialog({
 configureContextMenu({
   closeOnEsc: false,
   minWidth: 220,
+  typeaheadResetMs: 600,
   attrs: { 'data-menu-scope': 'global' },
 })
 

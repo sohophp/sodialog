@@ -1,15 +1,5 @@
-import './api-style.css'
-import { setupPinnedHeroTop } from './pinned-hero-top'
-import { renderLabHeader, wireCodeCopyButtons } from './lab-shared'
-
-const app = document.querySelector<HTMLDivElement>('#app')
-
-if (!app) {
-  throw new Error('Cannot find #app root element')
-}
-
-app.innerHTML = `
-  ${renderLabHeader('api', 'API Reference', '本页汇总 SoDialog 当前公开方法与主要类型参数，按功能模块拆分并提供默认值、类型和行为说明。')}
+import"./modulepreload-polyfill-B5Qt9EMX.js";import{s as d}from"./pinned-hero-top-PAvN5BGZ.js";import{r as o,w as e}from"./lab-shared-C3tuUAEJ.js";const t=document.querySelector("#app");if(!t)throw new Error("Cannot find #app root element");t.innerHTML=`
+  ${o("api","API Reference","本页汇总 SoDialog 当前公开方法与主要类型参数，按功能模块拆分并提供默认值、类型和行为说明。")}
 
   <main class="layout">
     <aside class="card side-nav" aria-label="API 导航">
@@ -689,7 +679,4 @@ toast({ id: 'sync-task', content: '策略 stack', duplicateStrategy: 'stack' })<
       </section>
     </div>
   </main>
-`
-
-setupPinnedHeroTop({ adjustSidebarOffset: true })
-wireCodeCopyButtons()
+`;d({adjustSidebarOffset:!0});e();

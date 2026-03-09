@@ -291,6 +291,7 @@ export interface SoContextMenuGlobalConfig {
   closeOnScroll?: boolean
   closeOnResize?: boolean
   preventNativeMenu?: boolean
+  typeaheadResetMs?: number
 }
 
 export type SoDialogOptions = SoDialogModalOptions | SoDialogOffcanvasOptions
