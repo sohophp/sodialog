@@ -30,6 +30,8 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 - tests expanded with context-menu keyboard interaction coverage
 - examples hub and shared lab navigation now include `ContextMenu Lab`
 - API and examples docs now describe typeahead behavior in context-menu keyboard interactions
+- context-menu keyboard handling now avoids double key processing and keeps `closeOnEsc: false` behavior intact
+- context-menu focused item now has visible focus ring for script-driven focus movement
 
 ## [0.1.20] - 2026-03-09
 
