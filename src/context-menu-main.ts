@@ -101,9 +101,13 @@ bindContextMenu({
   closeOnEsc: true,
   closeOnScroll: true,
   closeOnWindowBlur: true,
-  items: [{ id: 'delete', label: '删除' }],
-  onAction: () => {
-    pushMessage('warning', '已触发删除动作（示例）', { duration: 1200 })
+  items: [
+    { id: 'download', label: '下载 Download' },
+    { id: 'rename', label: '重命名 Rename' },
+    { id: 'delete', label: '删除 Delete' },
+  ],
+  onAction: ({ itemId }) => {
+    pushMessage('warning', `已触发动作: ${itemId}`, { duration: 1200 })
   },
 })
 
