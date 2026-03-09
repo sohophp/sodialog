@@ -1,4 +1,4 @@
-import"./modulepreload-polyfill-B5Qt9EMX.js";import{r as s}from"./lab-shared-BmHhYQNq.js";const a=document.querySelector("#app");if(!a)throw new Error("Cannot find #app root element");a.innerHTML=`
+import"./modulepreload-polyfill-B5Qt9EMX.js";/* empty css                  */import{r as s}from"./lab-shared-hq1WzFWt.js";const a=document.querySelector("#app");if(!a)throw new Error("Cannot find #app root element");a.innerHTML=`
 ${s("hub","Examples Hub","每个组件独立一页，页面内再细分示例场景。")}
 
 <main class="grid">

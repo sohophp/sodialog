@@ -1,5 +1,6 @@
 import './api-style.css'
 import { setupPinnedHeroTop } from './pinned-hero-top'
+import { renderLabHeader, wireCodeCopyButtons } from './lab-shared'
 
 const app = document.querySelector<HTMLDivElement>('#app')
 
@@ -8,26 +9,7 @@ if (!app) {
 }
 
 app.innerHTML = `
-  <header class="hero">
-    <div class="hero-top">
-      <div class="brand">
-        <img src="./logo.ico" alt="SoDialog Logo" width="34" height="34" />
-        <strong>SoDialog API</strong>
-      </div>
-      <nav class="quick-nav">
-        <a href="./index.html">文档首页</a>
-        <a href="./examples.html">Examples Hub</a>
-        <a href="./modal.html">Modal Lab</a>
-        <a href="./offcanvas.html">Offcanvas Lab</a>
-        <a href="./toast.html">Toast Lab</a>
-        <a href="./workflow.html">开发/发布流程</a>
-        <a href="./demo.html">原版 Demo</a>
-        <a href="https://www.npmjs.com/package/sodialog" target="_blank" rel="noreferrer">NPM</a>
-      </nav>
-    </div>
-    <h1>API 全量参考</h1>
-    <p>本页汇总 SoDialog 当前公开方法与主要类型参数，按功能模块拆分并提供默认值、类型和行为说明。</p>
-  </header>
+  ${renderLabHeader('api', 'API Reference', '本页汇总 SoDialog 当前公开方法与主要类型参数，按功能模块拆分并提供默认值、类型和行为说明。')}
 
   <main class="layout">
     <aside class="card side-nav" aria-label="API 导航">
@@ -242,6 +224,55 @@ app.innerHTML = `
             </tbody>
           </table>
         </div>
+        <details class="code-panel">
+          <summary>查看原始代码：Adapter 配置与调用</summary>
+          <div class="code-toolbar"><button class="code-copy-btn" data-copy-target="api-adapter-code" type="button">复制代码</button></div>
+          <div class="code"><pre id="api-adapter-code">configureAdapter({
+  modalDefaults: { closeOnEsc: true, footerAlign: 'center' },
+  toastDefaults: { placement: 'top-end', maxVisible: 4 },
+  diagnosticsEnabled: true,
+})
+
+openDialog({
+  title: '删除确认',
+  content: '&lt;p&gt;是否继续删除？&lt;/p&gt;',
+  traceId: 'trace-order-001',
+})
+
+pushMessage('success', '操作成功', { traceId: 'trace-order-001' })</pre></div>
+          <p class="note">说明：业务层统一走 adapter API，后续切换默认策略时只需修改一处。</p>
+        </details>
+      </section>
+
+      <section class="card" id="quick-snippets">
+        <h2 class="section-title">快速代码片段</h2>
+        <p class="desc">常用调用模式可直接展开复制，便于对照类型说明快速接入。</p>
+
+        <details class="code-panel">
+          <summary>Promise 串行流程</summary>
+          <div class="code-toolbar"><button class="code-copy-btn" data-copy-target="api-promise-code" type="button">复制代码</button></div>
+          <div class="code"><pre id="api-promise-code">const confirmed = await confirmModal({ title: '确认', content: '&lt;p&gt;继续发布吗？&lt;/p&gt;' })
+if (!confirmed) return
+
+const remark = await promptModal({ title: '输入备注', placeholder: '请输入内容' })
+if (remark === null) return
+
+await formModal({
+  title: '发布信息',
+  fields: [{ name: 'owner', label: '负责人', required: true }],
+})</pre></div>
+          <p class="note">说明：推荐用于审批、删除确认、补录信息等串行交互。</p>
+        </details>
+
+        <details class="code-panel">
+          <summary>Toast 队列与重复策略</summary>
+          <div class="code-toolbar"><button class="code-copy-btn" data-copy-target="api-toast-code" type="button">复制代码</button></div>
+          <div class="code"><pre id="api-toast-code">SoToast.configure({ maxVisible: 3 })
+
+toast({ id: 'sync-task', content: '策略 update', duplicateStrategy: 'update' })
+toast({ id: 'sync-task', content: '策略 stack', duplicateStrategy: 'stack' })</pre></div>
+          <p class="note">说明：相同 id 下，update 复用实例，stack 追加新实例。</p>
+        </details>
       </section>
 
       <section class="card" id="dialog-core">
@@ -612,3 +643,4 @@ app.innerHTML = `
 `
 
 setupPinnedHeroTop({ adjustSidebarOffset: true })
+wireCodeCopyButtons()

@@ -1,4 +1,4 @@
-export type LabPageKey = 'hub' | 'modal' | 'offcanvas' | 'toast' | 'workflow'
+export type LabPageKey = 'hub' | 'modal' | 'offcanvas' | 'toast' | 'workflow' | 'api'
 
 const LINKS: Array<{ key: LabPageKey; href: string; label: string }> = [
   { key: 'hub', href: './examples.html', label: 'Examples Hub' },
@@ -6,6 +6,7 @@ const LINKS: Array<{ key: LabPageKey; href: string; label: string }> = [
   { key: 'offcanvas', href: './offcanvas.html', label: 'Offcanvas Lab' },
   { key: 'toast', href: './toast.html', label: 'Toast Lab' },
   { key: 'workflow', href: './workflow.html', label: '开发/发布流程' },
+  { key: 'api', href: './api.html', label: 'API' },
 ]
 
 export function renderLabHeader(page: LabPageKey, title: string, intro: string): string {
@@ -29,7 +30,6 @@ export function renderLabHeader(page: LabPageKey, title: string, intro: string):
   <p>${intro}</p>
   <nav class="nav">
     ${navLinks}
-    <a href="./api.html">API</a>
     <a href="./index.html">文档首页</a>
     <a href="./demo.html">原版 Demo</a>
   </nav>

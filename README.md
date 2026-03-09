@@ -526,6 +526,7 @@ formBtn?.addEventListener('click', async () => {
 - Pages 构建后访问：`https://sohophp.github.io/sodialog/api.html`
 
 该页面包含全部公开方法、参数、返回值和类型说明，可作为查询手册使用。
+并新增“快速代码片段”折叠区（默认收起、支持一键复制），覆盖 Adapter、Promise 串行流程、Toast 队列策略。
 
 ### `openModal(options)`
 
