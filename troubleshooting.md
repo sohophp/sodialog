@@ -7,6 +7,7 @@
 
 ## Context menu and dialog overlap issues
 - In menu item action, close menu first, then open dialog.
+- Prefer `openDialogFromContextMenu(handle, options)` to enforce this sequence.
 - Keep default `closeOnOutsideClick` and `closeOnEsc` enabled.
 
 ## Toasts stack unexpectedly

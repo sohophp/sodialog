@@ -4,6 +4,7 @@ import {
   bindDialogContextMenu,
   configureAdapter,
   formModal,
+  openDialogFromContextMenu,
   openDialog,
   openModal,
   pushMessage,
@@ -542,6 +543,47 @@ describe('Adapter behavior', () => {
 
     expect(handle.element.className).toContain('sod-toast-warning')
     expect(document.querySelector('.sod-toast-layer-bottom-end')).toBeTruthy()
+  })
+
+  it('closes context menu before opening dialog via helper', async () => {
+    const trigger = document.createElement('div')
+    document.body.append(trigger)
+
+    let menuHandle: ReturnType<typeof bindDialogContextMenu> | null = null
+    menuHandle = bindDialogContextMenu({
+      target: trigger,
+      items: [
+        {
+          id: 'open-dialog',
+          label: 'Open Dialog',
+          onClick: () => {
+            if (!menuHandle) {
+              return
+            }
+            openDialogFromContextMenu(menuHandle, {
+              title: 'From Context Menu',
+              content: 'opened',
+            })
+          },
+        },
+      ],
+    })
+
+    trigger.dispatchEvent(
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 20,
+        clientY: 20,
+      }),
+    )
+
+    expect(menuHandle.isOpen()).toBe(true)
+    document.querySelector<HTMLButtonElement>('.sod-context-menu-item')?.click()
+    await Promise.resolve()
+
+    expect(menuHandle.isOpen()).toBe(false)
+    expect(document.querySelector('dialog.sod-dialog')).toBeTruthy()
   })
 })
 

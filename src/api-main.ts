@@ -107,6 +107,11 @@ app.innerHTML = `
                 <td><code>SoContextMenuHandle</code></td>
               </tr>
               <tr>
+                <td><code>openDialogFromContextMenu</code></td>
+                <td><code>(menuHandle: SoContextMenuHandle, options: SoDialogOptions)</code></td>
+                <td><code>SoDialogHandle</code></td>
+              </tr>
+              <tr>
                 <td><code>pushMessage</code></td>
                 <td><code>(level: SoMessageLevel, content: string | Node, options?: SoPushMessageOptions)</code></td>
                 <td><code>SoToastHandle</code></td>

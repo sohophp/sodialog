@@ -122,6 +122,7 @@ console.log('form result:', formValues)
 import {
   configureAdapter,
   openDialog,
+  openDialogFromContextMenu,
   bindDialogContextMenu,
   pushMessage,
 } from 'sodialog'
@@ -153,11 +154,25 @@ openDialog({
 bindDialogContextMenu({
   target: '.file-row',
   traceId: 'trace-order-001',
-  items: [{ id: 'remove', label: 'Remove' }],
+  items: [
+    {
+      id: 'remove',
+      label: 'Remove',
+      onClick: ({ handle }) => {
+        openDialogFromContextMenu(handle, {
+          title: 'Delete Confirm',
+          content: 'Delete this row?',
+          traceId: 'trace-order-001',
+        })
+      },
+    },
+  ],
 })
 
 pushMessage('success', 'Saved', { traceId: 'trace-order-001' })
 ```
+
+`openDialogFromContextMenu` 会先关闭菜单，再打开 Dialog，可避免层级和焦点冲突。
 
 ## 右键菜单图标（Bootstrap Icons）
 

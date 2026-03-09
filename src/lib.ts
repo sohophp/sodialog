@@ -3256,6 +3256,12 @@ export class SoAdapter {
     }
     return toast(resolvedOptions)
   }
+
+  static openDialogFromContextMenu(menuHandle: SoContextMenuHandle, options: SoDialogOptions): SoDialogHandle {
+    // Close menu first to avoid focus/layer conflicts before opening a dialog.
+    menuHandle.close('item')
+    return this.openDialog(options)
+  }
 }
 
 export function configureAdapter(config: SoAdapterConfig): void {
@@ -3272,4 +3278,8 @@ export function bindDialogContextMenu(options: SoContextMenuOptions): SoContextM
 
 export function pushMessage(level: SoMessageLevel, content: string | Node, options: SoPushMessageOptions = {}): SoToastHandle {
   return SoAdapter.pushMessage(level, content, options)
+}
+
+export function openDialogFromContextMenu(menuHandle: SoContextMenuHandle, options: SoDialogOptions): SoDialogHandle {
+  return SoAdapter.openDialogFromContextMenu(menuHandle, options)
 }

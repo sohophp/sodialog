@@ -6,6 +6,7 @@ Business code should depend on a stable adapter API instead of directly calling 
 ## Recommended Public Entry
 - `configureAdapter(config)`
 - `openDialog(options)`
+- `openDialogFromContextMenu(menuHandle, options)`
 - `bindDialogContextMenu(options)`
 - `pushMessage(level, content, options)`
 
@@ -41,3 +42,7 @@ configureAdapter({
 ## Trace Convention
 Use `traceId` to correlate user actions across dialog/context-menu/toast callbacks.
 Recommended fields: `action`, `phase`, `reason`, `id`, `traceId`.
+
+## Context Menu to Dialog Timing
+When a menu action should open a dialog, use `openDialogFromContextMenu`.
+This enforces close-first-open-next order and reduces layer/focus conflicts.
