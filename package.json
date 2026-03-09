@@ -40,6 +40,7 @@
     "build:demo": "vite build --mode demo",
     "test": "vitest",
     "test:run": "vitest run",
+    "hooks:enable": "git config core.hooksPath .githooks",
     "release:check": "node scripts/check-release-version.mjs",
     "docs:changelog": "node scripts/generate-changelog.mjs",
     "preview": "vite preview",

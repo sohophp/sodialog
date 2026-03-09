@@ -1,0 +1,37 @@
+import"./modulepreload-polyfill-B5Qt9EMX.js";/* empty css                  */const a=document.querySelector("#app");if(!a)throw new Error("Cannot find #app root element");a.innerHTML=`
+<header class="hero">
+  <h1>Examples Hub</h1>
+  <p>每个组件独立一页，页面内再细分示例场景。</p>
+  <nav class="nav">
+    <a href="./index.html">文档首页</a>
+    <a href="./api.html">API</a>
+    <a href="./workflow.html">流程页</a>
+  </nav>
+</header>
+
+<main class="grid">
+  <section class="card">
+    <h2>Modal Lab</h2>
+    <p>基础打开、layout-stable、trace、Promise 串行流程。</p>
+    <div class="row"><a class="btn primary" href="./modal.html">进入 Modal Lab</a></div>
+  </section>
+
+  <section class="card">
+    <h2>Offcanvas Lab</h2>
+    <p>位置/动画组合与生命周期动作示例。</p>
+    <div class="row"><a class="btn primary" href="./offcanvas.html">进入 Offcanvas Lab</a></div>
+  </section>
+
+  <section class="card">
+    <h2>Toast Lab</h2>
+    <p>基础提示、队列、重复策略与清空控制。</p>
+    <div class="row"><a class="btn primary" href="./toast.html">进入 Toast Lab</a></div>
+  </section>
+
+  <section class="card">
+    <h2>Legacy Demo</h2>
+    <p>保留原版 Demo 供回归与对比。</p>
+    <div class="row"><a class="btn" href="./demo.html">打开原版 Demo</a></div>
+  </section>
+</main>
+`;

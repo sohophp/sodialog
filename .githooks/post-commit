@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# Skip in CI or when explicitly disabled.
+if [ "$CI" = "true" ] || [ "$SODIALOG_SKIP_POST_COMMIT" = "1" ]; then
+  exit 0
+fi
+
+echo "[sodialog] post-commit: syncing API/demo artifacts..."
+npm run build:demo >/dev/null 2>&1
+
+if [ $? -ne 0 ]; then
+  echo "[sodialog] warning: build:demo failed in post-commit hook"
+  exit 0
+fi
+
+echo "[sodialog] API/demo artifacts updated. Stage changes in next commit if needed."

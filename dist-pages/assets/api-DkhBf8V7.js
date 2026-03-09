@@ -7,7 +7,11 @@ import"./modulepreload-polyfill-B5Qt9EMX.js";import{s as d}from"./pinned-hero-to
       </div>
       <nav class="quick-nav">
         <a href="./index.html">文档首页</a>
-        <a href="./examples.html">功能示例</a>
+        <a href="./examples.html">Examples Hub</a>
+        <a href="./modal.html">Modal Lab</a>
+        <a href="./offcanvas.html">Offcanvas Lab</a>
+        <a href="./toast.html">Toast Lab</a>
+        <a href="./workflow.html">开发/发布流程</a>
         <a href="./demo.html">原版 Demo</a>
         <a href="https://www.npmjs.com/package/sodialog" target="_blank" rel="noreferrer">NPM</a>
       </nav>

@@ -800,11 +800,19 @@ SoToast.configure({
 ## 开发
 
 ```bash
+npm run hooks:enable
 npm run dev
+npm run test:run
 npm run lint
 npm run build
+npm run build:demo
 npm run docs:changelog
 ```
+
+说明：
+
+- 先执行 `npm run hooks:enable`，启用仓库级 git hooks。
+- 启用后，每次 `git commit` 会自动执行 `npm run build:demo`，用于同步 API/演示页面产物。
 
 ## GitHub Pages 首页
 
@@ -817,7 +825,17 @@ npm run docs:changelog
 
 默认线上地址：`https://sohophp.github.io/sodialog/`
 
-独立示例页（按功能拆分演示）：`https://sohophp.github.io/sodialog/examples.html`
+独立示例导航页：`https://sohophp.github.io/sodialog/examples.html`
+
+每个工具独立一页（并在页面内细分示例）：
+
+- `https://sohophp.github.io/sodialog/modal.html`
+- `https://sohophp.github.io/sodialog/offcanvas.html`
+- `https://sohophp.github.io/sodialog/toast.html`
+
+开发/发布流程统一详情页：
+
+- `https://sohophp.github.io/sodialog/workflow.html`
 
 ## 文档体系
 
