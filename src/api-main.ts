@@ -34,6 +34,10 @@ app.innerHTML = `
       </div>
 
       <div class="nav-group">
+        <a class="nav-l1" href="#adapter-api">Adapter First</a>
+      </div>
+
+      <div class="nav-group">
         <a class="nav-l1" href="#dialog-core">Dialog 核心</a>
         <div class="nav-l2-list">
           <a class="nav-l2" href="#open-modal">openModal</a>
@@ -87,6 +91,26 @@ app.innerHTML = `
               </tr>
             </thead>
             <tbody>
+              <tr>
+                <td><code>configureAdapter</code></td>
+                <td><code>(config: SoAdapterConfig)</code></td>
+                <td><code>void</code></td>
+              </tr>
+              <tr>
+                <td><code>openDialog</code></td>
+                <td><code>(options: SoDialogOptions)</code></td>
+                <td><code>SoDialogHandle</code></td>
+              </tr>
+              <tr>
+                <td><code>bindDialogContextMenu</code></td>
+                <td><code>(options: SoContextMenuOptions)</code></td>
+                <td><code>SoContextMenuHandle</code></td>
+              </tr>
+              <tr>
+                <td><code>pushMessage</code></td>
+                <td><code>(level: SoMessageLevel, content: string | Node, options?: SoPushMessageOptions)</code></td>
+                <td><code>SoToastHandle</code></td>
+              </tr>
               <tr>
                 <td><code>openModal</code></td>
                 <td><code>(options: SoDialogModalOptions)</code></td>
@@ -197,6 +221,11 @@ app.innerHTML = `
         </div>
       </section>
 
+      <section class="card" id="adapter-api">
+        <h2 class="section-title">Adapter First</h2>
+        <p class="desc">推荐业务层优先使用适配层：<code>configureAdapter</code>、<code>openDialog</code>、<code>bindDialogContextMenu</code>、<code>pushMessage</code>，用于统一默认策略与行为。</p>
+      </section>
+
       <section class="card" id="dialog-core">
         <h2 class="section-title">Dialog 核心</h2>
         <p class="desc">核心入口包括 <code>openModal</code>、<code>openOffcanvas</code>、<code>bindContextMenu</code> 与统一入口 <code>SoDialog.open</code>。</p>
@@ -225,6 +254,10 @@ app.innerHTML = `
               <tr><td><code>autoFitMinHeight</code></td><td><code>number</code></td><td><code>160</code></td><td>自动尺寸最小高度。</td></tr>
               <tr><td><code>confirmText</code></td><td><code>string</code></td><td><code>'确认'</code></td><td>确认按钮文案。</td></tr>
               <tr><td><code>cancelText</code></td><td><code>string</code></td><td><code>'取消'</code></td><td>取消按钮文案。</td></tr>
+              <tr><td><code>traceId</code></td><td><code>string</code></td><td>-</td><td>链路追踪 ID，会透传到生命周期和动作回调。</td></tr>
+              <tr><td><code>onLayoutStable</code></td><td><code>(context: SoLayoutStableContext) =&gt; void</code></td><td>-</td><td>布局稳定后回调，适合初始化第三方组件。</td></tr>
+              <tr><td><code>layoutStableFrames</code></td><td><code>number</code></td><td><code>2</code></td><td>布局稳定延时帧数（每帧约 16ms）。</td></tr>
+              <tr><td><code>layoutStableOnRefit</code></td><td><code>boolean</code></td><td><code>false</code></td><td>手动 <code>refit()</code> 后是否再次触发稳定回调。</td></tr>
               <tr><td><code>confirmAction</code></td><td><code>'hide' | 'destroy'</code></td><td><code>'hide'</code></td><td>确认动作；显式 <code>id</code> 时内部默认偏向销毁策略。</td></tr>
               <tr><td><code>closeOnBackdrop</code></td><td><code>boolean</code></td><td><code>true</code></td><td>点击遮罩关闭。</td></tr>
               <tr><td><code>closeOnEsc</code></td><td><code>boolean</code></td><td><code>true</code></td><td>按 Esc 关闭。</td></tr>
@@ -266,6 +299,7 @@ app.innerHTML = `
               <tr><td><code>target</code></td><td><code>string | Element | Iterable&lt;Element&gt; | ArrayLike&lt;Element&gt;</code></td><td>-</td><td>右键触发目标；字符串时使用委托绑定。</td></tr>
               <tr><td><code>items</code></td><td><code>SoContextMenuItem[]</code></td><td>-</td><td>菜单项列表。</td></tr>
               <tr><td><code>id</code></td><td><code>string</code></td><td>自动生成</td><td>菜单实例 ID。</td></tr>
+              <tr><td><code>traceId</code></td><td><code>string</code></td><td>-</td><td>链路追踪 ID，会透传到生命周期和动作回调。</td></tr>
               <tr><td><code>offsetX</code></td><td><code>number</code></td><td><code>0</code></td><td>X 轴偏移。</td></tr>
               <tr><td><code>offsetY</code></td><td><code>number</code></td><td><code>0</code></td><td>Y 轴偏移。</td></tr>
               <tr><td><code>minWidth</code></td><td><code>number</code></td><td><code>180</code></td><td>最小宽度（最小限制 120）。</td></tr>
@@ -367,6 +401,7 @@ app.innerHTML = `
             </tbody>
           </table>
         </div>
+        <p class="desc"><code>SoLifecycleContext</code> 额外包含 <code>traceId?: string</code>，可用于 action/phase/reason 链路排查。</p>
       </section>
 
       <section class="card" id="promise-api">
@@ -446,6 +481,7 @@ app.innerHTML = `
             <tbody>
               <tr><td><code>content</code></td><td><code>string | Node</code></td><td>-</td><td>内容，必填。</td></tr>
               <tr><td><code>id</code></td><td><code>string</code></td><td>自动生成</td><td>用于去重与复用。</td></tr>
+              <tr><td><code>traceId</code></td><td><code>string</code></td><td>-</td><td>链路追踪 ID，会透传到生命周期回调。</td></tr>
               <tr><td><code>title</code></td><td><code>string</code></td><td>-</td><td>标题。</td></tr>
               <tr><td><code>placement</code></td><td><code>SoToastPlacement</code></td><td><code>'top-end'</code></td><td>展示位置。</td></tr>
               <tr><td><code>variant</code></td><td><code>SoToastVariant</code></td><td><code>'default'</code></td><td>样式变体。</td></tr>
@@ -530,6 +566,8 @@ app.innerHTML = `
               <tr><td><code>SoFooterAlign</code></td><td><code>'start' | 'center' | 'end' | 'between'</code></td></tr>
               <tr><td><code>SoFooterButtonAction</code></td><td><code>'none' | 'hide' | 'destroy'</code></td></tr>
               <tr><td><code>SoDialogFormValue</code></td><td><code>string | number | boolean | null</code></td></tr>
+              <tr><td><code>SoLayoutStableContext</code></td><td><code>{ component: 'modal' | 'offcanvas'; element: HTMLElement; id?: string; traceId?: string }</code></td></tr>
+              <tr><td><code>SoMessageLevel</code></td><td><code>'default' | 'info' | 'success' | 'warning' | 'danger'</code></td></tr>
               <tr><td><code>SoContextMenuCloseReason</code></td><td><code>'outside' | 'esc' | 'item' | 'programmatic' | 'destroy' | 'reopen' | 'blur' | 'scroll' | 'resize'</code></td></tr>
             </tbody>
           </table>

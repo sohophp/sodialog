@@ -2,11 +2,15 @@ import './examples-style.css'
 import { setupPinnedHeroTop } from './pinned-hero-top'
 import {
   SoToast,
+  bindDialogContextMenu,
   bindContextMenu,
+  configureAdapter,
   confirmModal,
   formModal,
+  openDialog,
   openModal,
   openOffcanvas,
+  pushMessage,
   promptModal,
   type SoContextMenuItem,
   toast,
@@ -87,6 +91,14 @@ app.innerHTML = `
           <a class="nav-l2" href="#modal-5">5. confirmModal</a>
           <a class="nav-l2" href="#modal-6">6. promptModal</a>
           <a class="nav-l2" href="#modal-7">7. formModal</a>
+        </div>
+      </div>
+
+      <div class="nav-group">
+        <a class="nav-l1" href="#adapter-example">Adapter First</a>
+        <div class="nav-l2-list">
+          <a class="nav-l2" href="#adapter-1">1. 统一入口 + trace</a>
+          <a class="nav-l2" href="#adapter-2">2. legacy-skin + 右键菜单</a>
         </div>
       </div>
 
@@ -358,8 +370,73 @@ if (formResult) {
       </div>
     </section>
 
+    <section class="card" id="adapter-example">
+      <h2>2) Adapter First 示例</h2>
+      <p class="section-lead">演示推荐接入路径：统一配置、统一入口、traceId 透传与兼容皮肤切换。</p>
+      <div class="example-grid">
+        <article class="example-card" id="adapter-1">
+          <h3>示例 1：<code>configureAdapter + openDialog + pushMessage</code></h3>
+          <div class="row">
+            <button class="btn primary" id="run-adapter-open">运行示例</button>
+          </div>
+          <div id="adapter-result" class="result-box">结果输出：等待执行...</div>
+          <div class="code">
+            <button class="copy-btn" data-copy-target="adapter-open-code" type="button">复制</button>
+            <pre id="adapter-open-code"><code>configureAdapter({
+  modalDefaults: {
+    closeOnEsc: true,
+    closeOnBackdrop: true,
+    footerAlign: 'center',
+  },
+  toastDefaults: {
+    placement: 'top-end',
+    maxVisible: 4,
+    newestOnTop: true,
+    duplicateStrategy: 'stack',
+    duration: 3800,
+  },
+})
+
+openDialog({
+  title: 'Adapter Dialog',
+  content: '&lt;p&gt;通过统一入口打开 Dialog。&lt;/p&gt;',
+  traceId: 'trace-example-001',
+  onLayoutStable: ({ traceId }) =&gt; {
+    pushMessage('success', '布局稳定，可初始化第三方组件', { traceId, duration: 1400 })
+  },
+})</code></pre>
+          </div>
+        </article>
+
+        <article class="example-card" id="adapter-2">
+          <h3>示例 2：兼容皮肤 + 适配层右键菜单</h3>
+          <div class="row">
+            <button class="btn primary" id="toggle-legacy-skin">切换 legacy-skin</button>
+            <button class="btn secondary" id="enable-adapter-context">启用适配层右键菜单</button>
+          </div>
+          <div class="context-demo-board" id="adapter-context-board">
+            <button class="context-demo-row" data-file-name="adapter-guidelines.md" type="button">adapter-guidelines.md</button>
+            <button class="context-demo-row" data-file-name="migration-guide.md" type="button">migration-guide.md</button>
+          </div>
+          <div class="code">
+            <button class="copy-btn" data-copy-target="adapter-context-code" type="button">复制</button>
+            <pre id="adapter-context-code"><code>document.body.classList.toggle('legacy-skin')
+
+bindDialogContextMenu({
+  target: '#adapter-context-board .context-demo-row',
+  traceId: 'trace-example-ctx-001',
+  items: [
+    { id: 'copy', label: '复制', icon: 'bi bi-copy' },
+    { id: 'inspect', label: '查看', icon: 'bi bi-eye' },
+  ],
+})</code></pre>
+          </div>
+        </article>
+      </div>
+    </section>
+
     <section class="card" id="offcanvas-example">
-      <h2>2) Offcanvas 示例</h2>
+      <h2>3) Offcanvas 示例</h2>
       <p class="section-lead">按“最基础 -> 位置动画 -> 边缘类型 -> 高级参数”逐步展示 Offcanvas 的用法。</p>
       <div class="example-grid">
         <article class="example-card" id="offcanvas-1">
@@ -457,7 +534,7 @@ openOffcanvas({
     </section>
 
     <section class="card" id="toast-example">
-      <h2>3) Toast 示例</h2>
+      <h2>4) Toast 示例</h2>
       <p class="section-lead">按“最基础 -> 样式位置 -> 手动控制 -> 队列 -> 重复策略”逐步展示 Toast 用法。</p>
       <div class="example-grid">
         <article class="example-card" id="toast-1">
@@ -585,7 +662,7 @@ SoToast.closeAll()
     </section>
 
     <section class="card" id="context-menu-example">
-      <h2>4) Context Menu 示例</h2>
+      <h2>5) Context Menu 示例</h2>
       <p class="section-lead">演示带图标的右键菜单、动态更新菜单项，以及手动在指定坐标打开菜单。</p>
       <div class="example-grid">
         <article class="example-card" id="context-menu-1">
@@ -655,6 +732,25 @@ const promptBtn = document.querySelector<HTMLButtonElement>('#open-prompt')
 const formBtn = document.querySelector<HTMLButtonElement>('#open-form')
 const modalResult = document.querySelector<HTMLDivElement>('#modal-result')
 const formResult = document.querySelector<HTMLDivElement>('#form-result')
+const adapterOpenBtn = document.querySelector<HTMLButtonElement>('#run-adapter-open')
+const adapterLegacyToggleBtn = document.querySelector<HTMLButtonElement>('#toggle-legacy-skin')
+const adapterEnableContextBtn = document.querySelector<HTMLButtonElement>('#enable-adapter-context')
+const adapterResult = document.querySelector<HTMLDivElement>('#adapter-result')
+
+configureAdapter({
+  modalDefaults: {
+    closeOnEsc: true,
+    closeOnBackdrop: true,
+    footerAlign: 'center',
+  },
+  toastDefaults: {
+    placement: 'top-end',
+    maxVisible: 4,
+    newestOnTop: true,
+    duplicateStrategy: 'stack',
+    duration: 3800,
+  },
+})
 
 modalMinimalBtn?.addEventListener('click', () => {
   openModal({
@@ -711,6 +807,68 @@ modalAdvancedBtn?.addEventListener('click', () => {
       toast({ title: 'after-close', content: '高级 Modal 已关闭', variant: 'default', duration: 1200 })
     },
   })
+})
+
+let adapterContextReady = false
+
+adapterOpenBtn?.addEventListener('click', () => {
+  openDialog({
+    title: 'Adapter Dialog',
+    content: '<p>通过统一入口打开 Dialog，并带 traceId。</p>',
+    traceId: 'trace-example-001',
+    onLayoutStable: ({ traceId }) => {
+      pushMessage('success', '布局稳定，可初始化第三方组件', {
+        traceId,
+        duration: 1400,
+      })
+
+      if (adapterResult) {
+        adapterResult.textContent = `结果输出：onLayoutStable 已触发（traceId=${traceId ?? '-'})`
+      }
+    },
+    onAction: ({ action, traceId }) => {
+      if (adapterResult) {
+        adapterResult.textContent = `结果输出：action=${action}（traceId=${traceId ?? '-'})`
+      }
+    },
+  })
+})
+
+adapterLegacyToggleBtn?.addEventListener('click', () => {
+  document.body.classList.toggle('legacy-skin')
+  const enabled = document.body.classList.contains('legacy-skin')
+  if (adapterResult) {
+    adapterResult.textContent = `结果输出：legacy-skin ${enabled ? '已启用' : '已关闭'}`
+  }
+  pushMessage('info', enabled ? '已启用 legacy-skin 兼容主题' : '已关闭 legacy-skin 兼容主题', {
+    duration: 1200,
+    traceId: 'trace-example-theme-001',
+  })
+})
+
+adapterEnableContextBtn?.addEventListener('click', () => {
+  if (!adapterContextReady) {
+    ensureBootstrapIconsLoaded()
+    bindDialogContextMenu({
+      target: '#adapter-context-board .context-demo-row',
+      traceId: 'trace-example-ctx-001',
+      items: [
+        { id: 'copy', label: '复制', icon: 'bi bi-copy' },
+        { id: 'inspect', label: '查看', icon: 'bi bi-eye' },
+      ],
+      onAction: ({ itemId, triggerElement, traceId }) => {
+        const fileName = triggerElement.dataset.fileName ?? '(unknown)'
+        if (adapterResult) {
+          adapterResult.textContent = `结果输出：adapter-menu ${itemId} -> ${fileName}（traceId=${traceId ?? '-'})`
+        }
+      },
+    })
+    adapterContextReady = true
+  }
+
+  if (adapterResult) {
+    adapterResult.textContent = '结果输出：适配层右键菜单已启用，请在卡片中文件行右键。'
+  }
 })
 
 confirmBtn?.addEventListener('click', async () => {
