@@ -6,70 +6,63 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 
 ## [Unreleased]
 
-## [0.2.2] - 2026-03-10
+## [0.2.2] - 2026-03-09
 
-### Commits
-- chore(release): prepare v0.2.2
-- docs(changelog): note typeahead enable switch
-- feat(context-menu): add configurable typeahead enable switch
-- 修改主页网址为github pages
-- docs(changelog): note global typeaheadResetMs support
-- feat(context-menu): support global typeaheadResetMs default
-- docs(changelog): note typeahead reset option
-- feat(context-menu): add configurable typeahead reset window
-- docs(changelog): note adapter context-menu diagnostics
-- feat(adapter): add context-menu focus and typeahead diagnostics
-- docs(changelog): note onTypeahead callback rollout
-- feat(context-menu): add onTypeahead callback and demo feedback
-- docs(changelog): note onFocusItem callback rollout
-- feat(context-menu): add onFocusItem callback for focus telemetry
-- docs(changelog): note context-menu close-reason feedback
-- feat(examples): add context-menu close-reason feedback
-- docs(changelog): note mixed-label typeahead documentation
-- docs(examples): clarify mixed-label typeahead behavior
-- docs(changelog): note mixed-label typeahead fix
-- fix(context-menu): make typeahead work with mixed labels
-- docs(changelog): record context-menu keyboard feedback demo
-- feat(examples): add context-menu keyboard feedback panel
-- docs(changelog): note context-menu example consistency fix
-- fix(examples): align context-menu policy demo with shown code
-- docs(changelog): record context-menu keyboard visibility fix
-- fix(context-menu): improve keyboard navigation visibility
-- docs(changelog): add context-menu typeahead notes
-- feat(context-menu): add keyboard typeahead navigation
-- docs(changelog): note context-menu lab availability
-- feat(examples): add dedicated context-menu lab page
-- docs(changelog): note context-menu keyboard support
-- feat(context-menu): add keyboard navigation and activation
-- docs(changelog): record global-config and a11y/theme updates
-- docs(examples): sync api page and global-config demos
-- feat(config): add global defaults for dialog and context menu
-- feat(theme): expose css tokens and add scenario playbook
-- feat(a11y): add aria links and trigger state for context menu
-- chore(hooks): make post-commit demo sync opt-in
-- feat(a11y): restore focus after dialog and menu close
-- feat(api): add collapsible copyable quick snippets
-- feat(lab): unify page shell and collapsible source panels
-- feat(docs): split examples into per-tool pages and add unified workflow page
-- feat(observability): add adapter diagnostics logger with docs and demo
+### Added
+- adapter-first APIs: `configureAdapter`, `openDialog`, `bindDialogContextMenu`, `pushMessage`
+- dialog `onLayoutStable` hook and timing controls (`layoutStableFrames`, `layoutStableOnRefit`)
+- optional `traceId` passthrough for dialog/toast/context-menu lifecycle and action contexts
+- scoped `.legacy-skin` compat styles for legacy UI alignment
+- migration docs: `adapter-guidelines.md`, `migration-guide.md`, `troubleshooting.md`
+- implementation plan document: `IMPLEMENTATION_PLAN_0.2.md`
+- a11y focus restore: dialog/context-menu close now restores focus to trigger element
+- a11y semantics: dialog now links title/body via `aria-labelledby` and `aria-describedby`; context-menu syncs `aria-controls` and `aria-expanded` on trigger
+- global configure APIs: `configureDialog` and `configureContextMenu`
+- public CSS tokens for dialog/button/toast/context-menu theme customization
+- scenario playbook entries in troubleshooting docs for migration and behavior tuning
+- context-menu keyboard navigation and activation support (`ArrowUp/ArrowDown/Home/End/Tab/Enter/Space`)
+- dedicated `ContextMenu Lab` examples page with basic binding, close strategy, and close-first-open-next dialog flow demo
+- context-menu first-character typeahead navigation for faster keyboard selection
+- context-menu `onFocusItem` callback for observing keyboard/script-driven focus changes via public API
+- context-menu `onTypeahead` callback for observing typeahead query/match results via public API
+- context-menu `typeaheadResetMs` option for controlling typeahead query reset timing
+- `configureContextMenu` now supports global `typeaheadResetMs` default to align app-wide keyboard behavior
+- context-menu `typeaheadEnabled` option for enabling/disabling character typeahead while keeping arrow-key navigation
 
-## [0.2.1] - 2026-03-09
-
-### Commits
-- chore(release): bump version to 0.2.1
-- feat(adapter): add close-first menu-to-dialog helper and sync docs
-- docs(demo): sync adapter-first APIs in docs and examples
-
-## [0.2.0] - 2026-03-09
-
-### Commits
-- feat: adapter-first 0.2 foundation with layout-stable and trace
+### Changed
+- package version bumped to `0.2.0` for major capability upgrade line
+- tests expanded for adapter behavior, layout-stable callback, and trace propagation
+- API reference page synced with global configure APIs and related type definitions
+- examples synced with runnable global-config demo scenario
+- tests expanded with context-menu keyboard interaction coverage
+- examples hub and shared lab navigation now include `ContextMenu Lab`
+- API and examples docs now describe typeahead behavior in context-menu keyboard interactions
+- context-menu keyboard handling now avoids double key processing and keeps `closeOnEsc: false` behavior intact
+- context-menu focused item now has visible focus ring for script-driven focus movement
+- context-menu "关闭策略与键盘交互" demo now matches the displayed source snippet (multi-item policy menu)
+- context-menu demo now includes keyboard feedback panels for current focused item and latest action
+- fixed context-menu typeahead matching for mixed labels like `删除 Delete` and improved forward cycling across matched items
+- API/README/ContextMenu Lab docs now explicitly describe mixed-label matching and same-letter cycling behavior
+- ContextMenu Lab now surfaces close reason feedback (`esc/outside/item/blur/scroll/resize/...`) for easier interaction-path diagnosis
+- ContextMenu Lab focus feedback now uses public `onFocusItem` callback instead of internal custom event wiring
+- ContextMenu Lab now shows typeahead feedback panel (query + matched/missed item) using `onTypeahead`
+- adapter diagnostics now include context-menu keyboard focus/typeahead events with `detail.itemId/query/matched`
+- ContextMenu Lab/API/README now document and demonstrate configurable typeahead reset window behavior
+- API typing for `SoContextMenuGlobalConfig` now includes `typeaheadResetMs` to match runtime global defaults
+- ContextMenu Lab/API/README now include explicit typeahead enable switch examples (`typeaheadEnabled`)
 
 ## [0.1.20] - 2026-03-09
 
 ### Commits
-- docs(changelog): update for v0.1.20
-- docs(changelog): update for v0.1.19
+- feat(docs): add standalone API page and pinned header UX
+- feat(context-menu): add bindContextMenu API with lifecycle hooks and handle controls
+- feat(context-menu): support menu item icons and Bootstrap Icons class rendering
+- feat(context-menu): harden close and destroy behavior (esc/outside/blur/scroll/resize)
+- docs(api): add context menu API reference and icon field documentation
+- docs(examples): add context menu demo sections for examples and legacy demo pages
+- feat(demo): add modal-internal context menu demo with icon actions and cleanup
+- test(context-menu): cover open/close behavior and icon rendering
+- chore(eslint): ignore dist-pages generated assets during lint
 
 ## [0.1.19] - 2026-03-08
 
@@ -198,8 +191,6 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 
 [Unreleased]: https://github.com/sohophp/sodialog/compare/v0.2.2...HEAD
 [0.2.2]: https://github.com/sohophp/sodialog/releases/tag/v0.2.2
-[0.2.1]: https://github.com/sohophp/sodialog/releases/tag/v0.2.1
-[0.2.0]: https://github.com/sohophp/sodialog/releases/tag/v0.2.0
 [0.1.20]: https://github.com/sohophp/sodialog/releases/tag/v0.1.20
 [0.1.19]: https://github.com/sohophp/sodialog/releases/tag/v0.1.19
 [0.1.18]: https://github.com/sohophp/sodialog/releases/tag/v0.1.18

@@ -71,11 +71,35 @@ export interface SoContextMenuActionContext {
   menuElement: HTMLElement
   triggerElement: HTMLElement
   originalEvent?: MouseEvent
+  traceId?: string
+  handle: SoContextMenuHandle
+}
+
+export interface SoContextMenuFocusContext {
+  itemId: string
+  item: SoContextMenuItem
+  itemElement: HTMLButtonElement
+  menuElement: HTMLElement
+  triggerElement: HTMLElement
+  traceId?: string
+  handle: SoContextMenuHandle
+}
+
+export interface SoContextMenuTypeaheadContext {
+  query: string
+  matched: boolean
+  itemId?: string
+  item?: SoContextMenuItem
+  itemElement?: HTMLButtonElement
+  menuElement: HTMLElement
+  triggerElement: HTMLElement
+  traceId?: string
   handle: SoContextMenuHandle
 }
 
 export interface SoContextMenuOptions extends SoLifecycleHooks {
   id?: string
+  traceId?: string
   target: string | Element | Iterable<Element> | ArrayLike<Element>
   items: SoContextMenuItem[]
   className?: string
@@ -90,9 +114,13 @@ export interface SoContextMenuOptions extends SoLifecycleHooks {
   closeOnScroll?: boolean
   closeOnResize?: boolean
   preventNativeMenu?: boolean
+  typeaheadEnabled?: boolean
+  typeaheadResetMs?: number
   onOpen?: (handle: SoContextMenuHandle) => void
   onClose?: (reason: SoContextMenuCloseReason, handle: SoContextMenuHandle) => void
   onAction?: (context: SoContextMenuActionContext) => void
+  onFocusItem?: (context: SoContextMenuFocusContext) => void
+  onTypeahead?: (context: SoContextMenuTypeaheadContext) => void
 }
 
 export interface SoContextMenuHandle {
@@ -112,9 +140,19 @@ export interface SoLifecycleContext {
   element: HTMLElement
   id?: string
   reason?: SoLifecycleReason
+  traceId?: string
 }
 
 export type SoLifecycleHook = (context: SoLifecycleContext) => void
+
+export interface SoLayoutStableContext {
+  component: 'modal' | 'offcanvas'
+  element: HTMLElement
+  id?: string
+  traceId?: string
+}
+
+export type SoLayoutStableHook = (context: SoLayoutStableContext) => void
 
 export interface SoLifecycleHooks {
   onLifecycle?: SoLifecycleHook
@@ -139,6 +177,7 @@ export interface SoDialogFooterButton {
 export interface SoDialogBaseOptions extends SoLifecycleHooks {
   title: string
   content: string | Node
+  traceId?: string
   confirmText?: string
   cancelText?: string
   confirmAction?: 'hide' | 'destroy'
@@ -149,6 +188,9 @@ export interface SoDialogBaseOptions extends SoLifecycleHooks {
   footerButtons?: SoDialogFooterButton[]
   hideFooter?: boolean
   footerAlign?: SoFooterAlign
+  onLayoutStable?: SoLayoutStableHook
+  layoutStableFrames?: number
+  layoutStableOnRefit?: boolean
   onAction?: SoDialogActionListener
 }
 
@@ -232,6 +274,28 @@ export interface SoDialogFormOptions
   validate?: (values: Record<string, SoDialogFormValue>) => string | boolean | Record<string, string> | void
 }
 
+export interface SoDialogGlobalConfig {
+  modalDefaults?: Partial<SoDialogModalOptions>
+  offcanvasDefaults?: Partial<Omit<SoDialogOffcanvasOptions, 'kind'>>
+}
+
+export interface SoContextMenuGlobalConfig {
+  className?: string
+  attrs?: Record<string, string>
+  offsetX?: number
+  offsetY?: number
+  minWidth?: number
+  maxHeight?: number
+  closeOnOutsideClick?: boolean
+  closeOnEsc?: boolean
+  closeOnWindowBlur?: boolean
+  closeOnScroll?: boolean
+  closeOnResize?: boolean
+  preventNativeMenu?: boolean
+  typeaheadEnabled?: boolean
+  typeaheadResetMs?: number
+}
+
 export type SoDialogOptions = SoDialogModalOptions | SoDialogOffcanvasOptions
 
 export interface SoDialogHandle {
@@ -250,6 +314,7 @@ export interface SoDialogFooterActionContext {
   buttonElement: HTMLButtonElement
   dialog: HTMLDialogElement
   event: MouseEvent
+  traceId?: string
   handle: SoDialogHandle
 }
 
@@ -257,6 +322,7 @@ export type SoDialogActionListener = (context: SoDialogFooterActionContext) => v
 
 export interface SoToastOptions extends SoLifecycleHooks {
   id?: string
+  traceId?: string
   title?: string
   content: string | Node
   placement?: SoToastPlacement
@@ -302,6 +368,7 @@ interface SoToastResolvedOptions
       | 'onAfterOpen'
       | 'onBeforeClose'
       | 'onAfterClose'
+      | 'traceId'
     > {
   content: string | Node
   duration: number | false
@@ -353,6 +420,22 @@ function closeDialog(dialog: HTMLDialogElement, action: 'hide' | 'destroy' = 'hi
 
   if (dialog.open) {
     dialog.close()
+  }
+}
+
+function focusElementIfPossible(element: HTMLElement | null): void {
+  if (!element || !element.isConnected) {
+    return
+  }
+
+  if (element instanceof HTMLButtonElement && element.disabled) {
+    return
+  }
+
+  try {
+    element.focus({ preventScroll: true })
+  } catch {
+    element.focus()
   }
 }
 
@@ -821,11 +904,19 @@ function setupModalAutoFit(
 export class SoDialog {
   private static modalRegistry = new Map<string, HTMLDialogElement>()
   private static handleRegistry = new WeakMap<HTMLDialogElement, () => SoDialogHandle>()
+  private static focusRestoreRegistry = new WeakMap<HTMLDialogElement, HTMLElement | null>()
+  private static globalConfig: SoDialogGlobalConfig = {}
   private static modalIdSeed = 0
+  private static ariaIdSeed = 0
 
   private static createAutoModalId(): string {
     this.modalIdSeed += 1
     return `sod-modal-${this.modalIdSeed}`
+  }
+
+  private static createAutoAriaId(prefix: string): string {
+    this.ariaIdSeed += 1
+    return `${prefix}-${this.ariaIdSeed}`
   }
 
   private static revealExisting(dialog: HTMLDialogElement, useModal: boolean): SoDialogHandle {
@@ -843,6 +934,7 @@ export class SoDialog {
 
     const panel = dialog.querySelector<HTMLElement>('.sod-panel')
     panel?.classList.remove('is-closing')
+    this.focusRestoreRegistry.set(dialog, document.activeElement instanceof HTMLElement ? document.activeElement : null)
     document.body.append(dialog)
 
     if (!dialog.open) {
@@ -875,6 +967,7 @@ export class SoDialog {
 
   static open(options: SoDialogOptions): SoDialogHandle {
     const kind: SoPanelKind = options.kind ?? 'modal'
+    const traceId = options.traceId?.trim() || undefined
     const lifecycleHooks: SoLifecycleHooks = {
       onLifecycle: options.onLifecycle,
       onBeforeOpen: options.onBeforeOpen,
@@ -908,6 +1001,7 @@ export class SoDialog {
             element: existed,
             id: modalId,
             reason: 'reused',
+            traceId,
           })
           const reusedHandle = this.revealExisting(existed, useModal)
 
@@ -926,6 +1020,7 @@ export class SoDialog {
             element: existed,
             id: modalId,
             reason: 'reused',
+            traceId,
           })
           return reusedHandle
         }
@@ -937,6 +1032,9 @@ export class SoDialog {
     const dialog = document.createElement('dialog')
     dialog.className = `sod-dialog sod-${kind}`
     const cleanups: Array<() => void> = []
+    const layoutStableFrames = Math.max(1, options.layoutStableFrames ?? 2)
+    const layoutStableOnRefit = options.layoutStableOnRefit ?? false
+    let layoutStableTimerId: number | null = null
     if (modalId) {
       dialog.dataset.sodId = modalId
       if (isExplicitModalId) {
@@ -952,9 +1050,55 @@ export class SoDialog {
         element: dialog,
         id: modalId,
         reason,
+        traceId,
       })
       closeDialog(dialog, action)
     }
+
+    const emitLayoutStable = () => {
+      if (!dialog.open || !dialog.isConnected) {
+        return
+      }
+
+      options.onLayoutStable?.({
+        component: kind,
+        element: dialog,
+        id: modalId,
+        traceId,
+      })
+    }
+
+    const scheduleLayoutStable = () => {
+      if (!options.onLayoutStable) {
+        return
+      }
+
+      if (layoutStableTimerId !== null) {
+        window.clearTimeout(layoutStableTimerId)
+      }
+
+      layoutStableTimerId = window.setTimeout(() => {
+        layoutStableTimerId = null
+        emitLayoutStable()
+      }, layoutStableFrames * 16)
+    }
+
+    const onRefitLayoutStable = () => {
+      if (!layoutStableOnRefit) {
+        return
+      }
+
+      scheduleLayoutStable()
+    }
+
+    dialog.addEventListener('sod:refit', onRefitLayoutStable as EventListener)
+    cleanups.push(() => {
+      dialog.removeEventListener('sod:refit', onRefitLayoutStable as EventListener)
+      if (layoutStableTimerId !== null) {
+        window.clearTimeout(layoutStableTimerId)
+        layoutStableTimerId = null
+      }
+    })
 
     const panel = document.createElement('section')
     panel.className = 'sod-panel'
@@ -982,6 +1126,7 @@ export class SoDialog {
     const title = document.createElement('h2')
     title.className = 'sod-title'
     title.textContent = options.title
+    title.id = SoDialog.createAutoAriaId('sod-title')
 
     const closeButton = document.createElement('button')
     closeButton.type = 'button'
@@ -994,7 +1139,12 @@ export class SoDialog {
 
     const body = document.createElement('div')
     body.className = 'sod-body'
+    body.id = SoDialog.createAutoAriaId('sod-body')
     appendContent(body, options.content)
+
+    dialog.setAttribute('aria-labelledby', title.id)
+    dialog.setAttribute('aria-describedby', body.id)
+    dialog.setAttribute('aria-modal', useModal ? 'true' : 'false')
 
     const footer = document.createElement('footer')
     footer.className = 'sod-footer'
@@ -1109,6 +1259,7 @@ export class SoDialog {
               buttonElement,
               dialog,
               event,
+              traceId,
               handle,
             }
 
@@ -1176,6 +1327,7 @@ export class SoDialog {
         element: dialog,
         id: modalId,
         reason: 'esc',
+        traceId,
       })
     })
 
@@ -1187,6 +1339,7 @@ export class SoDialog {
         element: dialog,
         id: modalId,
         reason,
+        traceId,
       })
 
       const keepInstance = dialog.dataset.sodPersistent === 'true'
@@ -1203,6 +1356,10 @@ export class SoDialog {
         delete dialog.dataset.sodDestroy
       }
 
+      const focusRestoreTarget = this.focusRestoreRegistry.get(dialog) ?? null
+      this.focusRestoreRegistry.delete(dialog)
+      focusElementIfPossible(focusRestoreTarget)
+
       delete dialog.dataset.sodCloseReason
     })
 
@@ -1211,7 +1368,10 @@ export class SoDialog {
       phase: 'before-open',
       element: dialog,
       id: modalId,
+      traceId,
     })
+
+    this.focusRestoreRegistry.set(dialog, document.activeElement instanceof HTMLElement ? document.activeElement : null)
 
     document.body.append(dialog)
     if (useModal) {
@@ -1227,7 +1387,9 @@ export class SoDialog {
       phase: 'after-open',
       element: dialog,
       id: modalId,
+      traceId,
     })
+    scheduleLayoutStable()
 
     if (modalId) {
       this.modalRegistry.set(modalId, dialog)
@@ -1244,11 +1406,34 @@ export class SoDialog {
   }
 
   static openModal(options: SoDialogModalOptions): SoDialogHandle {
-    return this.open({ ...options, kind: 'modal' })
+    return this.open({
+      ...(this.globalConfig.modalDefaults ?? {}),
+      ...options,
+      kind: 'modal',
+    })
   }
 
   static openOffcanvas(options: Omit<SoDialogOffcanvasOptions, 'kind'>): SoDialogHandle {
-    return this.open({ ...options, kind: 'offcanvas' })
+    return this.open({
+      ...(this.globalConfig.offcanvasDefaults ?? {}),
+      ...options,
+      kind: 'offcanvas',
+    })
+  }
+
+  static configure(nextConfig: SoDialogGlobalConfig): void {
+    this.globalConfig = {
+      ...this.globalConfig,
+      ...nextConfig,
+      modalDefaults: {
+        ...this.globalConfig.modalDefaults,
+        ...nextConfig.modalDefaults,
+      },
+      offcanvasDefaults: {
+        ...this.globalConfig.offcanvasDefaults,
+        ...nextConfig.offcanvasDefaults,
+      },
+    }
   }
 
   static confirm(options: SoDialogConfirmOptions = {}): Promise<boolean> {
@@ -1768,6 +1953,7 @@ export class SoToast {
       onAfterOpen: options.onAfterOpen,
       onBeforeClose: options.onBeforeClose,
       onAfterClose: options.onAfterClose,
+      traceId: options.traceId?.trim() || undefined,
     }
   }
 
@@ -1812,6 +1998,7 @@ export class SoToast {
         element: record.element,
         id: record.id,
         reason,
+        traceId: record.options.traceId,
       },
     )
   }
@@ -2421,6 +2608,9 @@ export class SoToast {
       if (options.onAfterClose !== undefined) {
         existed.options.onAfterClose = normalizedOptions.onAfterClose
       }
+      if (options.traceId !== undefined) {
+        existed.options.traceId = normalizedOptions.traceId
+      }
       this.emitToastLifecycle(existed, 'before-open', 'reused')
       this.emitToastLifecycle(existed, 'after-open', 'reused')
       return existed.handle
@@ -2532,11 +2722,23 @@ export class SoToast {
 
 export class SoContextMenu {
   private static activeHandle: SoContextMenuHandle | null = null
+  private static globalConfig: SoContextMenuGlobalConfig = {}
   private static idSeed = 0
+  private static triggerIdSeed = 0
 
   private static createAutoId(): string {
     this.idSeed += 1
     return `socm-${this.idSeed}`
+  }
+
+  private static ensureTriggerId(triggerElement: HTMLElement): string {
+    if (triggerElement.id.trim()) {
+      return triggerElement.id.trim()
+    }
+    this.triggerIdSeed += 1
+    const nextId = `socm-trigger-${this.triggerIdSeed}`
+    triggerElement.id = nextId
+    return nextId
   }
 
   private static normalizeTargetElements(
@@ -2608,13 +2810,22 @@ export class SoContextMenu {
 
     const id = options.id?.trim() || this.createAutoId()
     menuElement.dataset.contextMenuId = id
+    menuElement.id = `sod-context-menu-${id}`
 
-    if (options.className?.trim()) {
-      menuElement.className = `${menuElement.className} ${options.className.trim()}`
+    const resolvedClassName = options.className ?? this.globalConfig.className
+    if (resolvedClassName?.trim()) {
+      menuElement.className = `${menuElement.className} ${resolvedClassName.trim()}`
     }
 
-    if (options.attrs) {
-      Object.entries(options.attrs).forEach(([key, value]) => {
+    const resolvedAttrs = {
+      ...(this.globalConfig.attrs ?? {}),
+      ...(options.attrs ?? {}),
+    }
+    if (Object.keys(resolvedAttrs).length > 0) {
+      Object.entries(resolvedAttrs).forEach(([key, value]) => {
+        if (value === undefined) {
+          return
+        }
         menuElement.setAttribute(key, value)
       })
     }
@@ -2626,21 +2837,25 @@ export class SoContextMenu {
       onBeforeClose: options.onBeforeClose,
       onAfterClose: options.onAfterClose,
     }
+    const traceId = options.traceId?.trim() || undefined
 
-    const offsetX = options.offsetX ?? 0
-    const offsetY = options.offsetY ?? 0
-    const minWidth = Math.max(120, options.minWidth ?? 180)
-    const maxHeight = Math.max(120, options.maxHeight ?? 320)
-    const closeOnOutsideClick = options.closeOnOutsideClick ?? true
-    const closeOnEsc = options.closeOnEsc ?? true
-    const closeOnWindowBlur = options.closeOnWindowBlur ?? true
-    const closeOnScroll = options.closeOnScroll ?? true
-    const closeOnResize = options.closeOnResize ?? true
-    const preventNativeMenu = options.preventNativeMenu ?? true
+    const offsetX = options.offsetX ?? this.globalConfig.offsetX ?? 0
+    const offsetY = options.offsetY ?? this.globalConfig.offsetY ?? 0
+    const minWidth = Math.max(120, options.minWidth ?? this.globalConfig.minWidth ?? 180)
+    const maxHeight = Math.max(120, options.maxHeight ?? this.globalConfig.maxHeight ?? 320)
+    const closeOnOutsideClick = options.closeOnOutsideClick ?? this.globalConfig.closeOnOutsideClick ?? true
+    const closeOnEsc = options.closeOnEsc ?? this.globalConfig.closeOnEsc ?? true
+    const closeOnWindowBlur = options.closeOnWindowBlur ?? this.globalConfig.closeOnWindowBlur ?? true
+    const closeOnScroll = options.closeOnScroll ?? this.globalConfig.closeOnScroll ?? true
+    const closeOnResize = options.closeOnResize ?? this.globalConfig.closeOnResize ?? true
+    const preventNativeMenu = options.preventNativeMenu ?? this.globalConfig.preventNativeMenu ?? true
+    const typeaheadEnabled = options.typeaheadEnabled ?? this.globalConfig.typeaheadEnabled ?? true
+    const typeaheadResetMs = Math.max(120, options.typeaheadResetMs ?? this.globalConfig.typeaheadResetMs ?? 450)
 
     const listeners: Array<() => void> = []
     let menuItems = [...options.items]
     let lastTriggerElement: HTMLElement | null = null
+    let lastFocusedBeforeOpen: HTMLElement | null = null
     let lastEvent: MouseEvent | null = null
     let open = false
     let destroyed = false
@@ -2695,12 +2910,14 @@ export class SoContextMenu {
         element: menuElement,
         id,
         reason: lifecycleReason,
+        traceId,
       })
 
       open = false
       menuElement.hidden = true
       menuElement.setAttribute('aria-hidden', 'true')
       menuElement.style.display = 'none'
+      clearTypeahead()
       if (SoContextMenu.activeHandle === handle) {
         SoContextMenu.activeHandle = null
       }
@@ -2713,7 +2930,16 @@ export class SoContextMenu {
         element: menuElement,
         id,
         reason: lifecycleReason,
+        traceId,
       })
+
+      if (reason !== 'reopen') {
+        focusElementIfPossible(lastTriggerElement ?? lastFocusedBeforeOpen)
+      }
+
+      if (lastTriggerElement) {
+        lastTriggerElement.setAttribute('aria-expanded', 'false')
+      }
     }
 
     const destroyMenu = () => {
@@ -2728,6 +2954,7 @@ export class SoContextMenu {
           element: menuElement,
           id,
           reason: 'destroy',
+          traceId,
         })
         options.onClose?.('destroy', handle)
         emitLifecycle(lifecycleHooks, {
@@ -2736,11 +2963,20 @@ export class SoContextMenu {
           element: menuElement,
           id,
           reason: 'destroy',
+          traceId,
         })
+
+        focusElementIfPossible(lastTriggerElement ?? lastFocusedBeforeOpen)
+      }
+
+      if (lastTriggerElement) {
+        lastTriggerElement.removeAttribute('aria-expanded')
+        lastTriggerElement.removeAttribute('aria-controls')
       }
 
       open = false
       destroyed = true
+      clearTypeahead()
       if (SoContextMenu.activeHandle === handle) {
         SoContextMenu.activeHandle = null
       }
@@ -2776,14 +3012,23 @@ export class SoContextMenu {
       }
       SoContextMenu.activeHandle = handle
 
+      lastFocusedBeforeOpen = document.activeElement instanceof HTMLElement ? document.activeElement : null
       lastTriggerElement = triggerElement ?? lastTriggerElement
       lastEvent = event ?? lastEvent
+
+      if (lastTriggerElement) {
+        const triggerId = SoContextMenu.ensureTriggerId(lastTriggerElement)
+        lastTriggerElement.setAttribute('aria-controls', menuElement.id)
+        lastTriggerElement.setAttribute('aria-expanded', 'true')
+        menuElement.setAttribute('aria-labelledby', triggerId)
+      }
 
       emitLifecycle(lifecycleHooks, {
         component: 'context-menu',
         phase: 'before-open',
         element: menuElement,
         id,
+        traceId,
       })
 
       if (!menuElement.isConnected) {
@@ -2804,7 +3049,7 @@ export class SoContextMenu {
       menuElement.style.left = `${next.left}px`
       menuElement.style.top = `${next.top}px`
       open = true
-      menuElement.focus()
+      focusFirstItem()
 
       options.onOpen?.(handle)
 
@@ -2813,6 +3058,7 @@ export class SoContextMenu {
         phase: 'after-open',
         element: menuElement,
         id,
+        traceId,
       })
     }
 
@@ -2852,11 +3098,12 @@ export class SoContextMenu {
     const renderItems = () => {
       menuElement.replaceChildren()
 
-      for (const item of menuItems) {
+      menuItems.forEach((item, itemIndex) => {
         const itemElement = document.createElement('button')
         itemElement.type = 'button'
         itemElement.className = 'sod-context-menu-item'
         itemElement.setAttribute('role', 'menuitem')
+        itemElement.dataset.itemIndex = String(itemIndex)
 
         const content = document.createElement('span')
         content.className = 'sod-context-menu-item-content'
@@ -2865,9 +3112,7 @@ export class SoContextMenu {
         const iconElement = renderItemIcon(item)
         const iconPosition = item.iconPosition ?? 'start'
 
-        if (item.id?.trim()) {
-          itemElement.dataset.itemId = item.id.trim()
-        }
+        itemElement.dataset.itemId = item.id?.trim() || 'item'
         if (item.disabled) {
           itemElement.disabled = true
         }
@@ -2906,6 +3151,7 @@ export class SoContextMenu {
               menuElement,
               triggerElement: lastTriggerElement,
               originalEvent: lastEvent ?? undefined,
+              traceId,
               handle,
             }
 
@@ -2923,6 +3169,201 @@ export class SoContextMenu {
         })
 
         menuElement.append(itemElement)
+      })
+    }
+
+    const getFocusableItems = (): HTMLButtonElement[] => {
+      return Array.from(menuElement.querySelectorAll<HTMLButtonElement>('.sod-context-menu-item:not(:disabled)'))
+    }
+
+    const focusItemAt = (index: number) => {
+      const items = getFocusableItems()
+      if (items.length === 0) {
+        return
+      }
+
+      const nextIndex = ((index % items.length) + items.length) % items.length
+      const nextItem = items[nextIndex]
+      focusElementIfPossible(nextItem)
+
+      const triggerElement = lastTriggerElement
+      const itemIndex = Number.parseInt(nextItem.dataset.itemIndex ?? '-1', 10)
+      if (triggerElement && !Number.isNaN(itemIndex)) {
+        const item = menuItems[itemIndex]
+        if (item) {
+          options.onFocusItem?.({
+            itemId: item.id?.trim() || 'item',
+            item,
+            itemElement: nextItem,
+            menuElement,
+            triggerElement,
+            traceId,
+            handle,
+          })
+        }
+      }
+
+      menuElement.dispatchEvent(
+        new CustomEvent('sod:context-menu-focus-item', {
+          detail: {
+            itemId: nextItem.dataset.itemId,
+            label: (nextItem.textContent ?? '').trim(),
+          },
+        }),
+      )
+    }
+
+    const focusFirstItem = () => {
+      focusItemAt(0)
+    }
+
+    let typeaheadQuery = ''
+    let typeaheadTimerId: number | null = null
+
+    const clearTypeahead = () => {
+      typeaheadQuery = ''
+      if (typeaheadTimerId !== null) {
+        window.clearTimeout(typeaheadTimerId)
+        typeaheadTimerId = null
+      }
+    }
+
+    const runTypeahead = (rawKey: string) => {
+      const key = rawKey.toLowerCase()
+      const items = getFocusableItems()
+      if (items.length === 0) {
+        return
+      }
+
+      typeaheadQuery += key
+
+      const matchesItem = (item: HTMLButtonElement, query: string): boolean => {
+        const text = (item.textContent ?? '').trim().toLowerCase()
+        if (text.startsWith(query)) {
+          return true
+        }
+
+        const tokenList = text
+          .split(/[\s\-_/.,|:;(){}]+/)
+          .map((token) => token.trim())
+          .filter((token) => token.length > 0)
+        return tokenList.some((token) => token.startsWith(query))
+      }
+
+      const active = document.activeElement
+      const currentIndex = active instanceof HTMLButtonElement ? items.indexOf(active) : -1
+
+      const findNextMatchIndex = (query: string): number => {
+        const start = currentIndex
+        for (let offset = 1; offset <= items.length; offset += 1) {
+          const index = (start + offset + items.length) % items.length
+          if (matchesItem(items[index], query)) {
+            return index
+          }
+        }
+        return -1
+      }
+
+      let matchIndex = findNextMatchIndex(typeaheadQuery)
+      if (matchIndex < 0 && typeaheadQuery.length > 1) {
+        typeaheadQuery = key
+        matchIndex = findNextMatchIndex(typeaheadQuery)
+      }
+
+      if (matchIndex >= 0) {
+        focusItemAt(matchIndex)
+      }
+
+      if (lastTriggerElement) {
+        const matchedItem = matchIndex >= 0 ? items[matchIndex] : undefined
+        const matchedItemIndex = matchedItem
+          ? Number.parseInt(matchedItem.dataset.itemIndex ?? '-1', 10)
+          : Number.NaN
+        const matchedSourceItem = !Number.isNaN(matchedItemIndex) ? menuItems[matchedItemIndex] : undefined
+
+        options.onTypeahead?.({
+          query: typeaheadQuery,
+          matched: matchIndex >= 0,
+          itemId: matchedSourceItem?.id?.trim() || (matchedItem ? 'item' : undefined),
+          item: matchedSourceItem,
+          itemElement: matchedItem,
+          menuElement,
+          triggerElement: lastTriggerElement,
+          traceId,
+          handle,
+        })
+      }
+
+      if (typeaheadTimerId !== null) {
+        window.clearTimeout(typeaheadTimerId)
+      }
+      typeaheadTimerId = window.setTimeout(() => {
+        typeaheadQuery = ''
+        typeaheadTimerId = null
+      }, typeaheadResetMs)
+    }
+
+    const onMenuKeyDown = (event: KeyboardEvent) => {
+      if (!open) {
+        return
+      }
+
+      const items = getFocusableItems()
+      if (items.length === 0) {
+        return
+      }
+
+      const active = document.activeElement
+      const currentIndex = active instanceof HTMLButtonElement ? items.indexOf(active) : -1
+
+      if (event.key === 'ArrowDown') {
+        event.preventDefault()
+        focusItemAt(currentIndex < 0 ? 0 : currentIndex + 1)
+        return
+      }
+
+      if (event.key === 'ArrowUp') {
+        event.preventDefault()
+        focusItemAt(currentIndex < 0 ? items.length - 1 : currentIndex - 1)
+        return
+      }
+
+      if (event.key === 'Home') {
+        event.preventDefault()
+        focusItemAt(0)
+        return
+      }
+
+      if (event.key === 'End') {
+        event.preventDefault()
+        focusItemAt(items.length - 1)
+        return
+      }
+
+      if (event.key === 'Tab') {
+        event.preventDefault()
+        if (event.shiftKey) {
+          focusItemAt(currentIndex < 0 ? items.length - 1 : currentIndex - 1)
+        } else {
+          focusItemAt(currentIndex < 0 ? 0 : currentIndex + 1)
+        }
+        return
+      }
+
+      if (event.key === 'Enter' || event.key === ' ') {
+        if (active instanceof HTMLButtonElement && active.classList.contains('sod-context-menu-item')) {
+          event.preventDefault()
+          active.click()
+        }
+        return
+      }
+
+      if (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
+        if (!typeaheadEnabled) {
+          return
+        }
+        event.preventDefault()
+        runTypeahead(event.key)
       }
     }
 
@@ -2969,13 +3410,27 @@ export class SoContextMenu {
     }
 
     const onDocumentKeyDown = (event: KeyboardEvent) => {
-      if (!open || !closeOnEsc) {
+      if (!open) {
         return
       }
 
       if (event.key === 'Escape') {
-        closeMenu('esc')
+        if (closeOnEsc) {
+          closeMenu('esc')
+        }
+        return
       }
+
+      if (event.defaultPrevented) {
+        return
+      }
+
+      const target = event.target
+      if (target instanceof Node && menuElement.contains(target)) {
+        return
+      }
+
+      onMenuKeyDown(event)
     }
 
     const onWindowBlur = () => {
@@ -3037,6 +3492,7 @@ export class SoContextMenu {
     document.addEventListener('mousedown', onDocumentMouseDown, CAPTURE_LISTENER)
     document.addEventListener('contextmenu', onDocumentContextMenuOutside, CAPTURE_LISTENER)
     document.addEventListener('keydown', onDocumentKeyDown, CAPTURE_LISTENER)
+    menuElement.addEventListener('keydown', onMenuKeyDown)
     window.addEventListener('blur', onWindowBlur)
     window.addEventListener('scroll', onWindowScroll, true)
     window.addEventListener('resize', onWindowResize)
@@ -3044,12 +3500,24 @@ export class SoContextMenu {
     listeners.push(() => document.removeEventListener('mousedown', onDocumentMouseDown, CAPTURE_LISTENER))
     listeners.push(() => document.removeEventListener('contextmenu', onDocumentContextMenuOutside, CAPTURE_LISTENER))
     listeners.push(() => document.removeEventListener('keydown', onDocumentKeyDown, CAPTURE_LISTENER))
+    listeners.push(() => menuElement.removeEventListener('keydown', onMenuKeyDown))
     listeners.push(() => window.removeEventListener('blur', onWindowBlur))
     listeners.push(() => window.removeEventListener('scroll', onWindowScroll, true))
     listeners.push(() => window.removeEventListener('resize', onWindowResize))
 
     const handle = createHandle()
     return handle
+  }
+
+  static configure(nextConfig: SoContextMenuGlobalConfig): void {
+    this.globalConfig = {
+      ...this.globalConfig,
+      ...nextConfig,
+      attrs: {
+        ...this.globalConfig.attrs,
+        ...nextConfig.attrs,
+      },
+    }
   }
 }
 
@@ -3079,4 +3547,261 @@ export function toast(options: SoToastOptions): SoToastHandle {
 
 export function bindContextMenu(options: SoContextMenuOptions): SoContextMenuHandle {
   return SoContextMenu.bind(options)
+}
+
+export function configureDialog(config: SoDialogGlobalConfig): void {
+  SoDialog.configure(config)
+}
+
+export function configureContextMenu(config: SoContextMenuGlobalConfig): void {
+  SoContextMenu.configure(config)
+}
+
+export type SoMessageLevel = 'default' | 'info' | 'success' | 'warning' | 'danger'
+
+export interface SoAdapterLogEvent {
+  action: string
+  phase?: SoLifecyclePhase | 'action' | 'layout-stable' | 'focus' | 'typeahead'
+  component?: SoLifecycleComponent | 'adapter'
+  reason?: string
+  id?: string
+  traceId?: string
+  detail?: Record<string, unknown>
+}
+
+export interface SoAdapterConfig {
+  modalDefaults?: Partial<SoDialogModalOptions>
+  offcanvasDefaults?: Partial<Omit<SoDialogOffcanvasOptions, 'kind'>>
+  contextMenuDefaults?: Partial<Omit<SoContextMenuOptions, 'target' | 'items'>>
+  toastDefaults?: Partial<SoToastOptions>
+  diagnosticsEnabled?: boolean
+  logger?: (event: SoAdapterLogEvent) => void
+}
+
+export interface SoPushMessageOptions extends Omit<SoToastOptions, 'content' | 'variant'> {
+  title?: string
+}
+
+export class SoAdapter {
+  private static config: SoAdapterConfig = {
+    toastDefaults: {
+      placement: 'top-end',
+      maxVisible: 4,
+      newestOnTop: true,
+      duplicateStrategy: 'stack',
+      duration: 3800,
+    },
+    diagnosticsEnabled: false,
+  }
+
+  private static emitDiagnostic(event: SoAdapterLogEvent): void {
+    this.config.logger?.(event)
+
+    if (!this.config.diagnosticsEnabled || typeof window === 'undefined') {
+      return
+    }
+
+    const host = window as Window & {
+      __SOD_ADAPTER_DEV_LOGS__?: SoAdapterLogEvent[]
+      __SOD_ADAPTER_DEBUG__?: boolean
+    }
+    if (!Array.isArray(host.__SOD_ADAPTER_DEV_LOGS__)) {
+      host.__SOD_ADAPTER_DEV_LOGS__ = []
+    }
+    host.__SOD_ADAPTER_DEV_LOGS__.push(event)
+
+    if (host.__SOD_ADAPTER_DEBUG__) {
+      // Opt-in noisy debug output for local diagnosis only.
+      console.debug('[SoAdapter]', event)
+    }
+  }
+
+  static configure(nextConfig: SoAdapterConfig): void {
+    this.config = {
+      ...this.config,
+      ...nextConfig,
+      modalDefaults: {
+        ...this.config.modalDefaults,
+        ...nextConfig.modalDefaults,
+      },
+      offcanvasDefaults: {
+        ...this.config.offcanvasDefaults,
+        ...nextConfig.offcanvasDefaults,
+      },
+      contextMenuDefaults: {
+        ...this.config.contextMenuDefaults,
+        ...nextConfig.contextMenuDefaults,
+      },
+      toastDefaults: {
+        ...this.config.toastDefaults,
+        ...nextConfig.toastDefaults,
+      },
+    }
+
+    if (this.config.toastDefaults) {
+      SoToast.configure(this.config.toastDefaults)
+    }
+  }
+
+  static openDialog(options: SoDialogOptions): SoDialogHandle {
+    const wrappedOptions: SoDialogOptions = {
+      ...options,
+      onLifecycle: (context) => {
+        options.onLifecycle?.(context)
+        this.emitDiagnostic({
+          action: 'openDialog',
+          phase: context.phase,
+          component: context.component,
+          reason: context.reason,
+          id: context.id,
+          traceId: context.traceId,
+        })
+      },
+      onLayoutStable: (context) => {
+        options.onLayoutStable?.(context)
+        this.emitDiagnostic({
+          action: 'openDialog',
+          phase: 'layout-stable',
+          component: context.component,
+          id: context.id,
+          traceId: context.traceId,
+        })
+      },
+      onAction: (context) => {
+        options.onAction?.(context)
+        this.emitDiagnostic({
+          action: 'openDialog',
+          phase: 'action',
+          component: 'adapter',
+          id: context.handle.id,
+          traceId: context.traceId,
+          detail: {
+            footerAction: context.action,
+          },
+        })
+      },
+    }
+
+    if (options.kind === 'offcanvas') {
+      const merged = {
+        ...(this.config.offcanvasDefaults ?? {}),
+        ...wrappedOptions,
+      }
+      const { kind, ...rest } = merged as SoDialogOffcanvasOptions
+      void kind
+      return openOffcanvas(rest)
+    }
+
+    return openModal({
+      ...(this.config.modalDefaults ?? {}),
+      ...wrappedOptions,
+      kind: 'modal',
+    })
+  }
+
+  static bindContextMenu(options: SoContextMenuOptions): SoContextMenuHandle {
+    return bindContextMenu({
+      ...(this.config.contextMenuDefaults ?? {}),
+      ...options,
+      onLifecycle: (context) => {
+        options.onLifecycle?.(context)
+        this.emitDiagnostic({
+          action: 'bindDialogContextMenu',
+          phase: context.phase,
+          component: context.component,
+          reason: context.reason,
+          id: context.id,
+          traceId: context.traceId,
+        })
+      },
+      onAction: (context) => {
+        options.onAction?.(context)
+        this.emitDiagnostic({
+          action: 'bindDialogContextMenu',
+          phase: 'action',
+          component: 'context-menu',
+          id: context.handle.id,
+          traceId: context.traceId,
+          detail: {
+            itemId: context.itemId,
+          },
+        })
+      },
+      onFocusItem: (context) => {
+        options.onFocusItem?.(context)
+        this.emitDiagnostic({
+          action: 'bindDialogContextMenu',
+          phase: 'focus',
+          component: 'context-menu',
+          id: context.handle.id,
+          traceId: context.traceId,
+          detail: {
+            itemId: context.itemId,
+          },
+        })
+      },
+      onTypeahead: (context) => {
+        options.onTypeahead?.(context)
+        this.emitDiagnostic({
+          action: 'bindDialogContextMenu',
+          phase: 'typeahead',
+          component: 'context-menu',
+          id: context.handle.id,
+          traceId: context.traceId,
+          detail: {
+            query: context.query,
+            matched: context.matched,
+            itemId: context.itemId,
+          },
+        })
+      },
+    })
+  }
+
+  static pushMessage(level: SoMessageLevel, content: string | Node, options: SoPushMessageOptions = {}): SoToastHandle {
+    const resolvedOptions: SoToastOptions = {
+      ...(this.config.toastDefaults ?? {}),
+      ...options,
+      content,
+      variant: level,
+      onLifecycle: (context) => {
+        options.onLifecycle?.(context)
+        this.emitDiagnostic({
+          action: 'pushMessage',
+          phase: context.phase,
+          component: context.component,
+          reason: context.reason,
+          id: context.id,
+          traceId: context.traceId,
+        })
+      },
+    }
+    return toast(resolvedOptions)
+  }
+
+  static openDialogFromContextMenu(menuHandle: SoContextMenuHandle, options: SoDialogOptions): SoDialogHandle {
+    // Close menu first to avoid focus/layer conflicts before opening a dialog.
+    menuHandle.close('item')
+    return this.openDialog(options)
+  }
+}
+
+export function configureAdapter(config: SoAdapterConfig): void {
+  SoAdapter.configure(config)
+}
+
+export function openDialog(options: SoDialogOptions): SoDialogHandle {
+  return SoAdapter.openDialog(options)
+}
+
+export function bindDialogContextMenu(options: SoContextMenuOptions): SoContextMenuHandle {
+  return SoAdapter.bindContextMenu(options)
+}
+
+export function pushMessage(level: SoMessageLevel, content: string | Node, options: SoPushMessageOptions = {}): SoToastHandle {
+  return SoAdapter.pushMessage(level, content, options)
+}
+
+export function openDialogFromContextMenu(menuHandle: SoContextMenuHandle, options: SoDialogOptions): SoDialogHandle {
+  return SoAdapter.openDialogFromContextMenu(menuHandle, options)
 }

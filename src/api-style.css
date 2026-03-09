@@ -203,6 +203,69 @@ body {
   color: var(--muted);
 }
 
+.code-panel {
+  margin-top: 0.72rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgb(255 255 255 / 82%);
+  overflow: hidden;
+}
+
+.code-panel summary {
+  cursor: pointer;
+  user-select: none;
+  padding: 0.56rem 0.64rem;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #293735;
+  background: rgb(220 79 36 / 11%);
+}
+
+.code-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.46rem 0.64rem 0;
+}
+
+.code-copy-btn {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgb(255 255 255 / 86%);
+  color: #2c3a37;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.34rem 0.52rem;
+  cursor: pointer;
+}
+
+.code-copy-btn:hover {
+  border-color: rgb(220 79 36 / 45%);
+  color: var(--brand);
+}
+
+.code {
+  padding: 0.48rem 0.64rem 0.66rem;
+}
+
+.code pre {
+  margin: 0;
+  padding: 0.68rem 0.72rem;
+  border-radius: 9px;
+  border: 1px solid rgb(24 32 31 / 12%);
+  background: #10242b;
+  color: #d3e7eb;
+  font-size: 0.78rem;
+  line-height: 1.52;
+  overflow-x: auto;
+}
+
+.note {
+  margin: 0;
+  padding: 0 0.64rem 0.64rem;
+  color: #43514e;
+  font-size: 0.8rem;
+}
+
 .sub-title {
   margin: 0.8rem 0 0.45rem;
   font-size: 0.98rem;

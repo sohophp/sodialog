@@ -1,20 +1,5 @@
-import"./modulepreload-polyfill-B5Qt9EMX.js";import{s as d}from"./pinned-hero-top-PAvN5BGZ.js";const t=document.querySelector("#app");if(!t)throw new Error("Cannot find #app root element");t.innerHTML=`
-  <header class="hero">
-    <div class="hero-top">
-      <div class="brand">
-        <img src="./logo.ico" alt="SoDialog Logo" width="34" height="34" />
-        <strong>SoDialog API</strong>
-      </div>
-      <nav class="quick-nav">
-        <a href="./index.html">文档首页</a>
-        <a href="./examples.html">功能示例</a>
-        <a href="./demo.html">原版 Demo</a>
-        <a href="https://www.npmjs.com/package/sodialog" target="_blank" rel="noreferrer">NPM</a>
-      </nav>
-    </div>
-    <h1>API 全量参考</h1>
-    <p>本页汇总 SoDialog 当前公开方法与主要类型参数，按功能模块拆分并提供默认值、类型和行为说明。</p>
-  </header>
+import"./modulepreload-polyfill-B5Qt9EMX.js";import{s as d}from"./pinned-hero-top-PAvN5BGZ.js";import{r as o,w as e}from"./lab-shared-C3tuUAEJ.js";const t=document.querySelector("#app");if(!t)throw new Error("Cannot find #app root element");t.innerHTML=`
+  ${o("api","API Reference","本页汇总 SoDialog 当前公开方法与主要类型参数，按功能模块拆分并提供默认值、类型和行为说明。")}
 
   <main class="layout">
     <aside class="card side-nav" aria-label="API 导航">
@@ -22,6 +7,14 @@ import"./modulepreload-polyfill-B5Qt9EMX.js";import{s as d}from"./pinned-hero-to
 
       <div class="nav-group">
         <a class="nav-l1" href="#all-methods">全部方法总览</a>
+      </div>
+
+      <div class="nav-group">
+        <a class="nav-l1" href="#adapter-api">Adapter First</a>
+      </div>
+
+      <div class="nav-group">
+        <a class="nav-l1" href="#global-config">全局配置</a>
       </div>
 
       <div class="nav-group">
@@ -78,6 +71,41 @@ import"./modulepreload-polyfill-B5Qt9EMX.js";import{s as d}from"./pinned-hero-to
               </tr>
             </thead>
             <tbody>
+              <tr>
+                <td><code>configureAdapter</code></td>
+                <td><code>(config: SoAdapterConfig)</code></td>
+                <td><code>void</code></td>
+              </tr>
+              <tr>
+                <td><code>configureDialog</code></td>
+                <td><code>(config: SoDialogGlobalConfig)</code></td>
+                <td><code>void</code></td>
+              </tr>
+              <tr>
+                <td><code>configureContextMenu</code></td>
+                <td><code>(config: SoContextMenuGlobalConfig)</code></td>
+                <td><code>void</code></td>
+              </tr>
+              <tr>
+                <td><code>openDialog</code></td>
+                <td><code>(options: SoDialogOptions)</code></td>
+                <td><code>SoDialogHandle</code></td>
+              </tr>
+              <tr>
+                <td><code>bindDialogContextMenu</code></td>
+                <td><code>(options: SoContextMenuOptions)</code></td>
+                <td><code>SoContextMenuHandle</code></td>
+              </tr>
+              <tr>
+                <td><code>openDialogFromContextMenu</code></td>
+                <td><code>(menuHandle: SoContextMenuHandle, options: SoDialogOptions)</code></td>
+                <td><code>SoDialogHandle</code></td>
+              </tr>
+              <tr>
+                <td><code>pushMessage</code></td>
+                <td><code>(level: SoMessageLevel, content: string | Node, options?: SoPushMessageOptions)</code></td>
+                <td><code>SoToastHandle</code></td>
+              </tr>
               <tr>
                 <td><code>openModal</code></td>
                 <td><code>(options: SoDialogModalOptions)</code></td>
@@ -188,6 +216,99 @@ import"./modulepreload-polyfill-B5Qt9EMX.js";import{s as d}from"./pinned-hero-to
         </div>
       </section>
 
+      <section class="card" id="adapter-api">
+        <h2 class="section-title">Adapter First</h2>
+        <p class="desc">推荐业务层优先使用适配层：<code>configureAdapter</code>、<code>openDialog</code>、<code>bindDialogContextMenu</code>、<code>pushMessage</code>，用于统一默认策略与行为。</p>
+        <div class="table-wrap">
+          <table class="api-table">
+            <thead><tr><th>配置项</th><th>类型</th><th>说明</th></tr></thead>
+            <tbody>
+              <tr><td><code>diagnosticsEnabled</code></td><td><code>boolean</code></td><td>启用适配层诊断日志聚合（默认关闭）。</td></tr>
+              <tr><td><code>logger</code></td><td><code>(event: SoAdapterLogEvent) =&gt; void</code></td><td>自定义日志出口，建议对接业务日志系统。</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <details class="code-panel">
+          <summary>查看原始代码：Adapter 配置与调用</summary>
+          <div class="code-toolbar"><button class="code-copy-btn" data-copy-target="api-adapter-code" type="button">复制代码</button></div>
+          <div class="code"><pre id="api-adapter-code">configureAdapter({
+  modalDefaults: { closeOnEsc: true, footerAlign: 'center' },
+  toastDefaults: { placement: 'top-end', maxVisible: 4 },
+  diagnosticsEnabled: true,
+})
+
+openDialog({
+  title: '删除确认',
+  content: '&lt;p&gt;是否继续删除？&lt;/p&gt;',
+  traceId: 'trace-order-001',
+})
+
+pushMessage('success', '操作成功', { traceId: 'trace-order-001' })</pre></div>
+          <p class="note">说明：业务层统一走 adapter API，后续切换默认策略时只需修改一处。</p>
+        </details>
+      </section>
+
+      <section class="card" id="global-config">
+        <h2 class="section-title">全局配置（Global Configure）</h2>
+        <p class="desc">用于直接配置 SoDialog / SoContextMenu 默认行为，适合不走 adapter 的场景。</p>
+        <div class="table-wrap">
+          <table class="api-table">
+            <thead><tr><th>方法</th><th>签名</th><th>说明</th></tr></thead>
+            <tbody>
+              <tr><td><code>configureDialog</code></td><td><code>(config: SoDialogGlobalConfig) =&gt; void</code></td><td>配置 modal/offcanvas 默认参数。</td></tr>
+              <tr><td><code>configureContextMenu</code></td><td><code>(config: SoContextMenuGlobalConfig) =&gt; void</code></td><td>配置菜单关闭策略、偏移、尺寸、attrs 等默认参数。</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <details class="code-panel">
+          <summary>查看原始代码：全局默认值</summary>
+          <div class="code-toolbar"><button class="code-copy-btn" data-copy-target="api-global-config-code" type="button">复制代码</button></div>
+          <div class="code"><pre id="api-global-config-code">configureDialog({
+  modalDefaults: { footerAlign: 'center', closeOnEsc: true },
+  offcanvasDefaults: { placement: 'start' },
+})
+
+configureContextMenu({
+  closeOnEsc: false,
+  minWidth: 220,
+  typeaheadResetMs: 600,
+  attrs: { 'data-menu-scope': 'global-default' },
+})</pre></div>
+          <p class="note">说明：业务层可将这组配置放在 app 启动入口，一次设置全局生效。</p>
+        </details>
+      </section>
+
+      <section class="card" id="quick-snippets">
+        <h2 class="section-title">快速代码片段</h2>
+        <p class="desc">常用调用模式可直接展开复制，便于对照类型说明快速接入。</p>
+
+        <details class="code-panel">
+          <summary>Promise 串行流程</summary>
+          <div class="code-toolbar"><button class="code-copy-btn" data-copy-target="api-promise-code" type="button">复制代码</button></div>
+          <div class="code"><pre id="api-promise-code">const confirmed = await confirmModal({ title: '确认', content: '&lt;p&gt;继续发布吗？&lt;/p&gt;' })
+if (!confirmed) return
+
+const remark = await promptModal({ title: '输入备注', placeholder: '请输入内容' })
+if (remark === null) return
+
+await formModal({
+  title: '发布信息',
+  fields: [{ name: 'owner', label: '负责人', required: true }],
+})</pre></div>
+          <p class="note">说明：推荐用于审批、删除确认、补录信息等串行交互。</p>
+        </details>
+
+        <details class="code-panel">
+          <summary>Toast 队列与重复策略</summary>
+          <div class="code-toolbar"><button class="code-copy-btn" data-copy-target="api-toast-code" type="button">复制代码</button></div>
+          <div class="code"><pre id="api-toast-code">SoToast.configure({ maxVisible: 3 })
+
+toast({ id: 'sync-task', content: '策略 update', duplicateStrategy: 'update' })
+toast({ id: 'sync-task', content: '策略 stack', duplicateStrategy: 'stack' })</pre></div>
+          <p class="note">说明：相同 id 下，update 复用实例，stack 追加新实例。</p>
+        </details>
+      </section>
+
       <section class="card" id="dialog-core">
         <h2 class="section-title">Dialog 核心</h2>
         <p class="desc">核心入口包括 <code>openModal</code>、<code>openOffcanvas</code>、<code>bindContextMenu</code> 与统一入口 <code>SoDialog.open</code>。</p>
@@ -216,6 +337,10 @@ import"./modulepreload-polyfill-B5Qt9EMX.js";import{s as d}from"./pinned-hero-to
               <tr><td><code>autoFitMinHeight</code></td><td><code>number</code></td><td><code>160</code></td><td>自动尺寸最小高度。</td></tr>
               <tr><td><code>confirmText</code></td><td><code>string</code></td><td><code>'确认'</code></td><td>确认按钮文案。</td></tr>
               <tr><td><code>cancelText</code></td><td><code>string</code></td><td><code>'取消'</code></td><td>取消按钮文案。</td></tr>
+              <tr><td><code>traceId</code></td><td><code>string</code></td><td>-</td><td>链路追踪 ID，会透传到生命周期和动作回调。</td></tr>
+              <tr><td><code>onLayoutStable</code></td><td><code>(context: SoLayoutStableContext) =&gt; void</code></td><td>-</td><td>布局稳定后回调，适合初始化第三方组件。</td></tr>
+              <tr><td><code>layoutStableFrames</code></td><td><code>number</code></td><td><code>2</code></td><td>布局稳定延时帧数（每帧约 16ms）。</td></tr>
+              <tr><td><code>layoutStableOnRefit</code></td><td><code>boolean</code></td><td><code>false</code></td><td>手动 <code>refit()</code> 后是否再次触发稳定回调。</td></tr>
               <tr><td><code>confirmAction</code></td><td><code>'hide' | 'destroy'</code></td><td><code>'hide'</code></td><td>确认动作；显式 <code>id</code> 时内部默认偏向销毁策略。</td></tr>
               <tr><td><code>closeOnBackdrop</code></td><td><code>boolean</code></td><td><code>true</code></td><td>点击遮罩关闭。</td></tr>
               <tr><td><code>closeOnEsc</code></td><td><code>boolean</code></td><td><code>true</code></td><td>按 Esc 关闭。</td></tr>
@@ -257,6 +382,7 @@ import"./modulepreload-polyfill-B5Qt9EMX.js";import{s as d}from"./pinned-hero-to
               <tr><td><code>target</code></td><td><code>string | Element | Iterable&lt;Element&gt; | ArrayLike&lt;Element&gt;</code></td><td>-</td><td>右键触发目标；字符串时使用委托绑定。</td></tr>
               <tr><td><code>items</code></td><td><code>SoContextMenuItem[]</code></td><td>-</td><td>菜单项列表。</td></tr>
               <tr><td><code>id</code></td><td><code>string</code></td><td>自动生成</td><td>菜单实例 ID。</td></tr>
+              <tr><td><code>traceId</code></td><td><code>string</code></td><td>-</td><td>链路追踪 ID，会透传到生命周期和动作回调。</td></tr>
               <tr><td><code>offsetX</code></td><td><code>number</code></td><td><code>0</code></td><td>X 轴偏移。</td></tr>
               <tr><td><code>offsetY</code></td><td><code>number</code></td><td><code>0</code></td><td>Y 轴偏移。</td></tr>
               <tr><td><code>minWidth</code></td><td><code>number</code></td><td><code>180</code></td><td>最小宽度（最小限制 120）。</td></tr>
@@ -267,9 +393,13 @@ import"./modulepreload-polyfill-B5Qt9EMX.js";import{s as d}from"./pinned-hero-to
               <tr><td><code>closeOnScroll</code></td><td><code>boolean</code></td><td><code>true</code></td><td>窗口或容器滚动时关闭。</td></tr>
               <tr><td><code>closeOnResize</code></td><td><code>boolean</code></td><td><code>true</code></td><td>窗口尺寸变化时关闭。</td></tr>
               <tr><td><code>preventNativeMenu</code></td><td><code>boolean</code></td><td><code>true</code></td><td>阻止浏览器原生右键菜单。</td></tr>
+              <tr><td><code>typeaheadEnabled</code></td><td><code>boolean</code></td><td><code>true</code></td><td>是否启用字母定位（typeahead）。</td></tr>
+              <tr><td><code>typeaheadResetMs</code></td><td><code>number</code></td><td><code>450</code></td><td>字母定位 query 重置时间（毫秒，最小 120）。</td></tr>
               <tr><td><code>onOpen</code></td><td><code>(handle: SoContextMenuHandle) =&gt; void</code></td><td>-</td><td>打开后回调。</td></tr>
               <tr><td><code>onClose</code></td><td><code>(reason, handle) =&gt; void</code></td><td>-</td><td>关闭后回调。</td></tr>
               <tr><td><code>onAction</code></td><td><code>(context) =&gt; void</code></td><td>-</td><td>菜单项点击回调。</td></tr>
+              <tr><td><code>onFocusItem</code></td><td><code>(context) =&gt; void</code></td><td>-</td><td>键盘定位到菜单项时回调，适合做可视化回显。</td></tr>
+              <tr><td><code>onTypeahead</code></td><td><code>(context) =&gt; void</code></td><td>-</td><td>字母定位时回调，支持观察命中/未命中与当前 query。</td></tr>
             </tbody>
           </table>
         </div>
@@ -289,7 +419,7 @@ import"./modulepreload-polyfill-B5Qt9EMX.js";import{s as d}from"./pinned-hero-to
             </tbody>
           </table>
         </div>
-        <p class="desc">Bootstrap Icons 示例：先引入 <code>bootstrap-icons.min.css</code>，然后使用 <code>icon: 'bi bi-pencil-square'</code>。</p>
+        <p class="desc">Bootstrap Icons 示例：先引入 <code>bootstrap-icons.min.css</code>，然后使用 <code>icon: 'bi bi-pencil-square'</code>。键盘支持 ArrowUp/ArrowDown/Home/End/Tab 导航，Enter/Space 激活；当 <code>typeaheadEnabled=true</code> 时可输入首字母快速定位菜单项，混合标签（如 <code>删除 Delete</code>）也可匹配并在同字母命中项间循环。可通过 <code>typeaheadResetMs</code> 调整 query 重置窗口；可在 <code>onFocusItem(context)</code> 中观察定位项，在 <code>onTypeahead(context)</code> 中观察当前 query 与命中结果，在 <code>onClose(reason)</code> 中观察关闭原因（<code>esc/outside/item/blur/scroll/resize/programmatic</code>）。</p>
       </section>
 
       <section class="card" id="dialog-open">
@@ -358,6 +488,7 @@ import"./modulepreload-polyfill-B5Qt9EMX.js";import{s as d}from"./pinned-hero-to
             </tbody>
           </table>
         </div>
+        <p class="desc"><code>SoLifecycleContext</code> 额外包含 <code>traceId?: string</code>，可用于 action/phase/reason 链路排查。</p>
       </section>
 
       <section class="card" id="promise-api">
@@ -437,6 +568,7 @@ import"./modulepreload-polyfill-B5Qt9EMX.js";import{s as d}from"./pinned-hero-to
             <tbody>
               <tr><td><code>content</code></td><td><code>string | Node</code></td><td>-</td><td>内容，必填。</td></tr>
               <tr><td><code>id</code></td><td><code>string</code></td><td>自动生成</td><td>用于去重与复用。</td></tr>
+              <tr><td><code>traceId</code></td><td><code>string</code></td><td>-</td><td>链路追踪 ID，会透传到生命周期回调。</td></tr>
               <tr><td><code>title</code></td><td><code>string</code></td><td>-</td><td>标题。</td></tr>
               <tr><td><code>placement</code></td><td><code>SoToastPlacement</code></td><td><code>'top-end'</code></td><td>展示位置。</td></tr>
               <tr><td><code>variant</code></td><td><code>SoToastVariant</code></td><td><code>'default'</code></td><td>样式变体。</td></tr>
@@ -521,6 +653,11 @@ import"./modulepreload-polyfill-B5Qt9EMX.js";import{s as d}from"./pinned-hero-to
               <tr><td><code>SoFooterAlign</code></td><td><code>'start' | 'center' | 'end' | 'between'</code></td></tr>
               <tr><td><code>SoFooterButtonAction</code></td><td><code>'none' | 'hide' | 'destroy'</code></td></tr>
               <tr><td><code>SoDialogFormValue</code></td><td><code>string | number | boolean | null</code></td></tr>
+              <tr><td><code>SoLayoutStableContext</code></td><td><code>{ component: 'modal' | 'offcanvas'; element: HTMLElement; id?: string; traceId?: string }</code></td></tr>
+              <tr><td><code>SoMessageLevel</code></td><td><code>'default' | 'info' | 'success' | 'warning' | 'danger'</code></td></tr>
+              <tr><td><code>SoAdapterLogEvent</code></td><td><code>{ action; phase?: before-open/after-open/before-close/after-close/action/layout-stable/focus/typeahead; component?; reason?; id?; traceId?; detail? }</code></td></tr>
+              <tr><td><code>SoDialogGlobalConfig</code></td><td><code>{ modalDefaults?: Partial&lt;SoDialogModalOptions&gt;; offcanvasDefaults?: Partial&lt;Omit&lt;SoDialogOffcanvasOptions, 'kind'&gt;&gt; }</code></td></tr>
+              <tr><td><code>SoContextMenuGlobalConfig</code></td><td><code>{ closeOnEsc?; closeOnOutsideClick?; minWidth?; maxHeight?; offsetX?; offsetY?; typeaheadEnabled?; typeaheadResetMs?; className?; attrs?; ... }</code></td></tr>
               <tr><td><code>SoContextMenuCloseReason</code></td><td><code>'outside' | 'esc' | 'item' | 'programmatic' | 'destroy' | 'reopen' | 'blur' | 'scroll' | 'resize'</code></td></tr>
             </tbody>
           </table>
@@ -543,4 +680,4 @@ import"./modulepreload-polyfill-B5Qt9EMX.js";import{s as d}from"./pinned-hero-to
       </section>
     </div>
   </main>
-`;d({adjustSidebarOffset:!0});
+`;d({adjustSidebarOffset:!0});e();

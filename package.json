@@ -1,6 +1,6 @@
 {
   "name": "sodialog",
-  "version": "0.1.20",
+  "version": "0.2.2",
   "description": "A reusable HTML5 dialog-based modal and offcanvas library.",
   "keywords": [
     "dialog",
@@ -13,7 +13,7 @@
     "type": "git",
     "url": "https://github.com/sohophp/sodialog"
   },
-  "homepage": "https://github.com/sohophp/sodialog",
+  "homepage": "https://sohophp.github.io/sodialog/",
   "bugs": {
     "url": "https://github.com/sohophp/sodialog/issues"
   },
@@ -40,6 +40,7 @@
     "build:demo": "vite build --mode demo",
     "test": "vitest",
     "test:run": "vitest run",
+    "hooks:enable": "git config core.hooksPath .githooks",
     "release:check": "node scripts/check-release-version.mjs",
     "docs:changelog": "node scripts/generate-changelog.mjs",
     "preview": "vite preview",

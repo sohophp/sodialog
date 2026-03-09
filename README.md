@@ -7,6 +7,8 @@
 - [安装](#安装)
 - [使用](#使用)
 - [右键菜单图标（Bootstrap Icons）](#右键菜单图标bootstrap-icons)
+- [Adapter First](#adapter-first)
+- [CSS Tokens](#css-tokens)
 - [API](#api)
 - [API 独立页](#api-独立页)
 - [Promise API](#promise-api)
@@ -113,6 +115,129 @@ const formValues = await formModal({
 console.log('form result:', formValues)
 ```
 
+## Adapter First
+
+推荐业务层优先使用 adapter API，统一默认行为并降低迁移成本。
+
+```ts
+import {
+  configureContextMenu,
+  configureDialog,
+  configureAdapter,
+  openDialog,
+  openDialogFromContextMenu,
+  bindDialogContextMenu,
+  pushMessage,
+} from 'sodialog'
+
+configureAdapter({
+  modalDefaults: {
+    closeOnEsc: true,
+    closeOnBackdrop: true,
+    footerAlign: 'center',
+  },
+  toastDefaults: {
+    placement: 'top-end',
+    maxVisible: 4,
+    newestOnTop: true,
+    duplicateStrategy: 'stack',
+    duration: 3800,
+  },
+  diagnosticsEnabled: true,
+  logger: (event) => {
+    // action / phase / reason / id / traceId
+    console.log('[adapter-log]', event)
+  },
+})
+
+openDialog({
+  title: 'Delete Item',
+  content: 'Confirm delete?',
+  traceId: 'trace-order-001',
+  onLayoutStable: ({ traceId }) => {
+    console.log('layout stable', traceId)
+  },
+})
+
+bindDialogContextMenu({
+  target: '.file-row',
+  traceId: 'trace-order-001',
+  items: [
+    {
+      id: 'remove',
+      label: 'Remove',
+      onClick: ({ handle }) => {
+        openDialogFromContextMenu(handle, {
+          title: 'Delete Confirm',
+          content: 'Delete this row?',
+          traceId: 'trace-order-001',
+        })
+      },
+    },
+  ],
+})
+
+pushMessage('success', 'Saved', { traceId: 'trace-order-001' })
+```
+
+`openDialogFromContextMenu` 会先关闭菜单，再打开 Dialog，可避免层级和焦点冲突。
+
+`diagnosticsEnabled + logger` 用于统一诊断链路，推荐记录字段：`action`、`phase`、`reason`、`id`、`traceId`、`detail`。
+`bindDialogContextMenu` 诊断会额外输出 `phase='focus' | 'typeahead'`，并在 `detail` 中提供 `itemId/query/matched`。
+
+## 全局 configure（非 adapter 场景）
+
+如果项目不使用 adapter，也可以直接设置全局默认值：
+
+```ts
+import { configureDialog, configureContextMenu, openModal, bindContextMenu } from 'sodialog'
+
+configureDialog({
+  modalDefaults: {
+    footerAlign: 'center',
+    closeOnEsc: false,
+  },
+  offcanvasDefaults: {
+    placement: 'start',
+  },
+})
+
+configureContextMenu({
+  closeOnEsc: false,
+  minWidth: 220,
+  typeaheadEnabled: true,
+  typeaheadResetMs: 600,
+  attrs: { 'data-menu-scope': 'global' },
+})
+
+openModal({ title: '默认配置生效', content: '<p>无需重复传默认参数</p>' })
+bindContextMenu({ target: '#row', items: [{ label: '删除' }] })
+```
+
+## CSS Tokens
+
+SoDialog 现在提供一组公开 CSS 变量，可在业务层直接覆盖，避免改源码：
+
+```css
+:root {
+  --sod-color-surface: #ffffff;
+  --sod-color-text: #111827;
+  --sod-focus-ring: #22c55e;
+  --sod-btn-primary-bg: #2563eb;
+  --sod-toast-success-accent: #16a34a;
+  --sod-menu-bg: #f8fafc;
+}
+```
+
+常用 token 分类：
+
+- Dialog: `--sod-backdrop-bg`、`--sod-panel-radius`、`--sod-panel-shadow`、`--sod-panel-width`
+- Button: `--sod-btn-primary-bg`、`--sod-btn-outline-color`、`--sod-btn-danger-bg`、`--sod-btn-success-bg`
+- Toast: `--sod-toast-border`、`--sod-toast-shadow`、`--sod-toast-*-accent`
+- ContextMenu: `--sod-menu-bg`、`--sod-menu-border`、`--sod-menu-shadow`、`--sod-menu-item-hover-bg`
+
+建议将 token 覆盖放在应用全局样式入口，结合 `.legacy-skin` 可同时满足新旧界面兼容。
+
 ## 右键菜单图标（Bootstrap Icons）
 
 `bindContextMenu` 支持菜单项图标，`icon` 可传字符串 class（适合 Bootstrap Icons）或自定义 Node。
@@ -163,6 +288,17 @@ bindContextMenu({
 - `closeOnScroll?: boolean`：窗口或容器滚动时关闭，默认 `true`。
 - `closeOnResize?: boolean`：窗口尺寸变化时关闭，默认 `true`。
 - `destroy()`：销毁实例并移除全部事件监听。
+
+键盘交互补充：
+
+- 支持 `ArrowUp/ArrowDown/Home/End/Tab` 在菜单项之间导航，`Enter/Space` 激活当前项。
+- 支持首字母快速定位（typeahead）。
+- 可通过 `typeaheadEnabled` 关闭字母定位（保留方向键导航与 Enter/Space 激活）。
+- 混合标签（如 `删除 Delete`）会按词匹配，连续按同一字母会在命中项间轮转。
+- 可通过 `typeaheadResetMs` 调整字母定位 query 的重置窗口（默认 `450ms`，最小 `120ms`）。
+- 可通过 `onFocusItem(context)` 获取当前键盘定位的菜单项信息（`itemId/itemElement/...`）。
+- 可通过 `onTypeahead(context)` 观察字母定位 query、是否命中以及命中的菜单项。
+- 可在 `onClose(reason)` 里记录关闭原因（如 `esc`、`outside`、`item`、`blur`、`scroll`、`resize`），便于排查交互路径。
 
 层级说明：
 
@@ -458,6 +594,7 @@ formBtn?.addEventListener('click', async () => {
 - Pages 构建后访问：`https://sohophp.github.io/sodialog/api.html`
 
 该页面包含全部公开方法、参数、返回值和类型说明，可作为查询手册使用。
+并新增“快速代码片段”折叠区（默认收起、支持一键复制），覆盖 Adapter、Promise 串行流程、Toast 队列策略。
 
 ### `openModal(options)`
 
@@ -732,11 +869,19 @@ SoToast.configure({
 ## 开发
 
 ```bash
+npm run hooks:enable
 npm run dev
+npm run test:run
 npm run lint
 npm run build
+npm run build:demo
 npm run docs:changelog
 ```
+
+说明：
+
+- 先执行 `npm run hooks:enable`，启用仓库级 git hooks。
+- 启用后，每次 `git commit` 会自动执行 `npm run build:demo`，用于同步 API/演示页面产物。
 
 ## GitHub Pages 首页
 
@@ -749,13 +894,26 @@ npm run docs:changelog
 
 默认线上地址：`https://sohophp.github.io/sodialog/`
 
-独立示例页（按功能拆分演示）：`https://sohophp.github.io/sodialog/examples.html`
+独立示例导航页：`https://sohophp.github.io/sodialog/examples.html`
+
+每个工具独立一页（并在页面内细分示例）：
+
+- `https://sohophp.github.io/sodialog/modal.html`
+- `https://sohophp.github.io/sodialog/offcanvas.html`
+- `https://sohophp.github.io/sodialog/toast.html`
+
+开发/发布流程统一详情页：
+
+- `https://sohophp.github.io/sodialog/workflow.html`
 
 ## 文档体系
 
 - `README.md`：使用方式、API、发布流程总览
 - `CHANGELOG.md`：版本变更记录（按 git tag 自动生成）
 - `RELEASE_CHECKLIST.md`：发布前人工检查清单
+- `adapter-guidelines.md`：推荐接入路径与反例
+- `migration-guide.md`：从旧系统迁移到 SoDialog
+- `troubleshooting.md`：排障手册与检查清单
 
 ### 文档自动更新
 

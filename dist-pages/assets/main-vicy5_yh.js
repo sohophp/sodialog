@@ -1,4 +1,4 @@
-import"./modulepreload-polyfill-B5Qt9EMX.js";import{s as c}from"./pinned-hero-top-PAvN5BGZ.js";const t=document.querySelector("#app");if(!t)throw new Error("Cannot find #app root element");t.innerHTML=`
+import"./modulepreload-polyfill-B5Qt9EMX.js";import{s}from"./pinned-hero-top-PAvN5BGZ.js";const t=document.querySelector("#app");if(!t)throw new Error("Cannot find #app root element");t.innerHTML=`
   <div class="page-bg" aria-hidden="true">
     <span class="shape shape-a"></span>
     <span class="shape shape-b"></span>
@@ -16,11 +16,13 @@ import"./modulepreload-polyfill-B5Qt9EMX.js";import{s as c}from"./pinned-hero-to
       </div>
       <nav class="quick-nav">
         <a href="./index.html#quick-start">快速开始</a>
-        <a href="./examples.html#modal-example">功能示例</a>
+        <a href="./examples.html">示例导航</a>
+        <a href="./modal.html">Modal Lab</a>
+        <a href="./offcanvas.html">Offcanvas Lab</a>
+        <a href="./toast.html">Toast Lab</a>
         <a href="./demo.html">原版 Demo</a>
         <a href="./api.html">API</a>
-        <a href="./index.html#dev-flow">开发流程</a>
-        <a href="./index.html#release-flow">发布流程</a>
+        <a href="./workflow.html">开发/发布流程</a>
       </nav>
     </div>
 
@@ -38,8 +40,12 @@ import"./modulepreload-polyfill-B5Qt9EMX.js";import{s as c}from"./pinned-hero-to
 
     <div class="hero-actions">
       <a class="btn primary" href="https://www.npmjs.com/package/sodialog" target="_blank" rel="noreferrer">NPM 包</a>
-      <a class="btn secondary" href="./examples.html">Examples 页</a>
+      <a class="btn secondary" href="./examples.html">Examples Hub</a>
+      <a class="btn secondary" href="./modal.html">Modal Lab</a>
+      <a class="btn secondary" href="./offcanvas.html">Offcanvas Lab</a>
+      <a class="btn secondary" href="./toast.html">Toast Lab</a>
       <a class="btn secondary" href="./api.html">API 全量文档</a>
+      <a class="btn secondary" href="./workflow.html">开发/发布流程</a>
       <a class="btn secondary" href="https://github.com/sohophp/sodialog" target="_blank" rel="noreferrer">GitHub 仓库</a>
       <a class="btn secondary" href="https://github.com/sohophp/sodialog/blob/master/CHANGELOG.md" target="_blank" rel="noreferrer">更新日志</a>
     </div>
@@ -177,54 +183,35 @@ SoToast.configure({
       </div>
     </section>
 
-    <section id="dev-flow" class="card reveal">
-      <h2>开发流程</h2>
+    <section id="workflow-overview" class="card reveal">
+      <h2>开发与发布流程（统一入口）</h2>
+      <p>开发流程、API 每次 commit 后同步、发布流程与核对清单已合并到独立详情页。</p>
       <div class="grid command-grid">
         <article class="mini-card">
-          <h3>常用命令</h3>
+          <h3>关键命令</h3>
           <div class="code-wrap compact">
-            <button class="copy-btn" data-copy-target="dev-code" type="button">复制</button>
-            <pre id="dev-code"><code>npm run dev
+            <button class="copy-btn" data-copy-target="workflow-code" type="button">复制</button>
+            <pre id="workflow-code"><code>npm run hooks:enable
+npm run dev
+npm run test:run
 npm run lint
 npm run build
-npm run docs:changelog</code></pre>
+npm run build:demo
+npm run release:check -- vX.Y.Z</code></pre>
           </div>
         </article>
         <article class="mini-card">
-          <h3>文档文件</h3>
-          <ul>
-            <li><code>README.md</code>：完整使用说明</li>
-            <li><code>CHANGELOG.md</code>：版本变更记录</li>
-            <li><code>RELEASE_CHECKLIST.md</code>：发布检查清单</li>
-          </ul>
+          <h3>详情页</h3>
+          <p class="muted">查看完整流程说明：</p>
+          <div class="demo-actions">
+            <a class="btn secondary" href="./workflow.html">打开开发/发布流程页</a>
+          </div>
         </article>
       </div>
-    </section>
-
-    <section id="release-flow" class="card reveal">
-      <h2>发布流程（Tag 驱动）</h2>
-      <p>
-        推荐流程：更新版本号后进行校验，提交并打 tag，推送后由 GitHub Actions 自动发布 npm。
-      </p>
-      <div class="code-wrap">
-        <button class="copy-btn" data-copy-target="release-code" type="button">复制</button>
-        <pre id="release-code"><code>npm version patch --no-git-tag-version
-npm run release:check -- vX.Y.Z
-git add -A
-git commit -m "release: vX.Y.Z"
-git tag -a vX.Y.Z -m "vX.Y.Z"
-git push --follow-tags</code></pre>
-      </div>
-      <p class="muted">
-        更多细节可查看
-        <a href="https://github.com/sohophp/sodialog/blob/master/README.md" target="_blank" rel="noreferrer">README</a>
-        与
-        <a href="https://github.com/sohophp/sodialog/blob/master/RELEASE_CHECKLIST.md" target="_blank" rel="noreferrer">RELEASE_CHECKLIST</a>
-      </p>
     </section>
   </main>
 
   <footer class="footer">
     <p>SoDialog · GitHub Pages 首页</p>
   </footer>
-`;const s=document.querySelectorAll(".copy-btn");s.forEach(e=>{e.addEventListener("click",async()=>{const o=e.dataset.copyTarget;if(!o)return;const a=document.querySelector(`#${o} code`);if(a)try{await navigator.clipboard.writeText(a.textContent??""),e.textContent="已复制",window.setTimeout(()=>{e.textContent="复制"},1200)}catch{e.textContent="复制失败",window.setTimeout(()=>{e.textContent="复制"},1200)}})});c();
+`;const c=document.querySelectorAll(".copy-btn");c.forEach(a=>{a.addEventListener("click",async()=>{const e=a.dataset.copyTarget;if(!e)return;const o=document.querySelector(`#${e} code`);if(o)try{await navigator.clipboard.writeText(o.textContent??""),a.textContent="已复制",window.setTimeout(()=>{a.textContent="复制"},1200)}catch{a.textContent="复制失败",window.setTimeout(()=>{a.textContent="复制"},1200)}})});s();
