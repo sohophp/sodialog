@@ -32,6 +32,7 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 - API and examples docs now describe typeahead behavior in context-menu keyboard interactions
 - context-menu keyboard handling now avoids double key processing and keeps `closeOnEsc: false` behavior intact
 - context-menu focused item now has visible focus ring for script-driven focus movement
+- context-menu "关闭策略与键盘交互" demo now matches the displayed source snippet (multi-item policy menu)
 
 ## [0.1.20] - 2026-03-09
 
