@@ -1,3 +1,45 @@
+:root {
+  --sod-color-surface: #fff;
+  --sod-color-text: #212529;
+  --sod-color-muted: #6c757d;
+  --sod-color-border: #dee2e6;
+  --sod-focus-ring: #86b7fe;
+  --sod-backdrop-bg: rgb(0 0 0 / 50%);
+  --sod-panel-radius: 0.5rem;
+  --sod-panel-shadow: 0 0.5rem 1rem rgb(0 0 0 / 25%);
+  --sod-panel-width: 520px;
+
+  --sod-btn-primary-bg: #0d6efd;
+  --sod-btn-primary-hover-bg: #0b5ed7;
+  --sod-btn-primary-hover-border: #0a58ca;
+  --sod-btn-outline-color: #6c757d;
+  --sod-btn-outline-hover-bg: #6c757d;
+  --sod-btn-outline-hover-color: #fff;
+  --sod-btn-danger-bg: #dc3545;
+  --sod-btn-danger-hover-bg: #bb2d3b;
+  --sod-btn-danger-hover-border: #b02a37;
+  --sod-btn-success-bg: #198754;
+  --sod-btn-success-hover-bg: #157347;
+  --sod-btn-success-hover-border: #146c43;
+  --sod-btn-ghost-color: #495057;
+  --sod-btn-ghost-hover-bg: #e9ecef;
+  --sod-btn-link-color: #0d6efd;
+  --sod-btn-link-hover-color: #0a58ca;
+
+  --sod-toast-border: #dee2e6;
+  --sod-toast-shadow: 0 0.5rem 1rem rgb(0 0 0 / 18%);
+  --sod-toast-default-accent: #6c757d;
+  --sod-toast-info-accent: #0dcaf0;
+  --sod-toast-success-accent: #198754;
+  --sod-toast-warning-accent: #ffc107;
+  --sod-toast-danger-accent: #dc3545;
+
+  --sod-menu-bg: #fff;
+  --sod-menu-border: #dee2e6;
+  --sod-menu-shadow: 0 0.6rem 1.4rem rgb(0 0 0 / 18%);
+  --sod-menu-item-hover-bg: #f1f3f5;
+}
+
 .sod-dialog {
   border: 0;
   padding: 0;
@@ -9,17 +51,17 @@
 }
 
 .sod-dialog::backdrop {
-  background: rgb(0 0 0 / 50%);
+  background: var(--sod-backdrop-bg);
 }
 
 .sod-panel {
   box-sizing: border-box;
-  background: #fff;
-  color: #212529;
-  border-radius: 0.5rem;
-  box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 25%);
-  min-width: min(520px, calc(100vw - 2rem));
-  max-width: min(520px, calc(100vw - 2rem));
+  background: var(--sod-color-surface);
+  color: var(--sod-color-text);
+  border-radius: var(--sod-panel-radius);
+  box-shadow: var(--sod-panel-shadow);
+  min-width: min(var(--sod-panel-width), calc(100vw - 2rem));
+  max-width: min(var(--sod-panel-width), calc(100vw - 2rem));
 }
 
 .sod-modal .sod-panel {
@@ -112,7 +154,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 1rem 1rem 0.75rem;
-  border-bottom: 1px solid #dee2e6;
+  border-bottom: 1px solid var(--sod-color-border);
 }
 
 .sod-title {
@@ -123,7 +165,7 @@
 .sod-close {
   border: 0;
   background: transparent;
-  color: #6c757d;
+  color: var(--sod-color-muted);
   font-size: 1.5rem;
   line-height: 1;
   cursor: pointer;
@@ -178,16 +220,16 @@
 .sod-prompt-input {
   width: 100%;
   min-height: 2.3rem;
-  border: 1px solid #ced4da;
+  border: 1px solid var(--sod-color-border);
   border-radius: 0.4rem;
   font-size: 0.95rem;
   padding: 0.45rem 0.6rem;
 }
 
 .sod-prompt-input:focus-visible {
-  outline: 2px solid #86b7fe;
+  outline: 2px solid var(--sod-focus-ring);
   outline-offset: 1px;
-  border-color: #86b7fe;
+  border-color: var(--sod-focus-ring);
 }
 
 .sod-prompt-error {
@@ -224,7 +266,7 @@
 .sod-form-control {
   width: 100%;
   min-height: 2.3rem;
-  border: 1px solid #ced4da;
+  border: 1px solid var(--sod-color-border);
   border-radius: 0.4rem;
   font-size: 0.95rem;
   padding: 0.45rem 0.6rem;
@@ -236,9 +278,9 @@
 
 .sod-form-control:focus-visible,
 .sod-form-checkbox:focus-visible {
-  outline: 2px solid #86b7fe;
+  outline: 2px solid var(--sod-focus-ring);
   outline-offset: 1px;
-  border-color: #86b7fe;
+  border-color: var(--sod-focus-ring);
 }
 
 .sod-form-field-checkbox {
@@ -259,7 +301,7 @@
 }
 
 .sod-form-help {
-  color: #6c757d;
+  color: var(--sod-color-muted);
   font-size: 0.8rem;
 }
 
@@ -276,7 +318,7 @@
 
 .sod-footer {
   padding: 0.75rem 1rem 1rem;
-  border-top: 1px solid #dee2e6;
+  border-top: 1px solid var(--sod-color-border);
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
@@ -308,74 +350,74 @@
 }
 
 .sod-btn:focus-visible {
-  outline: 2px solid #86b7fe;
+  outline: 2px solid var(--sod-focus-ring);
   outline-offset: 1px;
 }
 
 .sod-btn-primary {
-  background: #0d6efd;
+  background: var(--sod-btn-primary-bg);
   color: #fff;
-  border-color: #0d6efd;
+  border-color: var(--sod-btn-primary-bg);
 }
 
 .sod-btn-primary:hover {
-  background: #0b5ed7;
-  border-color: #0a58ca;
+  background: var(--sod-btn-primary-hover-bg);
+  border-color: var(--sod-btn-primary-hover-border);
 }
 
 .sod-btn-outline {
   background: transparent;
-  color: #6c757d;
-  border-color: #6c757d;
+  color: var(--sod-btn-outline-color);
+  border-color: var(--sod-btn-outline-color);
 }
 
 .sod-btn-outline:hover {
-  color: #fff;
-  background: #6c757d;
+  color: var(--sod-btn-outline-hover-color);
+  background: var(--sod-btn-outline-hover-bg);
 }
 
 .sod-btn-danger {
-  background: #dc3545;
+  background: var(--sod-btn-danger-bg);
   color: #fff;
-  border-color: #dc3545;
+  border-color: var(--sod-btn-danger-bg);
 }
 
 .sod-btn-danger:hover {
-  background: #bb2d3b;
-  border-color: #b02a37;
+  background: var(--sod-btn-danger-hover-bg);
+  border-color: var(--sod-btn-danger-hover-border);
 }
 
 .sod-btn-success {
-  background: #198754;
+  background: var(--sod-btn-success-bg);
   color: #fff;
-  border-color: #198754;
+  border-color: var(--sod-btn-success-bg);
 }
 
 .sod-btn-success:hover {
-  background: #157347;
-  border-color: #146c43;
+  background: var(--sod-btn-success-hover-bg);
+  border-color: var(--sod-btn-success-hover-border);
 }
 
 .sod-btn-ghost {
   background: transparent;
-  color: #495057;
+  color: var(--sod-btn-ghost-color);
   border-color: transparent;
 }
 
 .sod-btn-ghost:hover {
-  background: #e9ecef;
+  background: var(--sod-btn-ghost-hover-bg);
 }
 
 .sod-btn-link {
   background: transparent;
-  color: #0d6efd;
+  color: var(--sod-btn-link-color);
   border-color: transparent;
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
 .sod-btn-link:hover {
-  color: #0a58ca;
+  color: var(--sod-btn-link-hover-color);
 }
 
 /* Legacy compatibility skin (scoped): add .legacy-skin on container/root to opt in. */
@@ -723,15 +765,15 @@
 }
 
 .sod-toast {
-  --sod-toast-accent: #6c757d;
+  --sod-toast-accent: var(--sod-toast-default-accent);
   pointer-events: auto;
   width: 100%;
   box-sizing: border-box;
   border-radius: 0.5rem;
-  border: 1px solid #dee2e6;
-  background: #fff;
-  color: #212529;
-  box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 18%);
+  border: 1px solid var(--sod-toast-border);
+  background: var(--sod-color-surface);
+  color: var(--sod-color-text);
+  box-shadow: var(--sod-toast-shadow);
   overflow: hidden;
   animation: sod-toast-enter 180ms ease-out;
 }
@@ -756,7 +798,7 @@
 .sod-toast-close {
   border: 0;
   background: transparent;
-  color: #6c757d;
+  color: var(--sod-color-muted);
   font-size: 1.15rem;
   line-height: 1;
   cursor: pointer;
@@ -781,28 +823,28 @@
 }
 
 .sod-toast-default {
-  --sod-toast-accent: #6c757d;
-  border-left: 4px solid #6c757d;
+  --sod-toast-accent: var(--sod-toast-default-accent);
+  border-left: 4px solid var(--sod-toast-default-accent);
 }
 
 .sod-toast-info {
-  --sod-toast-accent: #0dcaf0;
-  border-left: 4px solid #0dcaf0;
+  --sod-toast-accent: var(--sod-toast-info-accent);
+  border-left: 4px solid var(--sod-toast-info-accent);
 }
 
 .sod-toast-success {
-  --sod-toast-accent: #198754;
-  border-left: 4px solid #198754;
+  --sod-toast-accent: var(--sod-toast-success-accent);
+  border-left: 4px solid var(--sod-toast-success-accent);
 }
 
 .sod-toast-warning {
-  --sod-toast-accent: #ffc107;
-  border-left: 4px solid #ffc107;
+  --sod-toast-accent: var(--sod-toast-warning-accent);
+  border-left: 4px solid var(--sod-toast-warning-accent);
 }
 
 .sod-toast-danger {
-  --sod-toast-accent: #dc3545;
-  border-left: 4px solid #dc3545;
+  --sod-toast-accent: var(--sod-toast-danger-accent);
+  border-left: 4px solid var(--sod-toast-danger-accent);
 }
 
 @keyframes sod-toast-enter {
@@ -848,10 +890,10 @@
   max-width: min(320px, calc(100vw - 1rem));
   max-height: 320px;
   padding: 0.35rem;
-  border: 1px solid #dee2e6;
+  border: 1px solid var(--sod-menu-border);
   border-radius: 0.45rem;
-  background: #fff;
-  box-shadow: 0 0.6rem 1.4rem rgb(0 0 0 / 18%);
+  background: var(--sod-menu-bg);
+  box-shadow: var(--sod-menu-shadow);
   overflow: auto;
 }
 
@@ -859,7 +901,7 @@
   border: 0;
   border-radius: 0.35rem;
   background: transparent;
-  color: #212529;
+  color: var(--sod-color-text);
   text-align: left;
   padding: 0.5rem 0.6rem;
   font-size: 0.92rem;
@@ -888,11 +930,11 @@
 }
 
 .sod-context-menu-item:hover {
-  background: #f1f3f5;
+  background: var(--sod-menu-item-hover-bg);
 }
 
 .sod-context-menu-item:focus-visible {
-  outline: 2px solid #86b7fe;
+  outline: 2px solid var(--sod-focus-ring);
   outline-offset: 1px;
 }
 

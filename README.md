@@ -8,6 +8,7 @@
 - [使用](#使用)
 - [右键菜单图标（Bootstrap Icons）](#右键菜单图标bootstrap-icons)
 - [Adapter First](#adapter-first)
+- [CSS Tokens](#css-tokens)
 - [API](#api)
 - [API 独立页](#api-独立页)
 - [Promise API](#promise-api)
@@ -180,6 +181,30 @@ pushMessage('success', 'Saved', { traceId: 'trace-order-001' })
 `openDialogFromContextMenu` 会先关闭菜单，再打开 Dialog，可避免层级和焦点冲突。
 
 `diagnosticsEnabled + logger` 用于统一诊断链路，推荐记录字段：`action`、`phase`、`reason`、`id`、`traceId`。
+
+## CSS Tokens
+
+SoDialog 现在提供一组公开 CSS 变量，可在业务层直接覆盖，避免改源码：
+
+```css
+:root {
+  --sod-color-surface: #ffffff;
+  --sod-color-text: #111827;
+  --sod-focus-ring: #22c55e;
+  --sod-btn-primary-bg: #2563eb;
+  --sod-toast-success-accent: #16a34a;
+  --sod-menu-bg: #f8fafc;
+}
+```
+
+常用 token 分类：
+
+- Dialog: `--sod-backdrop-bg`、`--sod-panel-radius`、`--sod-panel-shadow`、`--sod-panel-width`
+- Button: `--sod-btn-primary-bg`、`--sod-btn-outline-color`、`--sod-btn-danger-bg`、`--sod-btn-success-bg`
+- Toast: `--sod-toast-border`、`--sod-toast-shadow`、`--sod-toast-*-accent`
+- ContextMenu: `--sod-menu-bg`、`--sod-menu-border`、`--sod-menu-shadow`、`--sod-menu-item-hover-bg`
+
+建议将 token 覆盖放在应用全局样式入口，结合 `.legacy-skin` 可同时满足新旧界面兼容。
 
 ## 右键菜单图标（Bootstrap Icons）
 
