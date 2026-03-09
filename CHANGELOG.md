@@ -41,6 +41,7 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 - ContextMenu Lab now surfaces close reason feedback (`esc/outside/item/blur/scroll/resize/...`) for easier interaction-path diagnosis
 - ContextMenu Lab focus feedback now uses public `onFocusItem` callback instead of internal custom event wiring
 - ContextMenu Lab now shows typeahead feedback panel (query + matched/missed item) using `onTypeahead`
+- adapter diagnostics now include context-menu keyboard focus/typeahead events with `detail.itemId/query/matched`
 
 ## [0.1.20] - 2026-03-09
 
