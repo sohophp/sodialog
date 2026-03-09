@@ -1,12 +1,5 @@
-import './lab-style.css'
-import { confirmModal, formModal, openDialog, openModal, promptModal, pushMessage } from './lib'
-import { renderLabHeader, wireCodeCopyButtons } from './lab-shared'
-
-const app = document.querySelector<HTMLDivElement>('#app')
-if (!app) throw new Error('Cannot find #app root element')
-
-app.innerHTML = `
-${renderLabHeader('modal', 'Modal Lab', '独立页面展示 Modal 常见与进阶用法。')}
+import"./modulepreload-polyfill-B5Qt9EMX.js";import{r as c,w as n}from"./lab-shared-BmHhYQNq.js";import{o as d,c as s,d as r,p as i,f as p,e as a}from"./lib-Bd4HZL3A.js";const e=document.querySelector("#app");if(!e)throw new Error("Cannot find #app root element");e.innerHTML=`
+${c("modal","Modal Lab","独立页面展示 Modal 常见与进阶用法。")}
 
 <main class="grid">
   <section class="card">
@@ -72,43 +65,4 @@ pushMessage('info', '&#96;流程完成，备注：\${note}&#96;', { duration: 14
     </details>
   </section>
 </main>
-`
-
-wireCodeCopyButtons()
-
-document.querySelector<HTMLButtonElement>('#modal-basic')?.addEventListener('click', () => {
-  openModal({
-    title: '基础示例',
-    content: '<p>这是 Modal Lab 的基础示例。</p>',
-    confirmText: '确认',
-    cancelText: '取消',
-  })
-})
-
-document.querySelector<HTMLButtonElement>('#modal-stable')?.addEventListener('click', () => {
-  const result = document.querySelector<HTMLDivElement>('#modal-result')
-  openDialog({
-    title: '稳定时机示例',
-    content: '<p>观察 onLayoutStable 与 action 回调输出。</p>',
-    traceId: 'trace-modal-lab-001',
-    onLayoutStable: ({ traceId }) => {
-      if (result) result.textContent = `结果输出：onLayoutStable 已触发（traceId=${traceId ?? '-'})`
-      pushMessage('success', '布局已稳定', { traceId, duration: 1300 })
-    },
-    onAction: ({ action, traceId }) => {
-      if (result) result.textContent = `结果输出：action=${action}（traceId=${traceId ?? '-'})`
-    },
-  })
-})
-
-document.querySelector<HTMLButtonElement>('#modal-flow')?.addEventListener('click', async () => {
-  const ok = await confirmModal({ title: '确认', content: '<p>继续执行串行流程？</p>' })
-  if (!ok) return
-  const note = await promptModal({ title: '输入备注', placeholder: '请输入内容' })
-  if (note === null) return
-  await formModal({
-    title: '补充信息',
-    fields: [{ name: 'owner', label: '负责人', required: true }],
-  })
-  pushMessage('info', `流程完成，备注：${note}`, { duration: 1400, traceId: 'trace-modal-lab-001' })
-})
+`;n();document.querySelector("#modal-basic")?.addEventListener("click",()=>{d({title:"基础示例",content:"<p>这是 Modal Lab 的基础示例。</p>",confirmText:"确认",cancelText:"取消"})});document.querySelector("#modal-stable")?.addEventListener("click",()=>{const o=document.querySelector("#modal-result");s({title:"稳定时机示例",content:"<p>观察 onLayoutStable 与 action 回调输出。</p>",traceId:"trace-modal-lab-001",onLayoutStable:({traceId:t})=>{o&&(o.textContent=`结果输出：onLayoutStable 已触发（traceId=${t??"-"})`),a("success","布局已稳定",{traceId:t,duration:1300})},onAction:({action:t,traceId:l})=>{o&&(o.textContent=`结果输出：action=${t}（traceId=${l??"-"})`)}})});document.querySelector("#modal-flow")?.addEventListener("click",async()=>{if(!await r({title:"确认",content:"<p>继续执行串行流程？</p>"}))return;const t=await i({title:"输入备注",placeholder:"请输入内容"});t!==null&&(await p({title:"补充信息",fields:[{name:"owner",label:"负责人",required:!0}]}),a("info",`流程完成，备注：${t}`,{duration:1400,traceId:"trace-modal-lab-001"}))});

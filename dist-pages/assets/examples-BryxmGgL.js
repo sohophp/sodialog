@@ -1,13 +1,5 @@
-import"./modulepreload-polyfill-B5Qt9EMX.js";/* empty css                  */const a=document.querySelector("#app");if(!a)throw new Error("Cannot find #app root element");a.innerHTML=`
-<header class="hero">
-  <h1>Examples Hub</h1>
-  <p>每个组件独立一页，页面内再细分示例场景。</p>
-  <nav class="nav">
-    <a href="./index.html">文档首页</a>
-    <a href="./api.html">API</a>
-    <a href="./workflow.html">流程页</a>
-  </nav>
-</header>
+import"./modulepreload-polyfill-B5Qt9EMX.js";import{r as s}from"./lab-shared-BmHhYQNq.js";const a=document.querySelector("#app");if(!a)throw new Error("Cannot find #app root element");a.innerHTML=`
+${s("hub","Examples Hub","每个组件独立一页，页面内再细分示例场景。")}
 
 <main class="grid">
   <section class="card">

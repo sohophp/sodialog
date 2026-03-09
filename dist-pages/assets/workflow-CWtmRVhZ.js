@@ -1,16 +1,5 @@
-import"./modulepreload-polyfill-B5Qt9EMX.js";const e=document.querySelector("#app");if(!e)throw new Error("Cannot find #app root element");e.innerHTML=`
-<header class="hero">
-  <h1>开发与发布流程（统一页）</h1>
-  <p>将开发流程和发布流程合并到一页，并补充 API 同步机制。</p>
-  <nav class="nav">
-    <a href="./index.html">文档首页</a>
-    <a href="./api.html">API</a>
-    <a href="./examples.html">Examples Hub</a>
-    <a href="./modal.html">Modal Lab</a>
-    <a href="./offcanvas.html">Offcanvas Lab</a>
-    <a href="./toast.html">Toast Lab</a>
-  </nav>
-</header>
+import"./modulepreload-polyfill-B5Qt9EMX.js";import{r as i}from"./lab-shared-BmHhYQNq.js";const e=document.querySelector("#app");if(!e)throw new Error("Cannot find #app root element");e.innerHTML=`
+${i("workflow","开发与发布流程","将开发流程和发布流程合并到一页，并补充 API 同步机制。")}
 
 <main class="stack">
   <section class="card">

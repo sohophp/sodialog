@@ -1,18 +1,11 @@
 import './lab-style.css'
+import { renderLabHeader } from './lab-shared'
 
 const app = document.querySelector<HTMLDivElement>('#app')
 if (!app) throw new Error('Cannot find #app root element')
 
 app.innerHTML = `
-<header class="hero">
-  <h1>Examples Hub</h1>
-  <p>每个组件独立一页，页面内再细分示例场景。</p>
-  <nav class="nav">
-    <a href="./index.html">文档首页</a>
-    <a href="./api.html">API</a>
-    <a href="./workflow.html">流程页</a>
-  </nav>
-</header>
+${renderLabHeader('hub', 'Examples Hub', '每个组件独立一页，页面内再细分示例场景。')}
 
 <main class="grid">
   <section class="card">
