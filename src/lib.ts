@@ -85,6 +85,18 @@ export interface SoContextMenuFocusContext {
   handle: SoContextMenuHandle
 }
 
+export interface SoContextMenuTypeaheadContext {
+  query: string
+  matched: boolean
+  itemId?: string
+  item?: SoContextMenuItem
+  itemElement?: HTMLButtonElement
+  menuElement: HTMLElement
+  triggerElement: HTMLElement
+  traceId?: string
+  handle: SoContextMenuHandle
+}
+
 export interface SoContextMenuOptions extends SoLifecycleHooks {
   id?: string
   traceId?: string
@@ -106,6 +118,7 @@ export interface SoContextMenuOptions extends SoLifecycleHooks {
   onClose?: (reason: SoContextMenuCloseReason, handle: SoContextMenuHandle) => void
   onAction?: (context: SoContextMenuActionContext) => void
   onFocusItem?: (context: SoContextMenuFocusContext) => void
+  onTypeahead?: (context: SoContextMenuTypeaheadContext) => void
 }
 
 export interface SoContextMenuHandle {
@@ -3253,6 +3266,26 @@ export class SoContextMenu {
 
       if (matchIndex >= 0) {
         focusItemAt(matchIndex)
+      }
+
+      if (lastTriggerElement) {
+        const matchedItem = matchIndex >= 0 ? items[matchIndex] : undefined
+        const matchedItemIndex = matchedItem
+          ? Number.parseInt(matchedItem.dataset.itemIndex ?? '-1', 10)
+          : Number.NaN
+        const matchedSourceItem = !Number.isNaN(matchedItemIndex) ? menuItems[matchedItemIndex] : undefined
+
+        options.onTypeahead?.({
+          query: typeaheadQuery,
+          matched: matchIndex >= 0,
+          itemId: matchedSourceItem?.id?.trim() || (matchedItem ? 'item' : undefined),
+          item: matchedSourceItem,
+          itemElement: matchedItem,
+          menuElement,
+          triggerElement: lastTriggerElement,
+          traceId,
+          handle,
+        })
       }
 
       if (typeaheadTimerId !== null) {

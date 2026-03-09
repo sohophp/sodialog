@@ -725,6 +725,42 @@ describe('SoContextMenu behavior', () => {
     menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'r', bubbles: true }))
     expect(document.activeElement).toBe(items[1])
   })
+
+  it('emits onTypeahead for matched and unmatched queries', () => {
+    const trigger = document.createElement('button')
+    trigger.type = 'button'
+    trigger.textContent = 'menu'
+    document.body.append(trigger)
+
+    const traces: Array<{ query: string; matched: boolean; itemId?: string }> = []
+    const handle = bindContextMenu({
+      target: trigger,
+      items: [
+        { id: 'download', label: '下载 Download' },
+        { id: 'rename', label: '重命名 Rename' },
+        { id: 'delete', label: '删除 Delete' },
+      ],
+      onTypeahead: ({ query, matched, itemId }) => {
+        traces.push({ query, matched, itemId })
+      },
+    })
+
+    trigger.dispatchEvent(
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 30,
+        clientY: 20,
+      }),
+    )
+
+    const menu = handle.element
+    menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'd', bubbles: true }))
+    menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'z', bubbles: true }))
+
+    expect(traces[0]).toEqual({ query: 'd', matched: true, itemId: 'delete' })
+    expect(traces[1]).toEqual({ query: 'z', matched: false, itemId: undefined })
+  })
 })
 
 describe('Adapter behavior', () => {

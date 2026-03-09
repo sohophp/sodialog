@@ -34,6 +34,7 @@ ${renderLabHeader('context-menu', 'ContextMenu Lab', '独立页面展示 Context
     <p>验证 Esc、滚动、窗口失焦等关闭路径；并观察方向键与字母快速定位（支持混合标签）。</p>
     <div class="result" id="cm-policy-zone" tabindex="0">右键此区域后，按 ArrowUp/ArrowDown，或按 d/r 定位；连续按 d 会在 Download/Delete 间轮转</div>
     <div class="result" id="cm-policy-focus-result">焦点定位：等待菜单打开...</div>
+    <div class="result" id="cm-policy-typeahead-result">字母定位：等待输入...</div>
     <div class="result" id="cm-policy-action-result">最近动作：等待触发...</div>
     <div class="result" id="cm-policy-close-result">关闭原因：等待关闭...</div>
     <div class="row"><button class="btn" id="cm-open-modal">打开普通 Modal（对比入口）</button></div>
@@ -55,6 +56,9 @@ ${renderLabHeader('context-menu', 'ContextMenu Lab', '独立页面展示 Context
   },
   onFocusItem: ({ itemId, itemElement }) => {
     console.log(itemId, itemElement.textContent)
+  },
+  onTypeahead: ({ query, matched, itemId }) => {
+    console.log('typeahead', query, matched, itemId)
   },
   onClose: (reason) => {
     console.log('close reason', reason)
@@ -130,6 +134,15 @@ bindContextMenu({
     const label = (itemElement.textContent ?? '').trim()
     if (focusResult) {
       focusResult.textContent = `焦点定位：${itemId} (${label})`
+    }
+  },
+  onTypeahead: ({ query, matched, itemId, itemElement }) => {
+    const typeaheadResult = document.querySelector<HTMLDivElement>('#cm-policy-typeahead-result')
+    const label = itemElement ? (itemElement.textContent ?? '').trim() : '-'
+    if (typeaheadResult) {
+      typeaheadResult.textContent = matched
+        ? `字母定位：query=${query} 命中 ${itemId ?? '-'} (${label})`
+        : `字母定位：query=${query} 未命中`
     }
   },
   onAction: ({ itemId }) => {

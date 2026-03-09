@@ -292,6 +292,7 @@ bindContextMenu({
 - 支持首字母快速定位（typeahead）。
 - 混合标签（如 `删除 Delete`）会按词匹配，连续按同一字母会在命中项间轮转。
 - 可通过 `onFocusItem(context)` 获取当前键盘定位的菜单项信息（`itemId/itemElement/...`）。
+- 可通过 `onTypeahead(context)` 观察字母定位 query、是否命中以及命中的菜单项。
 - 可在 `onClose(reason)` 里记录关闭原因（如 `esc`、`outside`、`item`、`blur`、`scroll`、`resize`），便于排查交互路径。
 
 层级说明：
