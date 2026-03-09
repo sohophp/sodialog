@@ -18,12 +18,14 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 - global configure APIs: `configureDialog` and `configureContextMenu`
 - public CSS tokens for dialog/button/toast/context-menu theme customization
 - scenario playbook entries in troubleshooting docs for migration and behavior tuning
+- context-menu keyboard navigation and activation support (`ArrowUp/ArrowDown/Home/End/Tab/Enter/Space`)
 
 ### Changed
 - package version bumped to `0.2.0` for major capability upgrade line
 - tests expanded for adapter behavior, layout-stable callback, and trace propagation
 - API reference page synced with global configure APIs and related type definitions
 - examples synced with runnable global-config demo scenario
+- tests expanded with context-menu keyboard interaction coverage
 
 ## [0.1.20] - 2026-03-09
 
