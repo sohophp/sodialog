@@ -3154,7 +3154,16 @@ export class SoContextMenu {
       }
 
       const nextIndex = ((index % items.length) + items.length) % items.length
-      focusElementIfPossible(items[nextIndex])
+      const nextItem = items[nextIndex]
+      focusElementIfPossible(nextItem)
+      menuElement.dispatchEvent(
+        new CustomEvent('sod:context-menu-focus-item', {
+          detail: {
+            itemId: nextItem.dataset.itemId,
+            label: (nextItem.textContent ?? '').trim(),
+          },
+        }),
+      )
     }
 
     const focusFirstItem = () => {
