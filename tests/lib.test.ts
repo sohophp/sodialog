@@ -93,6 +93,28 @@ describe('SoDialog modal behavior', () => {
       needReview: true,
     })
   })
+
+  it('restores focus to trigger after close', async () => {
+    const trigger = document.createElement('button')
+    trigger.type = 'button'
+    trigger.textContent = 'open'
+    document.body.append(trigger)
+    trigger.focus()
+
+    const handle = openModal({
+      title: 'focus restore',
+      content: '<p>content</p>',
+      confirmText: 'ok',
+      cancelText: 'cancel',
+    })
+
+    const cancelButton = handle.dialog.querySelector<HTMLButtonElement>('.sod-btn-outline')
+    cancelButton?.click()
+
+    await vi.runAllTimersAsync()
+
+    expect(document.activeElement).toBe(trigger)
+  })
 })
 
 describe('SoToast behavior', () => {
@@ -481,6 +503,34 @@ describe('SoContextMenu behavior', () => {
     await Promise.resolve()
 
     expect(traces.every((value) => value === 'trace-cm-1')).toBe(true)
+  })
+
+  it('restores focus to trigger after close', () => {
+    const trigger = document.createElement('button')
+    trigger.type = 'button'
+    trigger.textContent = 'row'
+    document.body.append(trigger)
+    trigger.focus()
+
+    const handle = bindContextMenu({
+      target: trigger,
+      items: [{ id: 'copy', label: 'Copy' }],
+    })
+
+    trigger.dispatchEvent(
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 18,
+        clientY: 18,
+      }),
+    )
+
+    expect(handle.isOpen()).toBe(true)
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+
+    expect(handle.isOpen()).toBe(false)
+    expect(document.activeElement).toBe(trigger)
   })
 })
 

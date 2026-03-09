@@ -375,6 +375,22 @@ function closeDialog(dialog: HTMLDialogElement, action: 'hide' | 'destroy' = 'hi
   }
 }
 
+function focusElementIfPossible(element: HTMLElement | null): void {
+  if (!element || !element.isConnected) {
+    return
+  }
+
+  if (element instanceof HTMLButtonElement && element.disabled) {
+    return
+  }
+
+  try {
+    element.focus({ preventScroll: true })
+  } catch {
+    element.focus()
+  }
+}
+
 function emitLifecycle(hooks: SoLifecycleHooks | undefined, context: SoLifecycleContext): void {
   hooks?.onLifecycle?.(context)
 
@@ -840,6 +856,7 @@ function setupModalAutoFit(
 export class SoDialog {
   private static modalRegistry = new Map<string, HTMLDialogElement>()
   private static handleRegistry = new WeakMap<HTMLDialogElement, () => SoDialogHandle>()
+  private static focusRestoreRegistry = new WeakMap<HTMLDialogElement, HTMLElement | null>()
   private static modalIdSeed = 0
 
   private static createAutoModalId(): string {
@@ -862,6 +879,7 @@ export class SoDialog {
 
     const panel = dialog.querySelector<HTMLElement>('.sod-panel')
     panel?.classList.remove('is-closing')
+    this.focusRestoreRegistry.set(dialog, document.activeElement instanceof HTMLElement ? document.activeElement : null)
     document.body.append(dialog)
 
     if (!dialog.open) {
@@ -1277,6 +1295,10 @@ export class SoDialog {
         delete dialog.dataset.sodDestroy
       }
 
+      const focusRestoreTarget = this.focusRestoreRegistry.get(dialog) ?? null
+      this.focusRestoreRegistry.delete(dialog)
+      focusElementIfPossible(focusRestoreTarget)
+
       delete dialog.dataset.sodCloseReason
     })
 
@@ -1287,6 +1309,8 @@ export class SoDialog {
       id: modalId,
       traceId,
     })
+
+    this.focusRestoreRegistry.set(dialog, document.activeElement instanceof HTMLElement ? document.activeElement : null)
 
     document.body.append(dialog)
     if (useModal) {
@@ -2724,6 +2748,7 @@ export class SoContextMenu {
     const listeners: Array<() => void> = []
     let menuItems = [...options.items]
     let lastTriggerElement: HTMLElement | null = null
+    let lastFocusedBeforeOpen: HTMLElement | null = null
     let lastEvent: MouseEvent | null = null
     let open = false
     let destroyed = false
@@ -2799,6 +2824,10 @@ export class SoContextMenu {
         reason: lifecycleReason,
         traceId,
       })
+
+      if (reason !== 'reopen') {
+        focusElementIfPossible(lastTriggerElement ?? lastFocusedBeforeOpen)
+      }
     }
 
     const destroyMenu = () => {
@@ -2824,6 +2853,8 @@ export class SoContextMenu {
           reason: 'destroy',
           traceId,
         })
+
+        focusElementIfPossible(lastTriggerElement ?? lastFocusedBeforeOpen)
       }
 
       open = false
@@ -2863,6 +2894,7 @@ export class SoContextMenu {
       }
       SoContextMenu.activeHandle = handle
 
+      lastFocusedBeforeOpen = document.activeElement instanceof HTMLElement ? document.activeElement : null
       lastTriggerElement = triggerElement ?? lastTriggerElement
       lastEvent = event ?? lastEvent
 
