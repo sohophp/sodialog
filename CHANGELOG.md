@@ -13,10 +13,17 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 - scoped `.legacy-skin` compat styles for legacy UI alignment
 - migration docs: `adapter-guidelines.md`, `migration-guide.md`, `troubleshooting.md`
 - implementation plan document: `IMPLEMENTATION_PLAN_0.2.md`
+- a11y focus restore: dialog/context-menu close now restores focus to trigger element
+- a11y semantics: dialog now links title/body via `aria-labelledby` and `aria-describedby`; context-menu syncs `aria-controls` and `aria-expanded` on trigger
+- global configure APIs: `configureDialog` and `configureContextMenu`
+- public CSS tokens for dialog/button/toast/context-menu theme customization
+- scenario playbook entries in troubleshooting docs for migration and behavior tuning
 
 ### Changed
 - package version bumped to `0.2.0` for major capability upgrade line
 - tests expanded for adapter behavior, layout-stable callback, and trace propagation
+- API reference page synced with global configure APIs and related type definitions
+- examples synced with runnable global-config demo scenario
 
 ## [0.1.20] - 2026-03-09
 
