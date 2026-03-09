@@ -797,6 +797,44 @@ describe('SoContextMenu behavior', () => {
 
     expect(queries).toEqual(['d', 'e'])
   })
+
+  it('can disable typeahead per instance', () => {
+    const trigger = document.createElement('button')
+    trigger.type = 'button'
+    trigger.textContent = 'menu'
+    document.body.append(trigger)
+
+    const queries: string[] = []
+    const handle = bindContextMenu({
+      target: trigger,
+      typeaheadEnabled: false,
+      items: [
+        { id: 'download', label: '下载 Download' },
+        { id: 'rename', label: '重命名 Rename' },
+      ],
+      onTypeahead: ({ query }) => {
+        queries.push(query)
+      },
+    })
+
+    trigger.dispatchEvent(
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 30,
+        clientY: 20,
+      }),
+    )
+
+    const menu = handle.element
+    const items = Array.from(menu.querySelectorAll<HTMLButtonElement>('.sod-context-menu-item'))
+    expect(document.activeElement).toBe(items[0])
+
+    menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'r', bubbles: true }))
+
+    expect(document.activeElement).toBe(items[0])
+    expect(queries).toEqual([])
+  })
 })
 
 describe('Adapter behavior', () => {
@@ -1072,6 +1110,47 @@ describe('Global configure behavior', () => {
     menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'e', bubbles: true }))
 
     expect(queries).toEqual(['d', 'e'])
+  })
+
+  it('applies context menu global typeaheadEnabled default', () => {
+    configureContextMenu({
+      typeaheadEnabled: false,
+    })
+
+    const trigger = document.createElement('button')
+    trigger.type = 'button'
+    trigger.textContent = 'menu'
+    document.body.append(trigger)
+
+    const queries: string[] = []
+    const handle = bindContextMenu({
+      target: trigger,
+      items: [
+        { id: 'download', label: '下载 Download' },
+        { id: 'rename', label: '重命名 Rename' },
+      ],
+      onTypeahead: ({ query }) => {
+        queries.push(query)
+      },
+    })
+
+    trigger.dispatchEvent(
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 18,
+        clientY: 18,
+      }),
+    )
+
+    const menu = handle.element
+    const items = Array.from(menu.querySelectorAll<HTMLButtonElement>('.sod-context-menu-item'))
+    expect(document.activeElement).toBe(items[0])
+
+    menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'r', bubbles: true }))
+
+    expect(document.activeElement).toBe(items[0])
+    expect(queries).toEqual([])
   })
 })
 

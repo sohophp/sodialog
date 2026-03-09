@@ -118,6 +118,7 @@ bindContextMenu({
   closeOnEsc: true,
   closeOnScroll: true,
   closeOnWindowBlur: true,
+  typeaheadEnabled: true,
   typeaheadResetMs: 700,
   items: [
     { id: 'download', label: '下载 Download' },

@@ -114,6 +114,7 @@ export interface SoContextMenuOptions extends SoLifecycleHooks {
   closeOnScroll?: boolean
   closeOnResize?: boolean
   preventNativeMenu?: boolean
+  typeaheadEnabled?: boolean
   typeaheadResetMs?: number
   onOpen?: (handle: SoContextMenuHandle) => void
   onClose?: (reason: SoContextMenuCloseReason, handle: SoContextMenuHandle) => void
@@ -291,6 +292,7 @@ export interface SoContextMenuGlobalConfig {
   closeOnScroll?: boolean
   closeOnResize?: boolean
   preventNativeMenu?: boolean
+  typeaheadEnabled?: boolean
   typeaheadResetMs?: number
 }
 
@@ -2847,6 +2849,7 @@ export class SoContextMenu {
     const closeOnScroll = options.closeOnScroll ?? this.globalConfig.closeOnScroll ?? true
     const closeOnResize = options.closeOnResize ?? this.globalConfig.closeOnResize ?? true
     const preventNativeMenu = options.preventNativeMenu ?? this.globalConfig.preventNativeMenu ?? true
+    const typeaheadEnabled = options.typeaheadEnabled ?? this.globalConfig.typeaheadEnabled ?? true
     const typeaheadResetMs = Math.max(120, options.typeaheadResetMs ?? this.globalConfig.typeaheadResetMs ?? 450)
 
     const listeners: Array<() => void> = []
@@ -3356,6 +3359,9 @@ export class SoContextMenu {
       }
 
       if (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
+        if (!typeaheadEnabled) {
+          return
+        }
         event.preventDefault()
         runTypeahead(event.key)
       }

@@ -205,6 +205,7 @@ configureDialog({
 configureContextMenu({
   closeOnEsc: false,
   minWidth: 220,
+  typeaheadEnabled: true,
   typeaheadResetMs: 600,
   attrs: { 'data-menu-scope': 'global' },
 })
@@ -292,6 +293,7 @@ bindContextMenu({
 
 - 支持 `ArrowUp/ArrowDown/Home/End/Tab` 在菜单项之间导航，`Enter/Space` 激活当前项。
 - 支持首字母快速定位（typeahead）。
+- 可通过 `typeaheadEnabled` 关闭字母定位（保留方向键导航与 Enter/Space 激活）。
 - 混合标签（如 `删除 Delete`）会按词匹配，连续按同一字母会在命中项间轮转。
 - 可通过 `typeaheadResetMs` 调整字母定位 query 的重置窗口（默认 `450ms`，最小 `120ms`）。
 - 可通过 `onFocusItem(context)` 获取当前键盘定位的菜单项信息（`itemId/itemElement/...`）。
