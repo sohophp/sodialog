@@ -653,6 +653,44 @@ describe('SoContextMenu behavior', () => {
     menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'd', bubbles: true }))
     expect(document.activeElement).toBe(items[1])
   })
+
+  it('supports typeahead on mixed labels and cycles forward', () => {
+    const trigger = document.createElement('button')
+    trigger.type = 'button'
+    trigger.textContent = 'menu'
+    document.body.append(trigger)
+
+    const handle = bindContextMenu({
+      target: trigger,
+      items: [
+        { id: 'download', label: '下载 Download' },
+        { id: 'rename', label: '重命名 Rename' },
+        { id: 'delete', label: '删除 Delete' },
+      ],
+    })
+
+    trigger.dispatchEvent(
+      new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 28,
+        clientY: 20,
+      }),
+    )
+
+    const menu = handle.element
+    const items = Array.from(menu.querySelectorAll<HTMLButtonElement>('.sod-context-menu-item'))
+    expect(document.activeElement).toBe(items[0])
+
+    menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'd', bubbles: true }))
+    expect(document.activeElement).toBe(items[2])
+
+    menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'd', bubbles: true }))
+    expect(document.activeElement).toBe(items[0])
+
+    menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'r', bubbles: true }))
+    expect(document.activeElement).toBe(items[1])
+  })
 })
 
 describe('Adapter behavior', () => {

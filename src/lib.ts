@@ -3190,19 +3190,41 @@ export class SoContextMenu {
 
       typeaheadQuery += key
 
-      const startsWithQuery = (item: HTMLButtonElement) => {
+      const matchesItem = (item: HTMLButtonElement, query: string): boolean => {
         const text = (item.textContent ?? '').trim().toLowerCase()
-        return text.startsWith(typeaheadQuery)
+        if (text.startsWith(query)) {
+          return true
+        }
+
+        const tokenList = text
+          .split(/[\s\-_/.,|:;(){}]+/)
+          .map((token) => token.trim())
+          .filter((token) => token.length > 0)
+        return tokenList.some((token) => token.startsWith(query))
       }
 
-      const startsWithKey = (item: HTMLButtonElement) => {
-        const text = (item.textContent ?? '').trim().toLowerCase()
-        return text.startsWith(key)
+      const active = document.activeElement
+      const currentIndex = active instanceof HTMLButtonElement ? items.indexOf(active) : -1
+
+      const findNextMatchIndex = (query: string): number => {
+        const start = currentIndex
+        for (let offset = 1; offset <= items.length; offset += 1) {
+          const index = (start + offset + items.length) % items.length
+          if (matchesItem(items[index], query)) {
+            return index
+          }
+        }
+        return -1
       }
 
-      const target = items.find(startsWithQuery) ?? items.find(startsWithKey)
-      if (target) {
-        focusElementIfPossible(target)
+      let matchIndex = findNextMatchIndex(typeaheadQuery)
+      if (matchIndex < 0 && typeaheadQuery.length > 1) {
+        typeaheadQuery = key
+        matchIndex = findNextMatchIndex(typeaheadQuery)
+      }
+
+      if (matchIndex >= 0) {
+        focusItemAt(matchIndex)
       }
 
       if (typeaheadTimerId !== null) {
