@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SoDialog Modal Promise Demo</title>
+    <link rel="stylesheet" href="https://unpkg.com/sodialog@0.2.2/dist/sodialog.css" />
+    <style>
+      body {
+        margin: 0;
+        padding: 24px;
+        font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        background: #f6f8fb;
+      }
+      .card {
+        max-width: 760px;
+        border: 1px solid #d8e0ef;
+        border-radius: 14px;
+        background: #fff;
+        padding: 18px;
+      }
+      button {
+        border: 0;
+        border-radius: 10px;
+        background: #0d9488;
+        color: #fff;
+        padding: 10px 14px;
+        cursor: pointer;
+      }
+      .log {
+        margin-top: 14px;
+        background: #0f172a;
+        color: #e2e8f0;
+        border-radius: 8px;
+        padding: 10px;
+        min-height: 72px;
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>Modal Promise 串行流程</h2>
+      <p>依次触发 <code>confirmModal -> promptModal -> formModal</code>。</p>
+      <button id="run" disabled>Loading...</button>
+      <p id="status" style="margin-top: 10px; color: #475569; font-size: 13px">正在加载示例脚本...</p>
+      <div class="log" id="log">等待执行...</div>
+    </div>
+
+    <script type="module">
+      const runButton = document.querySelector('#run')
+      const status = document.querySelector('#status')
+      const candidates = [
+        'https://unpkg.com/sodialog@0.2.2/dist/sodialog.es.js',
+        // 'https://cdn.jsdelivr.net/npm/sodialog@0.2.2/dist/sodialog.es.js', // backup
+      ]
+
+      const loadApi = async () => {
+        for (const url of candidates) {
+          try {
+            return await import(url)
+          } catch {
+            // Try next CDN endpoint.
+          }
+        }
+        return null
+      }
+
+      const api = await loadApi()
+      const logNode = document.querySelector('#log')
+      const appendLog = (text) => {
+        if (!logNode) return
+        logNode.textContent += `\n${text}`
+      }
+
+      if (!api?.confirmModal || !api?.promptModal || !api?.formModal || !api?.pushMessage || !runButton) {
+        if (status) {
+          status.textContent = '加载失败：无法访问示例依赖，请检查网络或代理。'
+          status.style.color = '#b91c1c'
+        }
+      } else {
+        runButton.disabled = false
+        runButton.textContent = 'Run Flow'
+        if (status) {
+          status.textContent = '已就绪，点击按钮执行流程。'
+          status.style.color = '#0f766e'
+        }
+
+        runButton.addEventListener('click', async () => {
+          if (!logNode) return
+          logNode.textContent = '开始流程...'
+
+          const ok = await api.confirmModal({
+            title: '确认执行',
+            content: '<p>是否继续执行多步骤流程？</p>',
+          })
+          appendLog(`confirm result: ${ok}`)
+          if (!ok) return
+
+          const note = await api.promptModal({
+            title: '输入备注',
+            placeholder: '至少 2 个字符',
+            validate: (value) => (value.trim().length < 2 ? '至少输入 2 个字符' : true),
+          })
+          appendLog(`prompt result: ${note}`)
+          if (note === null) return
+
+          const values = await api.formModal({
+            title: '补充字段',
+            submitText: '提交',
+            fields: [
+              { name: 'owner', label: '负责人', required: true },
+              {
+                name: 'priority',
+                label: '优先级',
+                type: 'select',
+                options: [
+                  { label: 'P0', value: 'p0' },
+                  { label: 'P1', value: 'p1' },
+                ],
+              },
+            ],
+          })
+          appendLog(`form result: ${JSON.stringify(values)}`)
+          if (values) {
+            api.pushMessage('success', `流程完成: ${note}`, { duration: 1800 })
+          }
+        })
+      }
+    </script>
+  </body>
+</html>

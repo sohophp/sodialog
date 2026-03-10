@@ -193,6 +193,10 @@ body {
   gap: 0.82rem;
 }
 
+.content section[id] {
+  scroll-margin-top: calc(var(--sod-sticky-offset) + 0.5rem);
+}
+
 .section-title {
   margin: 0 0 0.42rem;
   font-size: 1.08rem;
@@ -302,7 +306,7 @@ body {
   font-size: 0.8rem;
   font-weight: 700;
   position: sticky;
-  top: 0;
+  top: var(--sod-sticky-offset);
 }
 
 .api-table tr:last-child td {

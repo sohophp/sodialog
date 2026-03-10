@@ -1,10 +1,41 @@
 # Changelog
 
+<!-- markdownlint-disable MD007 MD010 MD022 MD024 MD032 -->
+
 All notable changes to this project will be documented in this file.
 
 The format is inspired by Keep a Changelog and generated from git tags/commits.
 
 ## [Unreleased]
+
+### Added
+- VitePress docs site scaffold under `docs/` with local search, sidebar navigation, and GitHub Pages `base: /sodialog/`
+- docs scripts: `docs:dev`, `docs:build`, and `docs:preview`
+- migrated docs pages for API, Modal, Offcanvas, Toast, and Context Menu
+- new guides pages in docs: `workflow`, `adapter-guidelines`, `migration-guide`, and `troubleshooting`
+- guides overview page: `docs/guides/index.md`
+- examples hub page in docs: `docs/examples/index.md`
+- reusable VitePress `DemoPreview` component (`iframe` + source panel + copy button) for in-page runnable demos
+- new runnable docs demos for advanced scenarios:
+	- `docs/public/components/modal-promise.html`
+	- `docs/public/components/toast-queue.html`
+	- `docs/public/components/context-menu-dialog.html`
+- API split pages for source-accurate docs:
+	- `docs/api/dialog.md`
+	- `docs/api/toast.md`
+	- `docs/api/context-menu.md`
+	- `docs/api/adapter.md`
+
+### Changed
+- README "文档体系" now points to VitePress docs paths and commands
+- root `adapter-guidelines.md`, `migration-guide.md`, and `troubleshooting.md` converted to pointers to docs pages to avoid dual maintenance
+- docs examples and component links migrated from legacy `*.html` pages to VitePress internal routes
+- VitePress `base` switched to `/`
+- docs information architecture upgraded to documentation portal style: homepage hero/features, shared logo/nav/footer, and structured sidebar
+- component guides upgraded to progressive teaching flow (basic -> advanced) with embedded live demos
+- API reference upgraded with method index, type cheat sheet, and page-level parameter/default tables aligned to `src/lib.ts`
+- quick start now includes in-page 30-second live demo entry
+- docs workflow guide expanded to include content update rules, quality gate, and post-release doc tasks
 
 ## [0.2.2] - 2026-03-09
 

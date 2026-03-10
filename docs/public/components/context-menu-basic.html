@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SoDialog Context Menu Basic Demo</title>
+    <link rel="stylesheet" href="https://unpkg.com/sodialog@0.2.2/dist/sodialog.css" />
+    <style>
+      body {
+        margin: 0;
+        padding: 24px;
+        font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        background: #f6f8fb;
+      }
+      .area {
+        border: 2px dashed #88a0d3;
+        border-radius: 14px;
+        background: #eef4ff;
+        min-height: 260px;
+        display: grid;
+        place-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Context Menu 演示</h2>
+    <p id="status" style="color: #475569; font-size: 13px">正在加载示例脚本...</p>
+    <div class="area" id="zone">在此区域右键</div>
+
+    <script type="module">
+      const status = document.querySelector('#status')
+      const candidates = [
+        'https://unpkg.com/sodialog@0.2.2/dist/sodialog.es.js',
+        // 'https://cdn.jsdelivr.net/npm/sodialog@0.2.2/dist/sodialog.es.js', // backup
+      ]
+
+      const loadApi = async () => {
+        for (const url of candidates) {
+          try {
+            return await import(url)
+          } catch {
+            // Try next CDN endpoint.
+          }
+        }
+        return null
+      }
+
+      const api = await loadApi()
+      if (!api?.bindContextMenu) {
+        if (status) {
+          status.textContent = '加载失败：无法访问示例依赖，请检查网络或代理。'
+          status.style.color = '#b91c1c'
+        }
+      } else {
+        api.bindContextMenu({
+          target: '#zone',
+          items: [
+            { id: 'copy', label: '复制' },
+            { id: 'rename', label: '重命名' },
+            { id: 'delete', label: '删除' },
+          ],
+          onAction: ({ itemId }) => {
+            console.log('selected item:', itemId)
+          },
+        })
+        if (status) {
+          status.textContent = '已就绪，请在区域内右键查看菜单。'
+          status.style.color = '#0f766e'
+        }
+      }
+    </script>
+  </body>
+</html>

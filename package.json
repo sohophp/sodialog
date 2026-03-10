@@ -34,10 +34,18 @@
     "dist"
   ],
   "scripts": {
-    "dev": "vite",
+    "dev": "npm run docs:dev:full",
+    "dev:legacy": "vite",
     "build": "vite build && npm run build:types",
     "build:types": "tsc -p tsconfig.build.json",
     "build:demo": "vite build --mode demo",
+    "docs:dev": "vitepress dev docs",
+    "docs:dev:full": "npm run build:demo && vitepress dev docs",
+    "docs:build": "npm run build:demo && vitepress build docs",
+    "docs:preview": "vitepress preview docs",
+    "docs:test:smoke": "playwright test -c playwright.docs.config.ts",
+    "docs:test:smoke:prepare": "npm run docs:build",
+    "docs:test:smoke:ci": "node scripts/docs-smoke-ci.mjs",
     "test": "vitest",
     "test:run": "vitest run",
     "hooks:enable": "git config core.hooksPath .githooks",
@@ -45,18 +53,21 @@
     "docs:changelog": "node scripts/generate-changelog.mjs",
     "preview": "vite preview",
     "lint": "eslint .",
-    "prepublishOnly": "npm run lint && npm run build"
+    "release:verify": "npm run lint && npm run build && npm run docs:test:smoke:ci",
+    "prepublishOnly": "npm run release:verify"
   },
   "sideEffects": [
     "**/*.css"
   ],
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.54.2",
     "eslint": "^10.0.2",
     "jsdom": "^28.1.0",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.56.1",
     "vite": "^7.3.1",
+    "vitepress": "^1.6.4",
     "vitest": "^4.0.18"
   }
 }

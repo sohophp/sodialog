@@ -18,6 +18,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,6 +31,20 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Docs smoke check
+        run: npm run docs:test:smoke:ci
+
+      - name: Upload docs smoke report (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-smoke-report-pages
+          path: playwright-report/docs-smoke
+          if-no-files-found: ignore
 
       - name: Build docs homepage
         run: npm run build:demo
@@ -44,6 +59,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: build
     environment:
       name: github-pages

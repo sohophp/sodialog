@@ -9,6 +9,7 @@
 - [x] `npm run release:check -- vX.Y.Z` 通过（tag 与 `package.json` 版本一致）
 - [x] `npm run lint` 通过
 - [x] `npm run build` 通过
+- [x] `npm run docs:test:smoke:ci` 通过（含 docs build + 页面冒烟）
 - [ ] 手工验证关键场景：
   - [ ] `cancel/close => dialog.close()`
   - [ ] `confirmAction: 'destroy' => dialog.remove()`
@@ -35,3 +36,12 @@
 - [ ] 新建空项目安装验证：`npm i sodialog`
 - [ ] 运行最小示例：`openModal(...)` + `import 'sodialog/style.css'`
 - [ ] 检查 ESM 导入、样式导入、类型提示是否正常
+
+## 6) 文档门户专项（VitePress）
+- [x] `npm run docs:build` 通过（文档与示例构建成功）
+- [x] Playwright 报告可查看：`npx playwright show-report playwright-report/docs-smoke`
+- [x] Markdown 内链检查通过（`docs/**/*.md` 无缺失内部链接）
+- [x] 首页/快速开始/API/组件页可正常访问
+- [x] 每个核心组件页含可运行示例与源码复制能力
+- [x] API 子页与 `src/lib.ts` 公开类型保持一致
+- [x] `CHANGELOG.md` 的 `Unreleased` 已同步本轮文档改动

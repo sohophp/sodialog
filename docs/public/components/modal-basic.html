@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SoDialog Modal Basic Demo</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="stylesheet" href="https://unpkg.com/sodialog@0.2.2/dist/sodialog.css" />
+    <style>
+      body {
+        margin: 0;
+        padding: 24px;
+        font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        background: #f6f8fb;
+      }
+      .card {
+        max-width: 720px;
+        background: #fff;
+        border: 1px solid #d8e0ef;
+        border-radius: 14px;
+        padding: 20px;
+      }
+      button {
+        border: 0;
+        border-radius: 10px;
+        background: #0d9488;
+        color: #fff;
+        padding: 10px 14px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>Modal 基础演示</h2>
+      <p>点击按钮打开一个标准 Modal。</p>
+      <button id="open" disabled>Loading...</button>
+      <p id="status" style="margin-top: 10px; color: #475569; font-size: 13px">正在加载示例脚本...</p>
+    </div>
+
+    <script type="module">
+      const openButton = document.querySelector('#open')
+      const status = document.querySelector('#status')
+
+      const candidates = [
+        'https://unpkg.com/sodialog@0.2.2/dist/sodialog.es.js',
+        // 'https://cdn.jsdelivr.net/npm/sodialog@0.2.2/dist/sodialog.es.js', // backup
+      ]
+
+      const loadApi = async () => {
+        for (const url of candidates) {
+          try {
+            return await import(url)
+          } catch {
+            // Try next CDN endpoint.
+          }
+        }
+        return null
+      }
+
+      const api = await loadApi()
+      if (!api?.openModal || !openButton) {
+        if (status) {
+          status.textContent = '加载失败：无法访问示例依赖，请检查网络或代理。'
+          status.style.color = '#b91c1c'
+        }
+      } else {
+        openButton.disabled = false
+        openButton.textContent = 'Open Modal'
+        if (status) {
+          status.textContent = '已就绪，点击按钮查看效果。'
+          status.style.color = '#0f766e'
+        }
+
+        openButton.addEventListener('click', () => {
+          api.openModal({
+            title: '删除确认',
+            content: '<p>确认删除当前记录吗？</p>',
+            confirmText: '确认',
+            cancelText: '取消',
+            useModal: true,
+          })
+        })
+      }
+    </script>
+  </body>
+</html>

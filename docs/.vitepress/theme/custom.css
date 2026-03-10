@@ -1,0 +1,192 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+
+:root {
+  --vp-c-brand-1: #0e7490;
+  --vp-c-brand-2: #0d9488;
+  --vp-c-brand-3: #14b8a6;
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(130deg, #0f766e 15%, #0e7490 40%, #2563eb 78%);
+  --vp-home-hero-image-background-image: radial-gradient(circle at 35% 35%, rgba(14, 116, 144, 0.32), rgba(15, 118, 110, 0.08));
+  --vp-home-hero-image-filter: blur(0px);
+}
+
+.VPNavBarTitle .title {
+  letter-spacing: 0.2px;
+  font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
+  font-weight: 700;
+}
+
+body {
+  font-family: 'IBM Plex Sans', 'Segoe UI', sans-serif;
+  background:
+    radial-gradient(circle at 7% 2%, rgba(20, 184, 166, 0.14), transparent 26%),
+    radial-gradient(circle at 92% 16%, rgba(59, 130, 246, 0.14), transparent 30%),
+    var(--vp-c-bg);
+}
+
+.Layout {
+  position: relative;
+}
+
+.Layout::before {
+  content: '';
+  position: fixed;
+  inset: -20vh -10vw auto;
+  height: 48vh;
+  pointer-events: none;
+  background: radial-gradient(circle at 30% 45%, rgba(20, 184, 166, 0.14), transparent 52%);
+  filter: blur(18px);
+  z-index: -1;
+  animation: none;
+}
+
+.VPNavBar {
+  backdrop-filter: saturate(135%) blur(8px);
+  background: color-mix(in srgb, var(--vp-c-bg) 82%, #d6f3ee 18%);
+}
+
+.VPHomeHero .container {
+  position: relative;
+}
+
+.VPHomeHero .container::before {
+  content: '';
+  position: absolute;
+  inset: 26px -24px auto;
+  height: 260px;
+  pointer-events: none;
+  border-radius: 28px;
+  background: linear-gradient(115deg, rgba(20, 184, 166, 0.14), rgba(59, 130, 246, 0.15));
+  z-index: -1;
+}
+
+.VPHomeHero .image-container {
+  animation: none;
+}
+
+.VPHomeHero {
+  padding-top: 14px;
+}
+
+.VPHomeHero .name {
+  letter-spacing: 0.4px;
+}
+
+.VPHomeHero .text {
+  max-width: 760px;
+  font-size: clamp(2rem, 4.6vw, 3rem);
+  line-height: 1.1;
+}
+
+.VPHomeHero .tagline {
+  max-width: 760px;
+  color: color-mix(in srgb, var(--vp-c-text-1) 76%, #0f766e 24%);
+}
+
+.VPHomeHero .actions .VPButton.brand {
+  box-shadow: 0 10px 20px rgba(14, 116, 144, 0.18);
+}
+
+.VPHomeHero .actions .VPButton {
+  border-radius: 12px;
+}
+
+.VPHomeHero .metrics {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.VPHomeHero .metric {
+  border: 1px solid color-mix(in srgb, var(--vp-c-divider) 72%, #22d3ee 28%);
+  border-radius: 999px;
+  padding: 7px 12px;
+  background: color-mix(in srgb, var(--vp-c-bg-soft) 80%, #d9f9f5 20%);
+  box-shadow: 0 5px 12px rgba(15, 118, 110, 0.08);
+}
+
+.VPHomeHero .metric .title {
+  font-weight: 700;
+}
+
+.VPHomeHero .metric .details {
+  color: var(--vp-c-text-2);
+  font-size: 0.82rem;
+}
+
+.VPFeature {
+  border: 1px solid color-mix(in srgb, var(--vp-c-divider) 76%, #22d3ee 24%);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.VPFeature:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(15, 118, 110, 0.09);
+}
+
+.VPFeature .title {
+  font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
+}
+
+.VPHome .VPHomeContent .container {
+  border: 1px solid color-mix(in srgb, var(--vp-c-divider) 78%, #67e8f9 22%);
+  border-radius: 18px;
+  padding: 22px 24px;
+  background: linear-gradient(140deg, color-mix(in srgb, var(--vp-c-bg-soft) 88%, #d9f9f5 12%), var(--vp-c-bg));
+}
+
+.VPHome .vp-doc h2 {
+  font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
+  letter-spacing: 0.2px;
+  position: relative;
+  padding-top: 8px;
+}
+
+.VPHome .vp-doc h2::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 0;
+  width: 58px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #14b8a6, #38bdf8);
+}
+
+.VPHome .vp-doc table {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.VPHome .vp-doc p img {
+  display: block;
+  width: min(760px, 82%);
+  max-height: 320px;
+  object-fit: cover;
+  margin: 8px 0 12px;
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--vp-c-divider) 72%, #67e8f9 28%);
+  box-shadow: 0 12px 24px rgba(14, 116, 144, 0.12);
+}
+
+.VPHome .vp-doc hr {
+  border: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(20, 184, 166, 0.45), transparent);
+  margin: 22px 0;
+}
+
+@media (max-width: 700px) {
+  .VPHome .VPHomeContent .container {
+    padding: 16px;
+    border-radius: 14px;
+  }
+
+  .VPHome .vp-doc p img {
+    width: 100%;
+    max-height: 240px;
+    margin: 8px 0 10px;
+  }
+}
+

@@ -4,20 +4,14 @@ import { resolve } from 'node:path'
 export default defineConfig(({ mode }) => {
   if (mode === 'demo') {
     return {
-      base: '/sodialog/',
+      base: '/legacy-demo/',
       build: {
-        outDir: 'dist-pages',
+        outDir: 'docs/public/legacy-demo',
         rollupOptions: {
           input: {
             main: resolve(__dirname, 'index.html'),
             demo: resolve(__dirname, 'demo.html'),
-            examples: resolve(__dirname, 'examples.html'),
-            api: resolve(__dirname, 'api.html'),
-            modal: resolve(__dirname, 'modal.html'),
             offcanvas: resolve(__dirname, 'offcanvas.html'),
-            toast: resolve(__dirname, 'toast.html'),
-            contextMenu: resolve(__dirname, 'context-menu.html'),
-            workflow: resolve(__dirname, 'workflow.html'),
           },
         },
       },

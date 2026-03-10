@@ -588,10 +588,10 @@ formBtn?.addEventListener('click', async () => {
 
 ## API
 
-### API 独立页
+### API 文档页
 
-- 本地开发访问：`/api.html`
-- Pages 构建后访问：`https://sohophp.github.io/sodialog/api.html`
+- 本地开发访问：`/api/`（VitePress）
+- 构建后访问：文档站内 `api` 路由
 
 该页面包含全部公开方法、参数、返回值和类型说明，可作为查询手册使用。
 并新增“快速代码片段”折叠区（默认收起、支持一键复制），覆盖 Adapter、Promise 串行流程、Toast 队列策略。
@@ -874,46 +874,42 @@ npm run dev
 npm run test:run
 npm run lint
 npm run build
-npm run build:demo
+npm run docs:build
+npm run docs:test:smoke:ci
 npm run docs:changelog
 ```
 
 说明：
 
 - 先执行 `npm run hooks:enable`，启用仓库级 git hooks。
-- 启用后，每次 `git commit` 会自动执行 `npm run build:demo`，用于同步 API/演示页面产物。
+- `npm run dev` 会自动先构建 legacy demo，再启动 VitePress。
 
 ## GitHub Pages 首页
 
-本仓库已将文档主页入口放在 `index.html + src/main.ts`，用于展示开发文档与使用说明。
+本仓库文档已迁移到 VitePress（`docs/`）。
 
-- 本地构建主页：`npm run build:demo`
-- 产物目录：`dist-pages/`
+- 本地开发文档：`npm run dev`（推荐）或 `npm run docs:dev`
+- 文档构建产物：`docs/.vitepress/dist`
+- 旧版 demo 构建：`npm run build:demo`
+- demo 产物目录：`docs/public/legacy-demo/`
 - 线上部署：`.github/workflows/pages.yml`（推送到 `master` 自动部署）
 - 仓库设置：`Settings -> Pages -> Source` 选择 `GitHub Actions`
 
-默认线上地址：`https://sohophp.github.io/sodialog/`
+默认文档地址：部署后的站点根路径（VitePress 路由，如 `/api/`、`/examples/`、`/guides/workflow`）。
 
-独立示例导航页：`https://sohophp.github.io/sodialog/examples.html`
-
-每个工具独立一页（并在页面内细分示例）：
-
-- `https://sohophp.github.io/sodialog/modal.html`
-- `https://sohophp.github.io/sodialog/offcanvas.html`
-- `https://sohophp.github.io/sodialog/toast.html`
-
-开发/发布流程统一详情页：
-
-- `https://sohophp.github.io/sodialog/workflow.html`
+旧版页面仅保留 legacy demo，访问路径：`/legacy-demo/demo.html`。
 
 ## 文档体系
 
+- VitePress 文档站：`docs/`
+- 本地开发：`npm run docs:dev`
+- 构建产物：`npm run docs:build`（输出 `docs/.vitepress/dist`）
 - `README.md`：使用方式、API、发布流程总览
 - `CHANGELOG.md`：版本变更记录（按 git tag 自动生成）
 - `RELEASE_CHECKLIST.md`：发布前人工检查清单
-- `adapter-guidelines.md`：推荐接入路径与反例
-- `migration-guide.md`：从旧系统迁移到 SoDialog
-- `troubleshooting.md`：排障手册与检查清单
+- `docs/guides/adapter-guidelines.md`：推荐接入路径与反例
+- `docs/guides/migration-guide.md`：从旧系统迁移到 SoDialog
+- `docs/guides/troubleshooting.md`：排障手册与检查清单
 
 ### 文档自动更新
 
@@ -943,13 +939,23 @@ Demo 中已包含：
 2. 检查包名可用性
 3. 发布：`npm publish --access public`
 
+建议发布前先执行：`npm run release:verify`（包含 `lint + build + docs smoke`）。
+
+若文档冒烟失败，可用以下命令查看本地 HTML 报告：
+
+```bash
+npx playwright show-report playwright-report/docs-smoke
+```
+
 ### Git Tag 自动发布（GitHub Actions）
 
 仓库已内置工作流 `.github/workflows/npm-publish.yml`，当推送版本标签（如 `v0.1.4`）时会自动：
 
 1. 校验 tag 版本与 `package.json` 版本一致
-2. 执行 `npm ci`、`npm run lint`、`npm run build`
-3. 发布到 npm（若该版本已存在则自动跳过）
+2. 执行 `npm ci`
+3. 安装 Playwright Chromium（用于文档冒烟测试）
+4. 执行 `npm run release:verify`（`lint + build + docs smoke`）
+5. 发布到 npm（若该版本已存在则自动跳过）
 
 发布前准备：
 
@@ -971,6 +977,7 @@ npm run release:check -- vX.Y.Z
 ```bash
 npm version patch --no-git-tag-version
 npm run release:check -- vX.Y.Z
+npm run release:verify
 git add -A
 git commit -m "release: vX.Y.Z"
 git tag -a vX.Y.Z -m "vX.Y.Z"

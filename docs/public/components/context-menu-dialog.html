@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SoDialog Context Menu to Dialog Demo</title>
+    <link rel="stylesheet" href="https://unpkg.com/sodialog@0.2.2/dist/sodialog.css" />
+    <style>
+      body {
+        margin: 0;
+        padding: 24px;
+        font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        background: #f6f8fb;
+      }
+      .zone {
+        min-height: 260px;
+        border: 2px dashed #8aa3d5;
+        border-radius: 14px;
+        background: #eef4ff;
+        display: grid;
+        place-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Context Menu -> Dialog（close-first）</h2>
+    <p id="status" style="color: #475569; font-size: 13px">正在加载示例脚本...</p>
+    <div class="zone" id="zone">在这里右键，点击菜单项打开 Dialog</div>
+
+    <script type="module">
+      const status = document.querySelector('#status')
+      const candidates = [
+        'https://unpkg.com/sodialog@0.2.2/dist/sodialog.es.js',
+        // 'https://cdn.jsdelivr.net/npm/sodialog@0.2.2/dist/sodialog.es.js', // backup
+      ]
+
+      const loadApi = async () => {
+        for (const url of candidates) {
+          try {
+            return await import(url)
+          } catch {
+            // Try next CDN endpoint.
+          }
+        }
+        return null
+      }
+
+      const api = await loadApi()
+      if (!api?.bindContextMenu || !api?.openDialogFromContextMenu) {
+        if (status) {
+          status.textContent = '加载失败：无法访问示例依赖，请检查网络或代理。'
+          status.style.color = '#b91c1c'
+        }
+      } else {
+        let handle = null
+        handle = api.bindContextMenu({
+          target: '#zone',
+          items: [
+            {
+              id: 'open-dialog',
+              label: '打开确认弹窗',
+              onClick: () => {
+                if (!handle) return
+                api.openDialogFromContextMenu(handle, {
+                  title: '来自右键菜单',
+                  content: '<p>已执行 close-first-open-next。</p>',
+                  confirmText: '确定',
+                  cancelText: '关闭',
+                })
+              },
+            },
+            { id: 'rename', label: '重命名' },
+            { id: 'delete', label: '删除' },
+          ],
+        })
+        if (status) {
+          status.textContent = '已就绪，请在区域内右键查看菜单。'
+          status.style.color = '#0f766e'
+        }
+      }
+    </script>
+  </body>
+</html>

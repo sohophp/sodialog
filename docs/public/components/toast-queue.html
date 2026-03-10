@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SoDialog Toast Queue Demo</title>
+    <link rel="stylesheet" href="https://unpkg.com/sodialog@0.2.2/dist/sodialog.css" />
+    <style>
+      body {
+        margin: 0;
+        padding: 24px;
+        font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        background: #f6f8fb;
+      }
+      .card {
+        max-width: 760px;
+        border: 1px solid #d8e0ef;
+        border-radius: 14px;
+        background: #fff;
+        padding: 18px;
+      }
+      .row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      button {
+        border: 0;
+        border-radius: 10px;
+        background: #0d9488;
+        color: #fff;
+        padding: 10px 14px;
+        cursor: pointer;
+      }
+      select {
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>Toast 队列与重复策略</h2>
+      <p id="status" style="color: #475569; font-size: 13px">正在加载示例脚本...</p>
+      <div class="row" style="margin-bottom: 10px;">
+        <label>
+          duplicateStrategy
+          <select id="strategy" disabled>
+            <option value="update">update</option>
+            <option value="ignore">ignore</option>
+            <option value="restart-timer">restart-timer</option>
+            <option value="stack">stack</option>
+          </select>
+        </label>
+      </div>
+      <div class="row">
+        <button id="single" disabled>Single Toast</button>
+        <button id="batch" disabled>Batch x6</button>
+        <button id="clear" disabled>Clear All</button>
+      </div>
+    </div>
+
+    <script type="module">
+      const status = document.querySelector('#status')
+      const strategyNode = document.querySelector('#strategy')
+      const singleButton = document.querySelector('#single')
+      const batchButton = document.querySelector('#batch')
+      const clearButton = document.querySelector('#clear')
+      const candidates = [
+        'https://unpkg.com/sodialog@0.2.2/dist/sodialog.es.js',
+        // 'https://cdn.jsdelivr.net/npm/sodialog@0.2.2/dist/sodialog.es.js', // backup
+      ]
+
+      const loadApi = async () => {
+        for (const url of candidates) {
+          try {
+            return await import(url)
+          } catch {
+            // Try next CDN endpoint.
+          }
+        }
+        return null
+      }
+
+      const api = await loadApi()
+      const getStrategy = () => strategyNode?.value || 'update'
+      if (!api?.toast || !api?.SoToast || !singleButton || !batchButton || !clearButton) {
+        if (status) {
+          status.textContent = '加载失败：无法访问示例依赖，请检查网络或代理。'
+          status.style.color = '#b91c1c'
+        }
+      } else {
+        api.SoToast.configure({ placement: 'top-end', maxVisible: 3, newestOnTop: true })
+        if (strategyNode) strategyNode.disabled = false
+        singleButton.disabled = false
+        batchButton.disabled = false
+        clearButton.disabled = false
+        if (status) {
+          status.textContent = '已就绪，点击按钮查看队列策略。'
+          status.style.color = '#0f766e'
+        }
+
+        singleButton.addEventListener('click', () => {
+          api.toast({
+            id: 'sync-task',
+            title: '同步任务',
+            content: `strategy = ${getStrategy()}`,
+            duplicateStrategy: getStrategy(),
+            duration: 2200,
+            variant: 'info',
+          })
+        })
+
+        batchButton.addEventListener('click', () => {
+          const strategy = getStrategy()
+          for (let index = 1; index <= 6; index += 1) {
+            api.toast({
+              id: strategy === 'stack' ? `stack-${index}` : 'queue-batch',
+              title: `Queue ${index}`,
+              content: `No.${index} / strategy: ${strategy}`,
+              duplicateStrategy: strategy,
+              duration: 1300 + index * 220,
+              variant: index % 2 === 0 ? 'success' : 'default',
+            })
+          }
+        })
+
+        clearButton.addEventListener('click', () => {
+          api.SoToast.closeAll()
+        })
+      }
+    </script>
+  </body>
+</html>

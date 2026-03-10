@@ -12,6 +12,7 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     env:
       NPM_AUTOMATION_TOKEN: ${{ secrets.NPM_AUTOMATION_TOKEN }}
 
@@ -32,11 +33,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Lint
-        run: npm run lint
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
 
-      - name: Build
-        run: npm run build
+      - name: Release verify (lint + build + docs smoke)
+        run: npm run release:verify
+
+      - name: Upload docs smoke report (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-smoke-report-npm-publish
+          path: playwright-report/docs-smoke
+          if-no-files-found: ignore
 
       - name: Check if version already exists on npm
         id: version_check

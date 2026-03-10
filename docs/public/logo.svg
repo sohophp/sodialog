@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="40" viewBox="0 0 160 40" fill="none">
+  <rect x="2" y="4" width="32" height="32" rx="8" fill="#0d9488"/>
+  <path d="M10 16h16v2H10zm0 6h12v2H10z" fill="white"/>
+  <text x="44" y="26" fill="#0f172a" font-family="Arial, sans-serif" font-size="18" font-weight="700">SoDialog</text>
+</svg>

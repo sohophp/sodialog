@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3f1a09"/>
+      <stop offset="0.5" stop-color="#9a3412"/>
+      <stop offset="1" stop-color="#ea580c"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect x="70" y="70" width="1060" height="490" rx="26" fill="#ffffff" fill-opacity="0.11"/>
+
+  <rect x="110" y="140" width="480" height="340" rx="18" fill="#431407" fill-opacity="0.58" stroke="#fdba74" stroke-opacity="0.4"/>
+  <text x="140" y="190" fill="#fff7ed" font-family="Segoe UI, Arial, sans-serif" font-size="38" font-weight="700">Devlog 2026-03-09</text>
+  <text x="140" y="235" fill="#ffedd5" font-family="Segoe UI, Arial, sans-serif" font-size="24">Toast Queue + Release Checklist</text>
+  <rect x="140" y="280" width="20" height="20" rx="4" fill="#fed7aa"/>
+  <text x="172" y="296" fill="#fff7ed" font-family="Segoe UI, Arial, sans-serif" font-size="18">Queue behavior reviewed</text>
+  <rect x="140" y="322" width="20" height="20" rx="4" fill="#fdba74"/>
+  <text x="172" y="338" fill="#fff7ed" font-family="Segoe UI, Arial, sans-serif" font-size="18">Release steps audited</text>
+  <rect x="140" y="364" width="20" height="20" rx="4" fill="#fb923c"/>
+  <text x="172" y="380" fill="#fff7ed" font-family="Segoe UI, Arial, sans-serif" font-size="18">Risk points documented</text>
+
+  <polygon points="820,410 870,410 850,520 840,520" fill="#fef3c7" fill-opacity="0.85"/>
+  <rect x="798" y="250" width="104" height="170" rx="48" fill="#fff7ed" fill-opacity="0.82"/>
+  <rect x="820" y="225" width="60" height="40" rx="20" fill="#fde68a" fill-opacity="0.9"/>
+  <polygon points="798,360 760,388 798,388" fill="#f97316" fill-opacity="0.85"/>
+  <polygon points="902,360 940,388 902,388" fill="#f97316" fill-opacity="0.85"/>
+  <ellipse cx="850" cy="536" rx="95" ry="26" fill="#ffedd5" fill-opacity="0.24"/>
+</svg>

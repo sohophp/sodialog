@@ -3,7 +3,15 @@ import tseslint from 'typescript-eslint'
 
 export default tseslint.config(
   {
-    ignores: ['dist', 'dist-pages', '.history', 'node_modules'],
+    ignores: [
+      'dist/**',
+      'dist-pages/**',
+      'docs/public/legacy-demo/**',
+      'docs/.vitepress/cache/**',
+      'docs/.vitepress/dist/**',
+      '.history/**',
+      'node_modules/**',
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,

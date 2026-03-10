@@ -845,6 +845,7 @@ function renderApp(root: HTMLDivElement) {
     const createRow = (name: string) => {
       const row = document.createElement('button')
       row.type = 'button'
+      row.className = 'modal-context-menu-row'
       row.textContent = name
       row.dataset.fileName = name
       row.style.textAlign = 'left'
@@ -877,9 +878,11 @@ function renderApp(root: HTMLDivElement) {
       content: wrapper,
       confirmText: '关闭',
       cancelText: '取消',
+      autoFitSize: true,
+      scrollMode: 'body',
       onAfterOpen: () => {
         menuHandle = bindContextMenu({
-          target: [rowA, rowB, rowC],
+          target: '.modal-context-menu-row',
           items: [
             { id: 'copy', label: '复制文件名', icon: 'bi bi-copy' },
             { id: 'rename', label: '重命名', icon: 'bi bi-pencil-square' },

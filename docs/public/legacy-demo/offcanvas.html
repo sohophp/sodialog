@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SoDialog Offcanvas Basic Demo</title>
+    <link rel="icon" type="image/x-icon" href="/legacy-demo/favicon.ico" />
+    <link rel="stylesheet" href="https://unpkg.com/sodialog@0.2.2/dist/sodialog.css" />
+    <style>
+      body {
+        margin: 0;
+        padding: 24px;
+        font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        background: #f6f8fb;
+      }
+      .card {
+        max-width: 720px;
+        background: #fff;
+        border: 1px solid #d8e0ef;
+        border-radius: 14px;
+        padding: 20px;
+      }
+      .row {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+      }
+      button {
+        border: 0;
+        border-radius: 10px;
+        background: #0d9488;
+        color: #fff;
+        padding: 10px 14px;
+        cursor: pointer;
+      }
+    </style>
+    <script type="module" crossorigin src="/legacy-demo/assets/offcanvas-1H1ThKd3.js"></script>
+    <link rel="modulepreload" crossorigin href="/legacy-demo/assets/modulepreload-polyfill-B5Qt9EMX.js">
+  </head>
+  <body>
+    <div class="card">
+      <h2>Offcanvas 位置演示</h2>
+      <p>点击按钮打开不同方向的 Offcanvas。</p>
+      <p id="status" style="margin-top: 10px; color: #475569; font-size: 13px">正在加载示例脚本...</p>
+      <div class="row">
+        <button data-placement="start" disabled>Start</button>
+        <button data-placement="end" disabled>End</button>
+        <button data-placement="top" disabled>Top</button>
+        <button data-placement="bottom" disabled>Bottom</button>
+      </div>
+    </div>
+
+  </body>
+</html>

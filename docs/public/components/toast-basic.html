@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SoDialog Toast Basic Demo</title>
+    <link rel="stylesheet" href="https://unpkg.com/sodialog@0.2.2/dist/sodialog.css" />
+    <style>
+      body {
+        margin: 0;
+        padding: 24px;
+        font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        background: #f6f8fb;
+      }
+      .grid {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        max-width: 720px;
+      }
+      button {
+        border: 0;
+        border-radius: 10px;
+        background: #0d9488;
+        color: #fff;
+        padding: 10px 14px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Toast 演示</h2>
+    <p id="status" style="color: #475569; font-size: 13px">正在加载示例脚本...</p>
+    <div class="grid">
+      <button data-type="success" disabled>Success</button>
+      <button data-type="info" disabled>Info</button>
+      <button data-type="warning" disabled>Warning</button>
+      <button data-type="danger" disabled>Danger</button>
+    </div>
+
+    <script type="module">
+      const status = document.querySelector('#status')
+      const buttons = document.querySelectorAll('button[data-type]')
+      const candidates = [
+        'https://unpkg.com/sodialog@0.2.2/dist/sodialog.es.js',
+        // 'https://cdn.jsdelivr.net/npm/sodialog@0.2.2/dist/sodialog.es.js', // backup
+      ]
+
+      const loadApi = async () => {
+        for (const url of candidates) {
+          try {
+            return await import(url)
+          } catch {
+            // Try next CDN endpoint.
+          }
+        }
+        return null
+      }
+
+      const api = await loadApi()
+      if (!api?.pushMessage) {
+        if (status) {
+          status.textContent = '加载失败：无法访问示例依赖，请检查网络或代理。'
+          status.style.color = '#b91c1c'
+        }
+      } else {
+        buttons.forEach((button) => {
+          button.disabled = false
+          button.addEventListener('click', () => {
+            const type = button.getAttribute('data-type') || 'info'
+            api.pushMessage(type, `这是一条 ${type} 消息`, { duration: 1800 })
+          })
+        })
+        if (status) {
+          status.textContent = '已就绪，点击按钮查看效果。'
+          status.style.color = '#0f766e'
+        }
+      }
+    </script>
+  </body>
+</html>

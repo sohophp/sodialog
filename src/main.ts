@@ -25,13 +25,13 @@ app.innerHTML = `
       </div>
       <nav class="quick-nav">
         <a href="./index.html#quick-start">快速开始</a>
-        <a href="./examples.html">示例导航</a>
-        <a href="./modal.html">Modal Lab</a>
-        <a href="./offcanvas.html">Offcanvas Lab</a>
-        <a href="./toast.html">Toast Lab</a>
+        <a href="/examples/">示例导航</a>
+        <a href="/components/modal">Modal</a>
+        <a href="/components/offcanvas">Offcanvas</a>
+        <a href="/components/toast">Toast</a>
         <a href="./demo.html">原版 Demo</a>
-        <a href="./api.html">API</a>
-        <a href="./workflow.html">开发/发布流程</a>
+        <a href="/api/">API</a>
+        <a href="/guides/workflow">开发/发布流程</a>
       </nav>
     </div>
 
@@ -49,12 +49,12 @@ app.innerHTML = `
 
     <div class="hero-actions">
       <a class="btn primary" href="https://www.npmjs.com/package/sodialog" target="_blank" rel="noreferrer">NPM 包</a>
-      <a class="btn secondary" href="./examples.html">Examples Hub</a>
-      <a class="btn secondary" href="./modal.html">Modal Lab</a>
-      <a class="btn secondary" href="./offcanvas.html">Offcanvas Lab</a>
-      <a class="btn secondary" href="./toast.html">Toast Lab</a>
-      <a class="btn secondary" href="./api.html">API 全量文档</a>
-      <a class="btn secondary" href="./workflow.html">开发/发布流程</a>
+      <a class="btn secondary" href="/examples/">Examples Hub</a>
+      <a class="btn secondary" href="/components/modal">Modal</a>
+      <a class="btn secondary" href="/components/offcanvas">Offcanvas</a>
+      <a class="btn secondary" href="/components/toast">Toast</a>
+      <a class="btn secondary" href="/api/">API 全量文档</a>
+      <a class="btn secondary" href="/guides/workflow">开发/发布流程</a>
       <a class="btn secondary" href="https://github.com/sohophp/sodialog" target="_blank" rel="noreferrer">GitHub 仓库</a>
       <a class="btn secondary" href="https://github.com/sohophp/sodialog/blob/master/CHANGELOG.md" target="_blank" rel="noreferrer">更新日志</a>
     </div>
@@ -146,7 +146,7 @@ SoToast.configure({
 
     <section id="api" class="card reveal">
       <h2>核心 API 摘要</h2>
-      <p class="lead">完整方法和参数请查看独立 API 页面：<a href="./api.html">API 全量参考</a></p>
+      <p class="lead">完整方法和参数请查看 API 文档页：<a href="/api/">API 全量参考</a></p>
       <div class="grid three-col">
         <article class="mini-card">
           <h3><code>openModal(options)</code></h3>
@@ -184,7 +184,7 @@ SoToast.configure({
       <h2>原版 Demo 演示</h2>
       <p>文档页内嵌了原有完整交互 Demo。你可以在下方直接操作，也可以新窗口打开。</p>
       <div class="demo-actions">
-        <a class="btn secondary" href="./examples.html" target="_blank" rel="noreferrer">打开 Examples 页</a>
+        <a class="btn secondary" href="/examples/" target="_blank" rel="noreferrer">打开 Examples 页</a>
         <a class="btn secondary" href="./demo.html" target="_blank" rel="noreferrer">新窗口打开 Demo</a>
       </div>
       <div class="demo-frame-wrap">
@@ -213,7 +213,7 @@ npm run release:check -- vX.Y.Z</code></pre>
           <h3>详情页</h3>
           <p class="muted">查看完整流程说明：</p>
           <div class="demo-actions">
-            <a class="btn secondary" href="./workflow.html">打开开发/发布流程页</a>
+            <a class="btn secondary" href="/guides/workflow">打开开发/发布流程页</a>
           </div>
         </article>
       </div>
