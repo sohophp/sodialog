@@ -15,7 +15,7 @@ export default defineConfig({
   lang: 'zh-CN',
   title: SITE_NAME,
   description: DEFAULT_DESCRIPTION,
-  base: '/sodialog/',
+  base: '/',
   cleanUrls: true,
   srcDir: '.',
   sitemap: {
