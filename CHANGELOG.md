@@ -6,6 +6,16 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 
 ## [Unreleased]
 
+## [0.2.4] - 2026-03-11
+
+### Commits
+- chore: bump version to 0.2.4 for npm release
+- chore: set base to / and homepage to custom domain
+- fix(docs): set VitePress base to /sodialog/ for GitHub Pages
+- chore(ci): update GitHub Pages workflow to latest VitePress deployment
+- docs(changelog): update for v0.2.3
+- docs(changelog): update for v0.2.2-homepage-refactor
+
 ## [0.2.3] - 2026-03-11
 
 ### Commits
@@ -208,7 +218,8 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 - release: prepare v0.1.1
 - feat: build reusable SoDialog npm library
 
-[Unreleased]: https://github.com/sohophp/sodialog/compare/v0.2.3...HEAD
+[Unreleased]: https://github.com/sohophp/sodialog/compare/v0.2.4...HEAD
+[0.2.4]: https://github.com/sohophp/sodialog/releases/tag/v0.2.4
 [0.2.3]: https://github.com/sohophp/sodialog/releases/tag/v0.2.3
 [0.2.2-homepage-refactor]: https://github.com/sohophp/sodialog/releases/tag/v0.2.2-homepage-refactor
 [0.2.2]: https://github.com/sohophp/sodialog/releases/tag/v0.2.2
