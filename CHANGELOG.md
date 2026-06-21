@@ -6,6 +6,11 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-06-21
+
+### Commits
+- 0.3.1
+
 ## [0.3.0] - 2026-06-21
 
 ### Commits
@@ -237,7 +242,8 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 - release: prepare v0.1.1
 - feat: build reusable SoDialog npm library
 
-[Unreleased]: https://github.com/sohophp/sodialog/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/sohophp/sodialog/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/sohophp/sodialog/releases/tag/v0.3.1
 [0.3.0]: https://github.com/sohophp/sodialog/releases/tag/v0.3.0
 [0.2.6]: https://github.com/sohophp/sodialog/releases/tag/v0.2.6
 [0.2.5]: https://github.com/sohophp/sodialog/releases/tag/v0.2.5
