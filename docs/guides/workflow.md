@@ -34,6 +34,7 @@ Merge only when tests, lint, docs build, and docs smoke pass together.
 ## 4. Release Workflow (Tag-driven)
 
 ```bash
+npm version patch --no-git-tag-version
 npm run release:check -- vX.Y.Z
 npm run test:run
 npm run lint
@@ -47,17 +48,19 @@ git tag -a vX.Y.Z -m "vX.Y.Z"
 git push --follow-tags
 ```
 
+发布前直接整理 `CHANGELOG.md`：将 `Unreleased` 中准备发布的内容移动到当前版本章节，并与 `package.json` 一起提交。CI 不会自动修改 Changelog 或向 `master` 写入机器人提交。
+
 ## 5. Post-release Documentation Tasks
 
-1. Update `CHANGELOG.md` with release notes.
+1. Confirm the GitHub release and npm package use the expected version.
 2. Confirm homepage highlights match the new feature set.
 3. Validate API examples and quick start snippets against published package.
-4. If there are breaking changes, update `docs/guides/migration-guide.md`.
+4. If there are breaking changes, verify `docs/guides/migration-guide.md` was published.
 
 ## 6. CI Deployment Gate
 
 - `.github/workflows/pages.yml` now runs `npm run docs:test:smoke:ci` before uploading Pages artifacts.
-- `.github/workflows/npm-publish.yml` now runs `npm run release:verify` before npm publish.
+- `.github/workflows/npm-publish.yml` validates version and runs `release:verify` before npm publish.
 - If smoke tests fail in CI, download the uploaded `docs-smoke-report-*` artifact and open `index.html`.
 - Local report viewer: `npx playwright show-report playwright-report/docs-smoke`.
 - Both workflows enforce job timeouts to avoid hanging runners (`pages: 20m/10m`, `npm-publish: 25m`).

@@ -2,6 +2,7 @@
 
 ## 1) 版本与变更
 - [x] 更新 `package.json` 的 `version`
+- [ ] 将 `CHANGELOG.md` 的 `Unreleased` 内容整理为当前版本章节
 - [x] 确认 `README.md` 的 API 与当前实现一致
 - [x] 梳理本次变更要点（建议写到发布说明）
 
@@ -44,4 +45,4 @@
 - [x] 首页/快速开始/API/组件页可正常访问
 - [x] 每个核心组件页含可运行示例与源码复制能力
 - [x] API 子页与 `src/lib.ts` 公开类型保持一致
-- [x] `CHANGELOG.md` 的 `Unreleased` 已同步本轮文档改动
+- [ ] Tag 创建前确认 `CHANGELOG.md` 已包含当前版本章节

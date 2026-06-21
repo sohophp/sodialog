@@ -885,7 +885,6 @@ npm run lint
 npm run build
 npm run docs:build
 npm run docs:test:smoke:ci
-npm run docs:changelog
 ```
 
 说明：
@@ -914,17 +913,18 @@ npm run docs:changelog
 - 本地开发：`npm run docs:dev`
 - 构建产物：`npm run docs:build`（输出 `docs/.vitepress/dist`）
 - `README.md`：使用方式、API、发布流程总览
-- `CHANGELOG.md`：版本变更记录（按 git tag 自动生成）
+- `CHANGELOG.md`：人工维护的用户可见变更记录
 - `RELEASE_CHECKLIST.md`：发布前人工检查清单
 - `docs/guides/adapter-guidelines.md`：推荐接入路径与反例
 - `docs/guides/migration-guide.md`：从旧系统迁移到 SoDialog
 - `docs/guides/troubleshooting.md`：排障手册与检查清单
 
-### 文档自动更新
+### Changelog 发布流程
 
-- 本地可执行：`npm run docs:changelog`
-- 仓库内置工作流：`.github/workflows/docs-changelog.yml`
-- 当推送版本 tag（`v*.*.*`）时，工作流会自动重建 `CHANGELOG.md` 并回推到 `master`
+- 开发功能或修复问题时，直接更新 `CHANGELOG.md` 的 `Unreleased` 章节。
+- 只记录对使用者有意义的变化，不复制完整 Git 提交列表。
+- 发布时将 `Unreleased` 内容整理为版本章节，并与版本修改一起提交。
+- GitHub Actions 不生成、不提交、也不回写 `CHANGELOG.md`。
 
 Demo 中已包含：
 

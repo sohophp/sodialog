@@ -71,7 +71,6 @@ npm run release:verify
 - `npm run docs:build`：先构建旧版演示，再构建 VitePress 文档站。
 - `.github/workflows/pages.yml`：当前直接执行 VitePress 构建并输出到 `dist-pages/`。
 - `.github/workflows/npm-publish.yml`：校验版本、安装依赖和 Chromium、执行完整发布验证后发布 npm。
-- `.github/workflows/docs-changelog.yml`：推送版本 Tag 后生成并回写 `CHANGELOG.md`。
 
 # Architecture Principles
 
@@ -188,6 +187,7 @@ npm run release:verify
 - 不引入不必要的全局状态；同 ID 复用、队列和实例注册表行为必须保持可预测。
 - 不在没有测试与迁移说明的情况下改变默认值、关闭原因、生命周期顺序或 Promise 返回语义。
 - 任何公共 API 变更都必须同步：`src/lib.ts` 类型与实现、`tests/lib.test.ts`、`docs/api/`、组件示例、`README.md` 和 `CHANGELOG.md`（适用时）。
+- 用户可见的功能、修复或兼容性变化应直接写入 `CHANGELOG.md` 的 `Unreleased`；纯内部重构无需记录。Changelog 人工维护，不从 Git 提交自动生成。
 
 验证要求按变更范围选择，但交付前至少执行直接相关检查：
 
@@ -342,7 +342,6 @@ docs/public/components/            可运行的独立组件示例
 docs/public/legacy-demo/           legacy demo 构建产物
 .github/workflows/pages.yml        GitHub Pages 构建与部署
 .github/workflows/npm-publish.yml  npm 发布
-.github/workflows/docs-changelog.yml 版本 Tag 后更新 changelog
 ```
 
 # Definition of Done
