@@ -8,14 +8,10 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 
 ## [0.2.5] - 2026-06-21
 
-### Changed
-- Add consistent `width` and `height` options to Modal, Offcanvas, Toast, and Context Menu.
-- Allow numeric pixel sizes and CSS size strings such as `rem`, `vw`, `vh`, and `calc(...)`.
-- Keep explicit Modal dimensions authoritative over automatic sizing.
-
-### Fixed
-- Remove the forced Context Menu `:focus` outline that appeared as a thick border on first right-click.
-- Align documentation canonical URLs with `https://sodialog.sohophp.app`.
+### Commits
+- chore(release): prepare v0.2.5 and add 2026-06-21 devlog
+- -fix: 增加尺寸属性，width,height 支持rem、vw、vh、calc(...) 等, -fix: 修改站点网址为sodialog.sohophp.app -fix: 修复右键菜单第一次出现黑框问题
+- docs(changelog): update for v0.2.4
 
 ## [0.2.4] - 2026-03-11
 
