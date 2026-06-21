@@ -1,6 +1,6 @@
 import { defineConfig } from 'vitepress'
 
-const SITE_URL = 'https://sohophp.github.io/sodialog'
+const SITE_URL = 'https://sodialog.sohophp.app'
 const SITE_NAME = 'SoDialog'
 const DEFAULT_DESCRIPTION =
   'SoDialog 文档站：覆盖 Modal、Offcanvas、Toast、Context Menu，提供 API 参考、可运行示例与工作流指南。'

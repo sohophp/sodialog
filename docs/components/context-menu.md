@@ -18,6 +18,8 @@ import { bindContextMenu } from 'sodialog'
 
 bindContextMenu({
   target: '#cm-basic-zone',
+  width: 260,
+  height: 'auto',
   items: [
     { id: 'copy', label: '复制' },
     { id: 'rename', label: '重命名' },
@@ -30,6 +32,7 @@ bindContextMenu({
 
 - `target` 支持选择器、单元素和元素集合。
 - 菜单项可绑定 `id`、`label` 和 `onClick`。
+- `width` 和 `height` 支持数字（按 px）或 CSS 尺寸字符串，并继续受 `minWidth`、`maxHeight` 安全限制。
 
 ## Level 2. Keyboard and close policies
 

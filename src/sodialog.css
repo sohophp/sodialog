@@ -938,11 +938,6 @@
   outline-offset: 1px;
 }
 
-.sod-context-menu-item:focus {
-  outline: 2px solid var(--sod-focus-ring);
-  outline-offset: 1px;
-}
-
 .sod-context-menu-item:disabled {
   color: #adb5bd;
   cursor: not-allowed;

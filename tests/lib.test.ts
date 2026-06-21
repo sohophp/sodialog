@@ -9,11 +9,40 @@ import {
   openDialogFromContextMenu,
   openDialog,
   openModal,
+  openOffcanvas,
   pushMessage,
   toast,
 } from '../src/lib'
 
 describe('SoDialog modal behavior', () => {
+  it('applies custom modal width and height', () => {
+    const handle = openModal({
+      title: 'sized modal',
+      content: 'x',
+      width: '42rem',
+      height: 520,
+    })
+
+    const panel = handle.dialog.querySelector<HTMLElement>('.sod-panel')
+    expect(panel?.style.width).toBe('42rem')
+    expect(panel?.style.height).toBe('520px')
+    expect(panel?.classList.contains('sod-modal-autofit')).toBe(false)
+  })
+
+  it('applies custom offcanvas width and height', () => {
+    const handle = openOffcanvas({
+      title: 'sized offcanvas',
+      content: 'x',
+      placement: 'end',
+      width: 480,
+      height: '80vh',
+    })
+
+    const panel = handle.dialog.querySelector<HTMLElement>('.sod-panel')
+    expect(panel?.style.width).toBe('480px')
+    expect(panel?.style.height).toBe('80vh')
+  })
+
   it('reuses explicit modal id instance', () => {
     const created = vi.fn()
     const reused = vi.fn()
@@ -135,6 +164,22 @@ describe('SoDialog modal behavior', () => {
 })
 
 describe('SoToast behavior', () => {
+  it('applies and updates custom width and height', () => {
+    const handle = toast({
+      content: 'sized toast',
+      duration: false,
+      width: 360,
+      height: '8rem',
+    })
+
+    expect(handle.element.style.width).toBe('360px')
+    expect(handle.element.style.height).toBe('8rem')
+
+    handle.update({ width: '24rem', height: 140 })
+    expect(handle.element.style.width).toBe('24rem')
+    expect(handle.element.style.height).toBe('140px')
+  })
+
   it('queues toasts when maxVisible is reached', async () => {
     const first = toast({
       id: 'q-1',
@@ -223,6 +268,23 @@ describe('SoToast behavior', () => {
 })
 
 describe('SoContextMenu behavior', () => {
+  it('applies custom width and height', () => {
+    const trigger = document.createElement('div')
+    document.body.append(trigger)
+
+    const handle = bindContextMenu({
+      target: trigger,
+      items: [{ id: 'copy', label: 'Copy' }],
+      width: 260,
+      height: '12rem',
+    })
+
+    handle.openAt(20, 20, trigger)
+
+    expect(handle.element.style.width).toBe('260px')
+    expect(handle.element.style.height).toBe('12rem')
+  })
+
   it('opens on contextmenu event and triggers item action', async () => {
     const trigger = document.createElement('div')
     document.body.append(trigger)

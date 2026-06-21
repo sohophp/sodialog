@@ -20,10 +20,14 @@ const openPanel = (placement: 'start' | 'end' | 'top' | 'bottom') => {
     title: `Offcanvas ${placement}`,
     placement,
     animation: placement === 'top' || placement === 'bottom' ? 'fade' : 'slide',
+    width: placement === 'start' || placement === 'end' ? 480 : '100vw',
+    height: placement === 'top' || placement === 'bottom' ? '40vh' : '100vh',
     content: `<p>当前位置：${placement}</p>`,
   })
 }
 ```
+
+`width` 和 `height` 接受数字或 CSS 尺寸字符串。数字按像素处理，例如 `width: 480`；字符串可使用 `40vw`、`75vh` 或 `calc(...)`。
 
 ## Level 2. Lifecycle hooks
 

@@ -15,6 +15,7 @@
 | `target` | `string \| Element \| Iterable<Element>` | Yes | - | Target region(s) for right-click binding. |
 | `items` | `SoContextMenuItem[]` | Yes | - | Menu item definitions. |
 | `offsetX / offsetY` | `number` | No | `0` | Menu position offset. |
+| `width / height` | `number \| string` | No | auto | Menu dimensions. Numbers are interpreted as pixels; strings accept CSS sizes. |
 | `minWidth / maxHeight` | `number` | No | `180 / 320` | Panel size limits. |
 | `closeOnEsc` | `boolean` | No | `true` | Close menu when pressing `Esc`. |
 | `closeOnOutsideClick` | `boolean` | No | `true` | Close menu on outside click. |

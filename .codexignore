@@ -1,0 +1,243 @@
+# ==========================================================
+
+# Dependencies
+
+# ==========================================================
+
+node_modules/
+vendor/
+
+# pnpm
+
+.pnpm-store/
+.pnpm/
+
+# ==========================================================
+
+# Build Output
+
+# ==========================================================
+
+dist/
+dist-ssr/
+dist-pages/
+build/
+out/
+.next/
+.nuxt/
+.cache/
+.tmp/
+temp/
+
+# Docusaurus
+
+.docusaurus/
+docs/.vitepress/cache/
+docs/.vitepress/dist/
+docs/public/legacy-demo/
+
+# ==========================================================
+
+# Test Output
+
+# ==========================================================
+
+coverage/
+playwright-report/
+test-results/
+jest-report/
+.nyc_output/
+
+# ==========================================================
+
+# Runtime / Logs
+
+# ==========================================================
+
+logs/
+log/
+*.log
+*.pid
+
+.dev-output.txt
+
+# PHP Runtime
+
+storage/logs/
+storage/cache/
+storage/framework/cache/
+storage/framework/views/
+storage/framework/sessions/
+
+runtime/
+cache/
+
+# ==========================================================
+
+# Database / Dumps
+
+# ==========================================================
+
+*.sql
+*.sql.gz
+*.dump
+
+backup/
+backups/
+database/backups/
+
+# ==========================================================
+
+# Uploads / User Files
+
+# ==========================================================
+
+uploads/
+upload/
+
+public/uploads/
+public/upload/
+
+resources/ckfinder/userfiles/
+resources/uploads/
+
+# ==========================================================
+
+# Media Assets
+
+# ==========================================================
+
+*.mp4
+*.avi
+*.mov
+*.mkv
+
+*.zip
+*.7z
+*.rar
+*.tar
+*.tar.gz
+
+# 如果项目图片很多建议打开
+
+# *.png
+
+# *.jpg
+
+# *.jpeg
+
+# *.gif
+
+# *.webp
+
+# ==========================================================
+
+# AI / Vector / Crawling Data
+
+# ==========================================================
+
+data/raw/
+data/cache/
+data/tmp/
+data/downloads/
+
+vector_store/
+embeddings/
+
+.ai-cache/
+.cursor-cache/
+
+# Ollama
+
+ollama-data/
+
+# ==========================================================
+
+# Docker
+
+# ==========================================================
+
+docker-data/
+docker-volumes/
+
+postgres-data/
+mysql-data/
+redis-data/
+
+# ==========================================================
+
+# Environment
+
+# ==========================================================
+
+.env
+.env.*
+*.local
+
+!.env.example
+!.env.template
+
+# ==========================================================
+
+# IDE
+
+# ==========================================================
+
+.idea/
+
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+# ==========================================================
+
+# Git
+
+# ==========================================================
+
+.git/
+
+# ==========================================================
+
+# Operating System
+
+# ==========================================================
+
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ==========================================================
+
+# WSL
+
+# ==========================================================
+
+wsl-backups/
+wsl-export/
+
+# ==========================================================
+
+# Generated Documentation
+
+# ==========================================================
+
+site/
+public/build/
+
+# ==========================================================
+
+# Large Generated Files
+
+# ==========================================================
+
+*.csv
+*.xlsx
+*.parquet
+
+*.min.js
+*.min.css
+
+*.map

@@ -21,6 +21,8 @@
 | `variant` | `'default'\|'info'\|'success'\|'warning'\|'danger'` | No | `default` | Visual style type. |
 | `duration` | `number` | No | `3000` | Auto close timeout in milliseconds. |
 | `placement` | `SoToastPlacement` | No | `top-end` | Toast container position. |
+| `width` | `number \| string` | No | CSS default | Toast width. Numbers are interpreted as pixels; strings accept CSS sizes. |
+| `height` | `number \| string` | No | auto | Toast height. Numbers are interpreted as pixels; strings accept CSS sizes. |
 | `duplicateStrategy` | `'update'\|'ignore'\|'restart-timer'\|'stack'` | No | `update` | How repeated id values are handled. |
 | `maxVisible` | `number` | No | `3` | Max visible toasts per placement. |
 | `newestOnTop` | `boolean` | No | `true` | Prepend new toast to top of stack. |
@@ -35,7 +37,7 @@
 | `id` | `string` | Toast id. |
 | `element` | `HTMLElement` | Toast DOM element. |
 | `close` | `(reason?) => void` | Manually close toast. |
-| `update` | `(patch) => void` | Patch title/content/variant/duration. |
+| `update` | `(patch) => void` | Patch title/content/variant/duration/width/height. |
 | `pause` | `() => void` | Pause countdown timer. |
 | `resume` | `() => void` | Resume countdown timer. |
 
@@ -44,7 +46,7 @@
 ```ts
 import { pushMessage, SoToast } from 'sodialog'
 
-SoToast.configure({ placement: 'bottom-end', maxVisible: 4 })
+SoToast.configure({ placement: 'bottom-end', maxVisible: 4, width: 360 })
 pushMessage('success', 'Profile saved', { duration: 1800 })
 ```
 

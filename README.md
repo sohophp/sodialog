@@ -54,6 +54,7 @@ openOffcanvas({
 toast({
   title: '保存成功',
   content: '配置已更新',
+  width: 360,
   placement: 'top-end',
   variant: 'success',
   duration: 2500,
@@ -62,6 +63,8 @@ toast({
 
 bindContextMenu({
   target: '.file-row',
+  width: 260,
+  height: 'auto',
   items: [
     {
       id: 'rename',
@@ -600,6 +603,8 @@ formBtn?.addEventListener('click', async () => {
 
 - `title: string`
 - `content: string | Node`
+- `width?: number | string`（数字按像素处理；设置后优先于自动尺寸）
+- `height?: number | string`（数字按像素处理；设置后优先于自动尺寸）
 - `id?: string`（默认自动生成。传入后同 ID Modal 不重复创建，再次调用会唤起已有实例）
 - `onCreated?: (handle) => void`（仅新建时触发，可读取自动生成的 `handle.id`）
 - `onReused?: (handle) => void`（仅复用已有同 ID 实例时触发）
@@ -692,6 +697,8 @@ off()
 
 - `placement?: 'start' | 'end' | 'top' | 'bottom'` (默认 `end`)
 - `animation?: 'slide' | 'fade' | 'zoom'` (默认 `slide`)
+- `width?: number | string`（数字按像素处理，也可传入 CSS 尺寸字符串）
+- `height?: number | string`（数字按像素处理，也可传入 CSS 尺寸字符串）
 
 示例（类似 Bootstrap Offcanvas 多位置）：
 
@@ -771,6 +778,8 @@ const values = await formModal({
 - `content: string | Node`
 - `title?: string`
 - `placement?: 'top-start' | 'top-center' | 'top-end' | 'bottom-start' | 'bottom-center' | 'bottom-end'`（默认 `top-end`）
+- `width?: number | string`（数字按像素处理，也可传入 CSS 尺寸字符串）
+- `height?: number | string`（数字按像素处理，也可传入 CSS 尺寸字符串）
 - `variant?: 'default' | 'info' | 'success' | 'warning' | 'danger'`（默认 `default`）
 - `duration?: number | false`（默认 `3000`，`false` 表示不自动消失）
 - `showProgress?: boolean`（默认 `true`，显示自动消失倒计时进度条）

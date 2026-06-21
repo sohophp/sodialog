@@ -35,10 +35,13 @@ for (let index = 1; index <= 6; index += 1) {
   toast({
     title: `队列 ${index}`,
     content: `消息 ${index}`,
+    width: 360,
     duration: 1000 + index * 180,
   })
 }
 ```
+
+`width` 和 `height` 支持数字（按 px）或 CSS 尺寸字符串，并可通过返回句柄的 `update()` 动态修改。
 
 ## Level 3. Duplicate handling strategy
 

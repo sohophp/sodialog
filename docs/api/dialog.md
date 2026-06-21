@@ -37,11 +37,15 @@
 | `id` | `string` | auto id | Reuse an existing modal instance by id. |
 | `position` | `'center' \| 'top' \| 'bottom'` | `center` | Modal position. |
 | `animation` | `'slide' \| 'fade' \| 'zoom'` | `fade` | Modal animation. |
+| `width` | `number \| string` | auto | Panel width. Numbers are interpreted as pixels; strings accept CSS sizes. |
+| `height` | `number \| string` | auto | Panel height. Numbers are interpreted as pixels; strings accept CSS sizes. |
 | `useModal` | `boolean` | `true` | Use native `showModal()` behavior. |
 | `draggable` | `boolean` | `false` | Enable drag interactions. |
 | `dragHandle` | `SoModalDragHandle` | `header` | Drag handle selector target(s). |
 | `autoFitSize` | `boolean` | `true` | Auto fit panel to content changes. |
 | `scrollMode` | `'body' \| 'viewport' \| 'none' \| 'hybrid'` | auto | Auto-fit scroll strategy. |
+
+Providing `width` or `height` disables automatic modal sizing so the explicit dimensions take precedence.
 
 ## Offcanvas-only Options (`SoDialogOffcanvasOptions`)
 
@@ -49,6 +53,8 @@
 | --- | --- | --- | --- |
 | `placement` | `'start' \| 'end' \| 'top' \| 'bottom'` | `end` | Panel placement. |
 | `animation` | `'slide' \| 'fade' \| 'zoom'` | `slide` | Offcanvas animation. |
+| `width` | `number \| string` | placement default | Panel width. Numbers are interpreted as pixels; strings accept CSS sizes. |
+| `height` | `number \| string` | placement default | Panel height. Numbers are interpreted as pixels; strings accept CSS sizes. |
 
 ## Return Handle (`SoDialogHandle`)
 

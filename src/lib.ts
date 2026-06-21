@@ -8,6 +8,7 @@ export type SoModalAnimation = 'slide' | 'fade' | 'zoom'
 export type SoModalDragHandleTarget = 'header' | 'title' | 'body' | 'panel' | string
 export type SoModalDragHandle = SoModalDragHandleTarget | SoModalDragHandleTarget[]
 export type SoModalScrollMode = 'body' | 'viewport' | 'none' | 'hybrid'
+export type SoCssSize = number | string
 export type SoFooterButtonVariant = 'primary' | 'outline' | 'danger' | 'success' | 'ghost' | 'link'
 export type SoFooterAlign = 'start' | 'center' | 'end' | 'between'
 export type SoFooterButtonAction = 'none' | 'hide' | 'destroy'
@@ -106,6 +107,8 @@ export interface SoContextMenuOptions extends SoLifecycleHooks {
   attrs?: Record<string, string>
   offsetX?: number
   offsetY?: number
+  width?: SoCssSize
+  height?: SoCssSize
   minWidth?: number
   maxHeight?: number
   closeOnOutsideClick?: boolean
@@ -199,6 +202,8 @@ export interface SoDialogModalOptions extends SoDialogBaseOptions {
   kind?: 'modal'
   position?: SoModalPosition
   animation?: SoModalAnimation
+  width?: SoCssSize
+  height?: SoCssSize
   useModal?: boolean
   draggable?: boolean
   dragHandle?: SoModalDragHandle
@@ -217,6 +222,8 @@ export interface SoDialogOffcanvasOptions extends SoDialogBaseOptions {
   kind: 'offcanvas'
   placement?: SoOffcanvasPlacement
   animation?: SoOffcanvasAnimation
+  width?: SoCssSize
+  height?: SoCssSize
 }
 
 export interface SoDialogConfirmOptions
@@ -284,6 +291,8 @@ export interface SoContextMenuGlobalConfig {
   attrs?: Record<string, string>
   offsetX?: number
   offsetY?: number
+  width?: SoCssSize
+  height?: SoCssSize
   minWidth?: number
   maxHeight?: number
   closeOnOutsideClick?: boolean
@@ -335,6 +344,8 @@ export interface SoToastOptions extends SoLifecycleHooks {
   duplicateStrategy?: SoToastDuplicateStrategy
   newestOnTop?: boolean
   maxVisible?: number
+  width?: SoCssSize
+  height?: SoCssSize
   className?: string
   attrs?: Record<string, string>
   onShown?: (handle: SoToastHandle) => void
@@ -345,7 +356,7 @@ export interface SoToastHandle {
   id: string
   element: HTMLElement
   close: (reason?: Exclude<SoToastCloseReason, 'timeout' | 'close-button'>) => void
-  update: (patch: Partial<Pick<SoToastOptions, 'title' | 'content' | 'variant' | 'duration'>>) => void
+  update: (patch: Partial<Pick<SoToastOptions, 'title' | 'content' | 'variant' | 'duration' | 'width' | 'height'>>) => void
   pause: () => void
   resume: () => void
 }
@@ -369,6 +380,8 @@ interface SoToastResolvedOptions
       | 'onBeforeClose'
       | 'onAfterClose'
       | 'traceId'
+      | 'width'
+      | 'height'
     > {
   content: string | Node
   duration: number | false
@@ -437,6 +450,15 @@ function focusElementIfPossible(element: HTMLElement | null): void {
   } catch {
     element.focus()
   }
+}
+
+function resolveCssSize(value: SoCssSize | undefined): string | undefined {
+  if (typeof value === 'number') {
+    return Number.isFinite(value) && value >= 0 ? `${value}px` : undefined
+  }
+
+  const normalized = value?.trim()
+  return normalized || undefined
 }
 
 function emitLifecycle(hooks: SoLifecycleHooks | undefined, context: SoLifecycleContext): void {
@@ -977,7 +999,10 @@ export class SoDialog {
     }
     const useModal = 'useModal' in options ? options.useModal ?? true : true
     const modalOptions = kind === 'modal' ? (options as SoDialogModalOptions) : undefined
-    const modalAutoFitEnabled = kind === 'modal' && ('autoFitSize' in options ? options.autoFitSize !== false : true)
+    const modalWidth = modalOptions ? resolveCssSize(modalOptions.width) : undefined
+    const modalHeight = modalOptions ? resolveCssSize(modalOptions.height) : undefined
+    const modalAutoFitEnabled =
+      kind === 'modal' && !modalWidth && !modalHeight && ('autoFitSize' in options ? options.autoFitSize !== false : true)
 
     let modalId: string | undefined
     let isExplicitModalId = false
@@ -1107,13 +1132,28 @@ export class SoDialog {
     if (kind === 'offcanvas') {
       const placement = 'placement' in options ? options.placement ?? 'end' : 'end'
       const animation = 'animation' in options ? options.animation ?? 'slide' : 'slide'
+      const width = 'width' in options ? resolveCssSize(options.width) : undefined
+      const height = 'height' in options ? resolveCssSize(options.height) : undefined
       panel.classList.add(`sod-placement-${placement}`)
       panel.classList.add(`sod-anim-${animation}`)
+      if (width) {
+        panel.style.width = width
+      }
+      if (height) {
+        panel.style.height = height
+      }
     } else {
       const position = 'position' in options ? options.position ?? 'center' : 'center'
       const animation = 'animation' in options ? options.animation ?? 'fade' : 'fade'
       panel.classList.add(`sod-modal-pos-${position}`)
       panel.classList.add(`sod-modal-anim-${animation}`)
+
+      if (modalWidth) {
+        panel.style.width = modalWidth
+      }
+      if (modalHeight) {
+        panel.style.height = modalHeight
+      }
 
       if (modalAutoFitEnabled) {
         panel.classList.add('sod-modal-autofit')
@@ -1914,6 +1954,8 @@ export class SoToast {
     duplicateStrategy: SoToastDuplicateStrategy
     newestOnTop: boolean
     maxVisible: number
+    width?: SoCssSize
+    height?: SoCssSize
   } = {
     placement: 'top-end',
     variant: 'default',
@@ -1942,6 +1984,8 @@ export class SoToast {
       duplicateStrategy: options.duplicateStrategy ?? this.defaults.duplicateStrategy,
       newestOnTop: options.newestOnTop ?? this.defaults.newestOnTop,
       maxVisible: Math.max(1, options.maxVisible ?? this.defaults.maxVisible),
+      width: options.width ?? this.defaults.width,
+      height: options.height ?? this.defaults.height,
       title: options.title,
       content: options.content,
       className: options.className,
@@ -2033,6 +2077,15 @@ export class SoToast {
     }
     element.dataset.toastId = record.id
     element.setAttribute('role', this.resolveRole(options.variant))
+
+    const width = resolveCssSize(options.width)
+    const height = resolveCssSize(options.height)
+    if (width) {
+      element.style.width = width
+    }
+    if (height) {
+      element.style.height = height
+    }
 
     if (options.attrs) {
       Object.entries(options.attrs).forEach(([key, value]) => {
@@ -2310,6 +2363,8 @@ export class SoToast {
         | 'showProgress'
         | 'className'
         | 'attrs'
+        | 'width'
+        | 'height'
       >
     >,
   ): void {
@@ -2364,6 +2419,16 @@ export class SoToast {
 
     if (patch.newestOnTop !== undefined) {
       record.options.newestOnTop = patch.newestOnTop
+    }
+
+    if (patch.width !== undefined) {
+      record.options.width = patch.width
+      record.element.style.width = resolveCssSize(patch.width) ?? ''
+    }
+
+    if (patch.height !== undefined) {
+      record.options.height = patch.height
+      record.element.style.height = resolveCssSize(patch.height) ?? ''
     }
 
     let shouldRebuild = false
@@ -2586,6 +2651,8 @@ export class SoToast {
         showProgress: options.showProgress,
         className: options.className,
         attrs: options.attrs,
+        width: options.width,
+        height: options.height,
       })
       if (options.onClose !== undefined) {
         existed.options.onClose = normalizedOptions.onClose
@@ -2696,6 +2763,12 @@ export class SoToast {
     }
     if (defaults.maxVisible !== undefined) {
       this.defaults.maxVisible = Math.max(1, defaults.maxVisible)
+    }
+    if (defaults.width !== undefined) {
+      this.defaults.width = defaults.width
+    }
+    if (defaults.height !== undefined) {
+      this.defaults.height = defaults.height
     }
   }
 
@@ -2841,6 +2914,8 @@ export class SoContextMenu {
 
     const offsetX = options.offsetX ?? this.globalConfig.offsetX ?? 0
     const offsetY = options.offsetY ?? this.globalConfig.offsetY ?? 0
+    const width = resolveCssSize(options.width ?? this.globalConfig.width)
+    const height = resolveCssSize(options.height ?? this.globalConfig.height)
     const minWidth = Math.max(120, options.minWidth ?? this.globalConfig.minWidth ?? 180)
     const maxHeight = Math.max(120, options.maxHeight ?? this.globalConfig.maxHeight ?? 320)
     const closeOnOutsideClick = options.closeOnOutsideClick ?? this.globalConfig.closeOnOutsideClick ?? true
@@ -2991,6 +3066,8 @@ export class SoContextMenu {
       menuElement.style.top = '0px'
       menuElement.style.maxHeight = `${maxHeight}px`
       menuElement.style.minWidth = `${minWidth}px`
+      menuElement.style.width = width ?? ''
+      menuElement.style.height = height ?? ''
 
       const rect = menuElement.getBoundingClientRect()
       const maxLeft = window.innerWidth - rect.width - viewportPadding

@@ -21,10 +21,14 @@ import { openModal } from 'sodialog'
 openModal({
   title: '基础示例',
   content: '<p>这是 Modal 的基础示例。</p>',
+  width: 640,
+  height: '70vh',
   confirmText: '确认',
   cancelText: '取消',
 })
 ```
+
+`width` 和 `height` 支持数字（按 px）或 CSS 尺寸字符串；设置任一尺寸后，将关闭自动尺寸适配并优先采用显式尺寸。
 
 ## Level 2. Add lifecycle and tracing
 

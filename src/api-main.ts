@@ -336,6 +336,8 @@ toast({ id: 'sync-task', content: '策略 stack', duplicateStrategy: 'stack' })<
               <tr><td><code>id</code></td><td><code>string</code></td><td>自动生成</td><td>实例 ID；同 ID 可复用。</td></tr>
               <tr><td><code>position</code></td><td><code>'center' | 'top' | 'bottom'</code></td><td><code>'center'</code></td><td>弹窗位置。</td></tr>
               <tr><td><code>animation</code></td><td><code>'slide' | 'fade' | 'zoom'</code></td><td><code>'fade'</code></td><td>弹窗动画。</td></tr>
+              <tr><td><code>width</code></td><td><code>number | string</code></td><td>自动</td><td>面板宽度；数字按 px，设置后优先于自动尺寸。</td></tr>
+              <tr><td><code>height</code></td><td><code>number | string</code></td><td>自动</td><td>面板高度；数字按 px，设置后优先于自动尺寸。</td></tr>
               <tr><td><code>useModal</code></td><td><code>boolean</code></td><td><code>true</code></td><td><code>true</code> 使用 <code>showModal()</code>，否则 <code>show()</code>。</td></tr>
               <tr><td><code>draggable</code></td><td><code>boolean</code></td><td><code>false</code></td><td>启用拖拽。</td></tr>
               <tr><td><code>dragHandle</code></td><td><code>SoModalDragHandle</code></td><td><code>'header'</code></td><td>拖拽手柄，支持数组与 CSS 选择器。</td></tr>
@@ -376,6 +378,8 @@ toast({ id: 'sync-task', content: '策略 stack', duplicateStrategy: 'stack' })<
             <tbody>
               <tr><td><code>placement</code></td><td><code>'start' | 'end' | 'top' | 'bottom'</code></td><td><code>'end'</code></td><td>抽屉方向。</td></tr>
               <tr><td><code>animation</code></td><td><code>'slide' | 'fade' | 'zoom'</code></td><td><code>'slide'</code></td><td>抽屉动画。</td></tr>
+              <tr><td><code>width</code></td><td><code>number | string</code></td><td>按方向使用默认值</td><td>面板宽度；数字按 px，字符串支持 CSS 尺寸。</td></tr>
+              <tr><td><code>height</code></td><td><code>number | string</code></td><td>按方向使用默认值</td><td>面板高度；数字按 px，字符串支持 CSS 尺寸。</td></tr>
               <tr><td colspan="4">其余参数与 <code>SoDialogBaseOptions</code> 一致。</td></tr>
             </tbody>
           </table>
@@ -395,6 +399,8 @@ toast({ id: 'sync-task', content: '策略 stack', duplicateStrategy: 'stack' })<
               <tr><td><code>traceId</code></td><td><code>string</code></td><td>-</td><td>链路追踪 ID，会透传到生命周期和动作回调。</td></tr>
               <tr><td><code>offsetX</code></td><td><code>number</code></td><td><code>0</code></td><td>X 轴偏移。</td></tr>
               <tr><td><code>offsetY</code></td><td><code>number</code></td><td><code>0</code></td><td>Y 轴偏移。</td></tr>
+              <tr><td><code>width</code></td><td><code>number | string</code></td><td>自动</td><td>菜单宽度；数字按 px，字符串支持 CSS 尺寸。</td></tr>
+              <tr><td><code>height</code></td><td><code>number | string</code></td><td>自动</td><td>菜单高度；数字按 px，字符串支持 CSS 尺寸。</td></tr>
               <tr><td><code>minWidth</code></td><td><code>number</code></td><td><code>180</code></td><td>最小宽度（最小限制 120）。</td></tr>
               <tr><td><code>maxHeight</code></td><td><code>number</code></td><td><code>320</code></td><td>最大高度（最小限制 120）。</td></tr>
               <tr><td><code>closeOnOutsideClick</code></td><td><code>boolean</code></td><td><code>true</code></td><td>点击菜单外关闭。</td></tr>
@@ -581,6 +587,8 @@ toast({ id: 'sync-task', content: '策略 stack', duplicateStrategy: 'stack' })<
               <tr><td><code>traceId</code></td><td><code>string</code></td><td>-</td><td>链路追踪 ID，会透传到生命周期回调。</td></tr>
               <tr><td><code>title</code></td><td><code>string</code></td><td>-</td><td>标题。</td></tr>
               <tr><td><code>placement</code></td><td><code>SoToastPlacement</code></td><td><code>'top-end'</code></td><td>展示位置。</td></tr>
+              <tr><td><code>width</code></td><td><code>number | string</code></td><td>样式默认</td><td>Toast 宽度；数字按 px，字符串支持 CSS 尺寸。</td></tr>
+              <tr><td><code>height</code></td><td><code>number | string</code></td><td>自动</td><td>Toast 高度；数字按 px，字符串支持 CSS 尺寸。</td></tr>
               <tr><td><code>variant</code></td><td><code>SoToastVariant</code></td><td><code>'default'</code></td><td>样式变体。</td></tr>
               <tr><td><code>duration</code></td><td><code>number | false</code></td><td><code>3000</code></td><td>自动关闭时长；<code>false</code> 为常驻。</td></tr>
               <tr><td><code>showProgress</code></td><td><code>boolean</code></td><td><code>true</code></td><td>显示进度条。</td></tr>
@@ -608,7 +616,7 @@ toast({ id: 'sync-task', content: '策略 stack', duplicateStrategy: 'stack' })<
               <tr><td><code>id</code></td><td><code>string</code></td><td>Toast 唯一 ID。</td></tr>
               <tr><td><code>element</code></td><td><code>HTMLElement</code></td><td>当前节点。</td></tr>
               <tr><td><code>close()</code></td><td><code>(reason?: 'manual' | 'container-clear' | 'programmatic') =&gt; void</code></td><td>主动关闭。</td></tr>
-              <tr><td><code>update()</code></td><td><code>(patch: Partial&lt;Pick&lt;SoToastOptions, 'title' | 'content' | 'variant' | 'duration'&gt;&gt;) =&gt; void</code></td><td>局部更新。</td></tr>
+              <tr><td><code>update()</code></td><td><code>(patch: Partial&lt;Pick&lt;SoToastOptions, 'title' | 'content' | 'variant' | 'duration' | 'width' | 'height'&gt;&gt;) =&gt; void</code></td><td>局部更新。</td></tr>
               <tr><td><code>pause()</code></td><td><code>() =&gt; void</code></td><td>暂停计时。</td></tr>
               <tr><td><code>resume()</code></td><td><code>() =&gt; void</code></td><td>恢复计时。</td></tr>
             </tbody>
@@ -667,7 +675,7 @@ toast({ id: 'sync-task', content: '策略 stack', duplicateStrategy: 'stack' })<
               <tr><td><code>SoMessageLevel</code></td><td><code>'default' | 'info' | 'success' | 'warning' | 'danger'</code></td></tr>
               <tr><td><code>SoAdapterLogEvent</code></td><td><code>{ action; phase?: before-open/after-open/before-close/after-close/action/layout-stable/focus/typeahead; component?; reason?; id?; traceId?; detail? }</code></td></tr>
               <tr><td><code>SoDialogGlobalConfig</code></td><td><code>{ modalDefaults?: Partial&lt;SoDialogModalOptions&gt;; offcanvasDefaults?: Partial&lt;Omit&lt;SoDialogOffcanvasOptions, 'kind'&gt;&gt; }</code></td></tr>
-              <tr><td><code>SoContextMenuGlobalConfig</code></td><td><code>{ closeOnEsc?; closeOnOutsideClick?; minWidth?; maxHeight?; offsetX?; offsetY?; typeaheadEnabled?; typeaheadResetMs?; className?; attrs?; ... }</code></td></tr>
+              <tr><td><code>SoContextMenuGlobalConfig</code></td><td><code>{ width?; height?; closeOnEsc?; closeOnOutsideClick?; minWidth?; maxHeight?; offsetX?; offsetY?; typeaheadEnabled?; typeaheadResetMs?; className?; attrs?; ... }</code></td></tr>
               <tr><td><code>SoContextMenuCloseReason</code></td><td><code>'outside' | 'esc' | 'item' | 'programmatic' | 'destroy' | 'reopen' | 'blur' | 'scroll' | 'resize'</code></td></tr>
             </tbody>
           </table>
