@@ -3,12 +3,14 @@ import { defineConfig } from 'vitepress'
 const SITE_URL = 'https://sodialog.sohophp.app'
 const SITE_NAME = 'SoDialog'
 const DEFAULT_DESCRIPTION =
-  'SoDialog 文档站：覆盖 Modal、Offcanvas、Toast、Context Menu，提供 API 参考、可运行示例与工作流指南。'
+  'A lightweight, framework-agnostic dialog library built for modern web applications.'
 const DEFAULT_OG_IMAGE = `${SITE_URL}/logo.svg`
 
 function toCanonicalPath(relativePath: string): string {
   if (!relativePath || relativePath === 'index.md') return '/'
-  return `/${relativePath.replace(/\.md$/, '.html')}`
+  const path = relativePath.replace(/\.md$/, '')
+  if (path.endsWith('/index')) return `/${path.slice(0, -'/index'.length)}/`
+  return `/${path}`
 }
 
 export default defineConfig({
@@ -22,7 +24,7 @@ export default defineConfig({
     hostname: `${SITE_URL}/`,
   },
   head: [
-    ['meta', { name: 'theme-color', content: '#0d9488' }],
+    ['meta', { name: 'theme-color', content: '#0a0d12' }],
     ['meta', { name: 'author', content: 'SoDialog' }],
     ['meta', { name: 'robots', content: 'index,follow,max-image-preview:large' }],
     ['meta', { name: 'format-detection', content: 'telephone=no' }],
@@ -119,6 +121,8 @@ export default defineConfig({
           { text: 'Adapter Guidelines', link: '/guides/adapter-guidelines' },
           { text: 'Migration Guide', link: '/guides/migration-guide' },
           { text: 'Troubleshooting', link: '/guides/troubleshooting' },
+          { text: 'Themes', link: '/guides/themes' },
+          { text: 'FAQ', link: '/guides/faq' },
           { text: '示例中心', link: '/examples/' },
         ],
       },

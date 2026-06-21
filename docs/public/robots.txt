@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://sohophp.github.io/sodialog/sitemap.xml
+Sitemap: https://sodialog.sohophp.app/sitemap.xml
