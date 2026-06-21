@@ -6,6 +6,17 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 
 ## [Unreleased]
 
+## [0.2.5] - 2026-06-21
+
+### Changed
+- Add consistent `width` and `height` options to Modal, Offcanvas, Toast, and Context Menu.
+- Allow numeric pixel sizes and CSS size strings such as `rem`, `vw`, `vh`, and `calc(...)`.
+- Keep explicit Modal dimensions authoritative over automatic sizing.
+
+### Fixed
+- Remove the forced Context Menu `:focus` outline that appeared as a thick border on first right-click.
+- Align documentation canonical URLs with `https://sodialog.sohophp.app`.
+
 ## [0.2.4] - 2026-03-11
 
 ### Commits
@@ -218,7 +229,8 @@ The format is inspired by Keep a Changelog and generated from git tags/commits.
 - release: prepare v0.1.1
 - feat: build reusable SoDialog npm library
 
-[Unreleased]: https://github.com/sohophp/sodialog/compare/v0.2.4...HEAD
+[Unreleased]: https://github.com/sohophp/sodialog/compare/v0.2.5...HEAD
+[0.2.5]: https://github.com/sohophp/sodialog/releases/tag/v0.2.5
 [0.2.4]: https://github.com/sohophp/sodialog/releases/tag/v0.2.4
 [0.2.3]: https://github.com/sohophp/sodialog/releases/tag/v0.2.3
 [0.2.2-homepage-refactor]: https://github.com/sohophp/sodialog/releases/tag/v0.2.2-homepage-refactor

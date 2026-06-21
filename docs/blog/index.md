@@ -20,6 +20,18 @@ description: 以开发者第一人称记录 SoDialog 的日常开发、补记、
 
 ## 日志流
 
+### [把尺寸控制权还给使用者](/blog/2026-06-21-devlog)
+
+![交互与尺寸调试现场](/blog/photos/interaction-debug.jpg)
+
+`2026-06-21 · api · context-menu · release · quality`
+
+统一四类组件的尺寸 API，修掉首次右键黑框，并把文档、测试与 v0.2.5 发布准备收进同一条闭环。
+
+[阅读全文](/blog/2026-06-21-devlog)
+
+---
+
 ### [技术日志（一）：Playwright Smoke 接入实战](/blog/2026-03-11-playwright-smoke-devlog)
 
 ![Playwright smoke 测试相关的工位照片](/blog/photos/playwright-workstation.jpg)
@@ -112,6 +124,8 @@ description: 以开发者第一人称记录 SoDialog 的日常开发、补记、
 - `smoke-test`: 轻量但关键路径可用性检查
 - `ci`: 构建、预览、测试编排脚本
 - `workflow`: 每日开发节奏、协作和复盘
+- `api`: 公开接口设计与一致性
+- `quality`: 交互修复、测试与质量基线
 
 ## 更新节奏
 

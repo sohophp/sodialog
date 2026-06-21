@@ -128,6 +128,7 @@ export default defineConfig({
           { text: '日志首页', link: '/blog/' },
           { text: '标签总览', link: '/blog/tags' },
           { text: '月度归档', link: '/blog/archive' },
+          { text: '2026-06-21：统一尺寸 API', link: '/blog/2026-06-21-devlog' },
           { text: '2026-03-11：Playwright Smoke 实战', link: '/blog/2026-03-11-playwright-smoke-devlog' },
           { text: '2026-03-11：docs-smoke-ci 串联', link: '/blog/2026-03-11-docs-smoke-ci-devlog' },
           { text: '2026-03-11：SEO 元信息基线', link: '/blog/2026-03-11-seo-metadata-devlog' },

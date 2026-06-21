@@ -9,6 +9,16 @@ description: SoDialog 开发日志按月份归档，支持补记回溯。
 
 有些日子写代码像短跑，有些像越野，归档能告诉我到底跑去了哪里。
 
+## 2026-06
+
+### [2026-06-21：把尺寸控制权还给使用者](/blog/2026-06-21-devlog)
+
+![交互与尺寸调试现场](/blog/photos/interaction-debug.jpg)
+
+`api · context-menu · release · quality`
+
+---
+
 ## 2026-03
 
 ### [2026-03-11 技术日志（一）：Playwright Smoke 接入实战](/blog/2026-03-11-playwright-smoke-devlog)

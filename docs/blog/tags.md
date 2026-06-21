@@ -22,6 +22,7 @@ description: SoDialog 开发日志标签页，按主题查看开发记录。
 - [demo](#demo)
 - [quality](#quality)
 - [workflow](#workflow)
+- [api](#api)
 
 ## docs
 
@@ -35,6 +36,7 @@ description: SoDialog 开发日志标签页，按主题查看开发记录。
 
 ![交互调试图](/blog/photos/interaction-debug.jpg)
 
+- [2026-06-21：把尺寸控制权还给使用者](/blog/2026-06-21-devlog)
 - [2026-03-10（补记）：Context Menu 调整日](/blog/2026-03-10-devlog)
 
 ## toast
@@ -47,6 +49,7 @@ description: SoDialog 开发日志标签页，按主题查看开发记录。
 
 ![发布与流程图](/blog/photos/ci-task-board.jpg)
 
+- [2026-06-21：把尺寸控制权还给使用者](/blog/2026-06-21-devlog)
 - [2026-03-11 技术日志（二）：docs-smoke-ci 串联构建与验证](/blog/2026-03-11-docs-smoke-ci-devlog)
 - [2026-03-09（补记）：Toast 队列和发布自检](/blog/2026-03-09-devlog)
 
@@ -81,6 +84,7 @@ description: SoDialog 开发日志标签页，按主题查看开发记录。
 
 ![质量基线图](/blog/photos/ci-task-board.jpg)
 
+- [2026-06-21：把尺寸控制权还给使用者](/blog/2026-06-21-devlog)
 - [2026-03-11 技术日志（三）：首页 SEO 元信息基线检查实录](/blog/2026-03-11-seo-metadata-devlog)
 - [2026-03-11 技术日志（四）：Demo 可交互性回归与 iframe 断言](/blog/2026-03-11-demo-readiness-devlog)
 
@@ -100,3 +104,9 @@ description: SoDialog 开发日志标签页，按主题查看开发记录。
 - [2026-03-11：文档站上线 Blog](/blog/2026-03-11-devlog)
 - [2026-03-10（补记）：Context Menu 调整日](/blog/2026-03-10-devlog)
 - [2026-03-09（补记）：Toast 队列和发布自检](/blog/2026-03-09-devlog)
+
+## api
+
+![API 与交互调试图](/blog/photos/interaction-debug.jpg)
+
+- [2026-06-21：把尺寸控制权还给使用者](/blog/2026-06-21-devlog)
