@@ -4,6 +4,12 @@ on:
   push:
     tags:
       - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version tag to publish (for example v0.2.5)"
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -15,6 +21,7 @@ jobs:
     timeout-minutes: 25
     env:
       NPM_AUTOMATION_TOKEN: ${{ secrets.NPM_AUTOMATION_TOKEN }}
+      TAG_VERSION: ${{ inputs.version || github.ref_name }}
 
     steps:
       - name: Checkout
@@ -26,6 +33,9 @@ jobs:
           node-version: 20
           registry-url: https://registry.npmjs.org
           cache: npm
+
+      - name: Update npm for trusted publishing
+        run: npm install --global npm@latest
 
       - name: Validate tag and package version
         run: npm run release:check
@@ -62,11 +72,15 @@ jobs:
           fi
 
       - name: Publish to npm (Granular Access Token)
-        if: steps.version_check.outputs.skip_publish == 'false' && env.NPM_AUTOMATION_TOKEN != ''
+        id: token_publish
+        if: steps.version_check.outputs.skip_publish == 'false' && env.NPM_AUTOMATION_TOKEN != '' && github.event_name != 'workflow_dispatch'
+        continue-on-error: true
         run: npm publish --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ env.NPM_AUTOMATION_TOKEN }}
 
       - name: Publish to npm (Trusted Publishing fallback)
-        if: steps.version_check.outputs.skip_publish == 'false' && env.NPM_AUTOMATION_TOKEN == ''
+        if: steps.version_check.outputs.skip_publish == 'false' && (github.event_name == 'workflow_dispatch' || env.NPM_AUTOMATION_TOKEN == '' || steps.token_publish.outcome == 'failure')
         run: npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ""
