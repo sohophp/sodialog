@@ -107,6 +107,7 @@ function createSidebar(locale: LocaleKey, copy: {
         { text: copy.blogHome, link: withLocale('/blog/', locale) },
         { text: copy.tags, link: withLocale('/blog/tags', locale) },
         { text: copy.archive, link: withLocale('/blog/archive', locale) },
+        { text: '2026-06-23：三语言文档与发布流程', link: withLocale('/blog/2026-06-23-devlog', locale) },
         { text: '2026-06-21：统一尺寸 API', link: withLocale('/blog/2026-06-21-devlog', locale) },
         { text: '2026-03-11：Playwright Smoke 实战', link: withLocale('/blog/2026-03-11-playwright-smoke-devlog', locale) },
         { text: '2026-03-11：docs-smoke-ci 串联', link: withLocale('/blog/2026-03-11-docs-smoke-ci-devlog', locale) },

@@ -20,6 +20,18 @@ description: 以开发者第一人称记录 SoDialog 的日常开发、补记、
 
 ## 日志流
 
+### [让文档站说三种语言，也让发布流程少一点玄学](/blog/2026-06-23-devlog)
+
+![文档与发布流程相关照片](/blog/photos/docs-workflow.jpg)
+
+`2026-06-23 · docs · i18n · release · ci · quality`
+
+接入简体中文、繁体中文、英文三语言文档站，确认 npm 发布失败的真实原因，并把自动发布路径重新梳理清楚。
+
+[阅读全文](/blog/2026-06-23-devlog)
+
+---
+
 ### [把尺寸控制权还给使用者](/blog/2026-06-21-devlog)
 
 ![交互与尺寸调试现场](/blog/photos/interaction-debug.jpg)
@@ -120,6 +132,7 @@ description: 以开发者第一人称记录 SoDialog 的日常开发、补记、
 - `context-menu`: 右键菜单交互与术语统一
 - `toast`: 消息队列、提示策略与体验稳定性
 - `release`: 发布流程、清单与回归核对
+- `i18n`: 多语言路由、文案和 SEO 元信息
 - `playwright`: 文档站端到端自动化验证
 - `smoke-test`: 轻量但关键路径可用性检查
 - `ci`: 构建、预览、测试编排脚本

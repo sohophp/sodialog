@@ -11,6 +11,14 @@ description: SoDialog 开发日志按月份归档，支持补记回溯。
 
 ## 2026-06
 
+### [2026-06-23：让文档站说三种语言，也让发布流程少一点玄学](/blog/2026-06-23-devlog)
+
+![文档与发布流程相关照片](/blog/photos/docs-workflow.jpg)
+
+`docs · i18n · release · ci · quality`
+
+---
+
 ### [2026-06-21：把尺寸控制权还给使用者](/blog/2026-06-21-devlog)
 
 ![交互与尺寸调试现场](/blog/photos/interaction-debug.jpg)

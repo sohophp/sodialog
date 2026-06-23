@@ -12,6 +12,7 @@ description: SoDialog 开发日志标签页，按主题查看开发记录。
 ## 快速跳转
 
 - [docs](#docs)
+- [i18n](#i18n)
 - [context-menu](#context-menu)
 - [toast](#toast)
 - [release](#release)
@@ -28,9 +29,16 @@ description: SoDialog 开发日志标签页，按主题查看开发记录。
 
 ![文档主题图](/blog/photos/docs-workflow.jpg)
 
+- [2026-06-23：让文档站说三种语言，也让发布流程少一点玄学](/blog/2026-06-23-devlog)
 - [2026-03-11 技术日志（一）：Playwright Smoke 接入实战](/blog/2026-03-11-playwright-smoke-devlog)
 - [2026-03-11 技术日志（三）：首页 SEO 元信息基线检查实录](/blog/2026-03-11-seo-metadata-devlog)
 - [2026-03-11：文档站上线 Blog](/blog/2026-03-11-devlog)
+
+## i18n
+
+![文档主题图](/blog/photos/docs-workflow.jpg)
+
+- [2026-06-23：让文档站说三种语言，也让发布流程少一点玄学](/blog/2026-06-23-devlog)
 
 ## context-menu
 
@@ -49,6 +57,7 @@ description: SoDialog 开发日志标签页，按主题查看开发记录。
 
 ![发布与流程图](/blog/photos/ci-task-board.jpg)
 
+- [2026-06-23：让文档站说三种语言，也让发布流程少一点玄学](/blog/2026-06-23-devlog)
 - [2026-06-21：把尺寸控制权还给使用者](/blog/2026-06-21-devlog)
 - [2026-03-11 技术日志（二）：docs-smoke-ci 串联构建与验证](/blog/2026-03-11-docs-smoke-ci-devlog)
 - [2026-03-09（补记）：Toast 队列和发布自检](/blog/2026-03-09-devlog)
@@ -84,6 +93,7 @@ description: SoDialog 开发日志标签页，按主题查看开发记录。
 
 ![质量基线图](/blog/photos/ci-task-board.jpg)
 
+- [2026-06-23：让文档站说三种语言，也让发布流程少一点玄学](/blog/2026-06-23-devlog)
 - [2026-06-21：把尺寸控制权还给使用者](/blog/2026-06-21-devlog)
 - [2026-03-11 技术日志（三）：首页 SEO 元信息基线检查实录](/blog/2026-03-11-seo-metadata-devlog)
 - [2026-03-11 技术日志（四）：Demo 可交互性回归与 iframe 断言](/blog/2026-03-11-demo-readiness-devlog)
@@ -92,6 +102,7 @@ description: SoDialog 开发日志标签页，按主题查看开发记录。
 
 ![CI 任务板图](/blog/photos/ci-task-board.jpg)
 
+- [2026-06-23：让文档站说三种语言，也让发布流程少一点玄学](/blog/2026-06-23-devlog)
 - [2026-03-11 技术日志（二）：docs-smoke-ci 串联构建与验证](/blog/2026-03-11-docs-smoke-ci-devlog)
 
 ## workflow

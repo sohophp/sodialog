@@ -20,9 +20,21 @@ description: 以开发者第一人称记录 SoDialog 的日常开发、补记、
 
 ## 日志流
 
+### [让文档站说三种语言，也让发布流程少一点玄学](/en/blog/2026-06-23-devlog)
+
+![文档与发布流程相关照片](/blog/photos/docs-workflow.jpg)
+
+`2026-06-23 · docs · i18n · release · ci · quality`
+
+接入简体中文、繁体中文、英文三语言文档站，确认 npm 发布失败的真实原因，并把自动发布路径重新梳理清楚。
+
+[阅读全文](/en/blog/2026-06-23-devlog)
+
+---
+
 ### [把尺寸控制权还给使用者](/en/blog/2026-06-21-devlog)
 
-`![交互与尺寸调试现场](/blog/photos/interaction-debug.jpg)
+![交互与尺寸调试现场](/blog/photos/interaction-debug.jpg)
 
 `2026-06-21 · api · context-menu · release · quality`
 
@@ -34,7 +46,7 @@ description: 以开发者第一人称记录 SoDialog 的日常开发、补记、
 
 ### [技术日志（一）：Playwright Smoke 接入实战](/en/blog/2026-03-11-playwright-smoke-devlog)
 
-`![Playwright smoke 测试相关的工位照片](/blog/photos/playwright-workstation.jpg)
+![Playwright smoke 测试相关的工位照片](/blog/photos/playwright-workstation.jpg)
 
 `2026-03-11 · playwright · smoke-test · docs`
 
@@ -46,7 +58,7 @@ description: 以开发者第一人称记录 SoDialog 的日常开发、补记、
 
 ### [技术日志（二）：docs-smoke-ci 串联构建与验证](/en/blog/2026-03-11-docs-smoke-ci-devlog)
 
-`![任务清单与流程编排相关照片](/blog/photos/ci-task-board.jpg)
+![任务清单与流程编排相关照片](/blog/photos/ci-task-board.jpg)
 
 `2026-03-11 · ci · smoke-test · release`
 
@@ -58,7 +70,7 @@ description: 以开发者第一人称记录 SoDialog 的日常开发、补记、
 
 ### [技术日志（三）：首页 SEO 元信息基线检查实录](/en/blog/2026-03-11-seo-metadata-devlog)
 
-`![SEO 与结构化元信息检查图](/blog/photos/docs-workflow.jpg)
+![SEO 与结构化元信息检查图](/blog/photos/docs-workflow.jpg)
 
 `2026-03-11 · seo · docs · quality`
 
@@ -70,7 +82,7 @@ description: 以开发者第一人称记录 SoDialog 的日常开发、补记、
 
 ### [技术日志（四）：Demo 可交互性回归与 iframe 断言](/en/blog/2026-03-11-demo-readiness-devlog)
 
-`![Demo 可交互回归图](/blog/photos/interaction-debug.jpg)
+![Demo 可交互回归图](/blog/photos/interaction-debug.jpg)
 
 `2026-03-11 · playwright · demo · smoke-test`
 
@@ -82,7 +94,7 @@ description: 以开发者第一人称记录 SoDialog 的日常开发、补记、
 
 ### [文档站加了 Blog，我终于不用把 TODO 写在脑子里了](/en/blog/2026-03-11-devlog)
 
-`![文档与开发流程相关照片](/blog/photos/docs-workflow.jpg)
+![文档与开发流程相关照片](/blog/photos/docs-workflow.jpg)
 
 `2026-03-11 · docs · workflow`
 
@@ -94,7 +106,7 @@ description: 以开发者第一人称记录 SoDialog 的日常开发、补记、
 
 ### [Context Menu 调整日，鼠标右键终于像个成年人](/en/blog/2026-03-10-devlog)
 
-`![交互调试相关照片](/blog/photos/interaction-debug.jpg)
+![交互调试相关照片](/blog/photos/interaction-debug.jpg)
 
 `2026-03-10（补记） · context-menu · workflow`
 
@@ -106,7 +118,7 @@ description: 以开发者第一人称记录 SoDialog 的日常开发、补记、
 
 ### [Toast 队列与发布流程自检，告别“玄学通过”](/en/blog/2026-03-09-devlog)
 
-`![发布核查相关照片](/blog/photos/release-check.jpg)
+![发布核查相关照片](/blog/photos/release-check.jpg)
 
 `2026-03-09（补记） · toast · release`
 
@@ -120,6 +132,7 @@ description: 以开发者第一人称记录 SoDialog 的日常开发、补记、
 - `context-menu`: 右键菜单交互与术语统一
 - `toast`: 消息队列、提示策略与体验稳定性
 - `release`: 发布流程、清单与回归核对
+- `i18n`: 多语言路由、文案和 SEO 元信息
 - `playwright`: 文档站端到端自动化验证
 - `smoke-test`: 轻量但关键路径可用性检查
 - `ci`: 构建、预览、测试编排脚本
