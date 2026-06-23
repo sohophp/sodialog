@@ -11,7 +11,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/sohophp/sodialog"
+    "url": "git+https://github.com/sohophp/sodialog.git"
   },
   "homepage": "https://sodialog.sohophp.app",
   "bugs": {
