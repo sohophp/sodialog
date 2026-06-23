@@ -20,6 +20,18 @@ description: 以开发者第一人称记录 SoDialog 的日常开发、补记、
 
 ## 日志流
 
+### [文档站从漂亮项目页升级到组件库工作台](/blog/2026-06-23-docs-ia-ux-devlog)
+
+![文档与发布流程相关照片](/blog/photos/docs-workflow.jpg)
+
+`2026-06-23 · docs · ux · api · release · quality`
+
+重构文档站信息架构、内页 UX、Labs、API Reference、版本中心和更新日志，让 SoDialog 的文档更像成熟组件库工作台。
+
+[阅读全文](/blog/2026-06-23-docs-ia-ux-devlog)
+
+---
+
 ### [让文档站说三种语言，也让发布流程少一点玄学](/blog/2026-06-23-devlog)
 
 ![文档与发布流程相关照片](/blog/photos/docs-workflow.jpg)
@@ -129,6 +141,7 @@ description: 以开发者第一人称记录 SoDialog 的日常开发、补记、
 ## 标签索引
 
 - `docs`: 文档结构、导航、信息架构
+- `ux`: 内页体验、信息密度、Lab 布局
 - `context-menu`: 右键菜单交互与术语统一
 - `toast`: 消息队列、提示策略与体验稳定性
 - `release`: 发布流程、清单与回归核对

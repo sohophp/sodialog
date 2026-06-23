@@ -4,14 +4,30 @@ description: SoDialog Modal 指南：基础打开、生命周期钩子、Promise
 
 # Modal
 
-npm: [`sodialog`](https://www.npmjs.com/package/sodialog)
+<DocPageHeader
+  title="Modal"
+  description="可访问性友好的模态对话框，支持 Promise API、尺寸控制、拖动、生命周期钩子和诊断 trace。"
+  lab-href="/examples/modal-lab"
+  api-href="/api/dialog"
+  source-href="https://github.com/sohophp/sodialog/blob/main/src/lib.ts"
+/>
 
-<CdnNotice />
+## 最短可运行示例
+
+```ts
+import { openModal } from 'sodialog'
+import 'sodialog/style.css'
+
+openModal({
+  title: 'Hello',
+  content: '<p>Your dialog is ready.</p>',
+})
+```
+
+## Demo / Playground
 
 <DemoPreview src="/components/modal-basic.html" title="Modal Basic Demo" :height="430" />
 <DemoPreview src="/components/modal-promise.html" title="Modal Promise Flow Demo" :height="460" />
-
-## Level 1. Basic Usage
 
 ## 基础打开
 
@@ -30,9 +46,7 @@ openModal({
 
 `width` 和 `height` 支持数字（按 px）或 CSS 尺寸字符串；设置任一尺寸后，将关闭自动尺寸适配并优先采用显式尺寸。
 
-## Level 2. Add lifecycle and tracing
-
-## 布局稳定钩子与 trace
+## 生命周期与诊断
 
 ```ts
 import { openDialog, pushMessage } from 'sodialog'
@@ -49,8 +63,6 @@ openDialog({
   },
 })
 ```
-
-## Level 3. Promise flow composition
 
 ## Promise 组合流程
 
@@ -77,8 +89,6 @@ pushMessage('info', `流程完成，备注：${note}`, {
 })
 ```
 
-## Level 4. Configure defaults
-
 ## 全局默认配置
 
 ```ts
@@ -97,9 +107,14 @@ openModal({
 })
 ```
 
-## Related API
+## 可访问性
 
-- [Dialog API](/api/dialog)
-- [Adapter API](/api/adapter)
+Modal 保留原生 `<dialog>` 语义，并在打开时维护 `aria-modal`、可访问名称和焦点进入。关闭按钮与 footer 操作都应保留可见文本或明确的可访问名称；改变 `closeOnEsc`、`closeOnBackdrop` 时需要同步考虑键盘用户的退出路径。
 
-更多可视化示例见 [Examples Hub](/examples/)。
+## 相关 API
+
+<div class="sod-inline-actions">
+  <a href="/api/dialog">Dialog API</a>
+  <a href="/api/adapter">Adapter API</a>
+  <a href="/installation">安装与 CDN</a>
+</div>

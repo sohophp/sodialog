@@ -1,10 +1,14 @@
 import { defineConfig, type DefaultTheme } from 'vitepress'
+import { createRequire } from 'node:module'
 
 const SITE_URL = 'https://sodialog.sohophp.app'
 const SITE_NAME = 'SoDialog'
 const DEFAULT_DESCRIPTION =
   'A lightweight, framework-agnostic dialog library built for modern web applications.'
 const DEFAULT_OG_IMAGE = `${SITE_URL}/logo.svg`
+const require = createRequire(import.meta.url)
+const packageJson = require('../../package.json') as { version: string }
+const DOC_VERSION = packageJson.version
 
 type LocaleKey = 'root' | 'zh-TW' | 'en'
 
@@ -28,47 +32,67 @@ function withLocale(path: string, locale: LocaleKey): string {
 }
 
 function createNav(locale: LocaleKey, copy: {
-  gettingStarted: string
+  docs: string
   components: string
   api: string
   examples: string
   guides: string
-  blog: string
+  changelog: string
+  versions: string
 }): DefaultTheme.NavItem[] {
   return [
-    { text: copy.gettingStarted, link: withLocale('/getting-started', locale) },
+    { text: copy.docs, link: withLocale('/getting-started', locale) },
     { text: copy.components, link: withLocale('/components/modal', locale) },
     { text: copy.api, link: withLocale('/api/', locale) },
     { text: copy.examples, link: withLocale('/examples/', locale) },
     { text: copy.guides, link: withLocale('/guides/', locale) },
-    { text: copy.blog, link: withLocale('/blog/', locale) },
+    { text: copy.changelog, link: withLocale('/changelog/', locale) },
+    { text: copy.versions, link: withLocale('/versions/', locale) },
+    { text: 'GitHub ↗', link: 'https://github.com/sohophp/sodialog' },
+    { text: 'npm ↗', link: 'https://www.npmjs.com/package/sodialog' },
   ]
 }
 
 function createSidebar(locale: LocaleKey, copy: {
-  start: string
-  home: string
+  docs: string
   gettingStarted: string
+  installation: string
+  cdn: string
+  concepts: string
   components: string
   api: string
   apiOverview: string
+  types: string
+  globalConfig: string
   guides: string
   guidesOverview: string
+  frameworks: string
+  themes: string
+  migration: string
+  troubleshooting: string
+  faq: string
   workflow: string
   examples: string
-  blog: string
-  blogHome: string
+  changelog: string
+  latest: string
+  versions: string
+  notes: string
+  notesHome: string
   tags: string
   archive: string
 }): DefaultTheme.Sidebar {
-  return [
+  const docsSidebar = [
     {
-      text: copy.start,
+      text: copy.docs,
       items: [
-        { text: copy.home, link: withLocale('/', locale) },
         { text: copy.gettingStarted, link: withLocale('/getting-started', locale) },
+        { text: copy.installation, link: withLocale('/installation', locale) },
+        { text: copy.cdn, link: withLocale('/cdn', locale) },
+        { text: copy.concepts, link: withLocale('/guides/', locale) },
       ],
     },
+  ]
+  const componentSidebar = [
     {
       text: copy.components,
       items: [
@@ -76,8 +100,11 @@ function createSidebar(locale: LocaleKey, copy: {
         { text: 'Offcanvas', link: withLocale('/components/offcanvas', locale) },
         { text: 'Toast', link: withLocale('/components/toast', locale) },
         { text: 'Context Menu', link: withLocale('/components/context-menu', locale) },
+        { text: '其它组件', link: withLocale('/components/', locale) },
       ],
     },
+  ]
+  const apiSidebar = [
     {
       text: copy.api,
       items: [
@@ -86,25 +113,65 @@ function createSidebar(locale: LocaleKey, copy: {
         { text: 'Toast API', link: withLocale('/api/toast', locale) },
         { text: 'Context Menu API', link: withLocale('/api/context-menu', locale) },
         { text: 'Adapter API', link: withLocale('/api/adapter', locale) },
+        { text: copy.types, link: withLocale('/api/#types', locale) },
+        { text: copy.globalConfig, link: withLocale('/api/#global-config', locale) },
       ],
     },
+  ]
+  const examplesSidebar = [
+    {
+      text: 'Labs',
+      items: [
+        { text: copy.examples, link: withLocale('/examples/', locale) },
+        { text: 'Modal Lab', link: withLocale('/examples/modal-lab', locale) },
+        { text: 'Legacy Demo', link: withLocale('/demo', locale) },
+      ],
+    },
+  ]
+  const guidesSidebar = [
     {
       text: copy.guides,
       items: [
         { text: copy.guidesOverview, link: withLocale('/guides/', locale) },
+        { text: copy.installation, link: withLocale('/installation', locale) },
+        { text: copy.cdn, link: withLocale('/cdn', locale) },
+        { text: copy.frameworks, link: withLocale('/frameworks', locale) },
+        { text: copy.themes, link: withLocale('/themes', locale) },
+        { text: copy.migration, link: withLocale('/migration', locale) },
+        { text: copy.troubleshooting, link: withLocale('/troubleshooting', locale) },
+        { text: copy.faq, link: withLocale('/faq', locale) },
         { text: copy.workflow, link: withLocale('/guides/workflow', locale) },
         { text: 'Adapter Guidelines', link: withLocale('/guides/adapter-guidelines', locale) },
-        { text: 'Migration Guide', link: withLocale('/guides/migration-guide', locale) },
-        { text: 'Troubleshooting', link: withLocale('/guides/troubleshooting', locale) },
-        { text: 'Themes', link: withLocale('/guides/themes', locale) },
-        { text: 'FAQ', link: withLocale('/guides/faq', locale) },
-        { text: copy.examples, link: withLocale('/examples/', locale) },
       ],
     },
+  ]
+  const changelogSidebar = [
     {
-      text: copy.blog,
+      text: copy.changelog,
       items: [
-        { text: copy.blogHome, link: withLocale('/blog/', locale) },
+        { text: copy.latest, link: withLocale('/changelog/', locale) },
+        { text: 'v0.3.x', link: withLocale('/changelog/v0.3.x', locale) },
+        { text: 'v0.2.x', link: withLocale('/changelog/v0.2.x', locale) },
+        { text: 'v0.1.x', link: withLocale('/changelog/v0.1.x', locale) },
+        { text: copy.archive, link: withLocale('/changelog/archive', locale) },
+      ],
+    },
+  ]
+  const versionsSidebar = [
+    {
+      text: copy.versions,
+      items: [
+        { text: 'Latest stable', link: withLocale('/versions/', locale) },
+        { text: 'Historical versions', link: withLocale('/versions/#historical-versions', locale) },
+      ],
+    },
+  ]
+  const blogSidebar = [
+    {
+      text: copy.notes,
+      items: [
+        { text: copy.notesHome, link: withLocale('/blog/', locale) },
+        { text: copy.changelog, link: withLocale('/changelog/', locale) },
         { text: copy.tags, link: withLocale('/blog/tags', locale) },
         { text: copy.archive, link: withLocale('/blog/archive', locale) },
         { text: '2026-06-23：三语言文档与发布流程', link: withLocale('/blog/2026-06-23-devlog', locale) },
@@ -119,6 +186,24 @@ function createSidebar(locale: LocaleKey, copy: {
       ],
     },
   ]
+
+  return {
+    [withLocale('/getting-started', locale)]: docsSidebar,
+    [withLocale('/installation', locale)]: docsSidebar,
+    [withLocale('/cdn', locale)]: docsSidebar,
+    [withLocale('/components/', locale)]: componentSidebar,
+    [withLocale('/api/', locale)]: apiSidebar,
+    [withLocale('/examples/', locale)]: examplesSidebar,
+    [withLocale('/guides/', locale)]: guidesSidebar,
+    [withLocale('/frameworks', locale)]: guidesSidebar,
+    [withLocale('/themes', locale)]: guidesSidebar,
+    [withLocale('/migration', locale)]: guidesSidebar,
+    [withLocale('/troubleshooting', locale)]: guidesSidebar,
+    [withLocale('/faq', locale)]: guidesSidebar,
+    [withLocale('/changelog/', locale)]: changelogSidebar,
+    [withLocale('/versions/', locale)]: versionsSidebar,
+    [withLocale('/blog/', locale)]: blogSidebar,
+  }
 }
 
 const localeCopy: Record<LocaleKey, LocaleCopy> = {
@@ -127,26 +212,39 @@ const localeCopy: Record<LocaleKey, LocaleCopy> = {
     ogLocale: 'zh_CN',
     description: DEFAULT_DESCRIPTION,
     nav: createNav('root', {
-      gettingStarted: '快速开始',
-      components: '组件指南',
+      docs: '文档',
+      components: '组件',
       api: 'API 参考',
-      examples: '示例中心',
+      examples: '示例',
       guides: '指南',
-      blog: '开发日志',
+      changelog: '更新日志',
+      versions: '版本',
     }),
     sidebar: createSidebar('root', {
-      start: '开始使用',
-      home: '首页',
+      docs: '文档',
       gettingStarted: '快速开始',
-      components: '组件指南',
+      installation: '安装',
+      cdn: 'CDN 使用',
+      concepts: '基础概念',
+      components: '组件',
       api: 'API 参考',
       apiOverview: 'API 总览',
+      types: 'Types',
+      globalConfig: 'Global Config',
       guides: '指南',
       guidesOverview: '指南总览',
+      frameworks: '框架集成',
+      themes: '主题与样式',
+      migration: 'Migration',
+      troubleshooting: 'Troubleshooting',
+      faq: 'FAQ',
       workflow: '开发与发布流程',
-      examples: '示例中心',
-      blog: '开发日志',
-      blogHome: '日志首页',
+      examples: 'Labs 总览',
+      changelog: '更新日志',
+      latest: 'Latest',
+      versions: '版本',
+      notes: '更新与开发笔记',
+      notesHome: '开发笔记',
       tags: '标签总览',
       archive: '月度归档',
     }),
@@ -157,26 +255,39 @@ const localeCopy: Record<LocaleKey, LocaleCopy> = {
     ogLocale: 'zh_TW',
     description: '面向現代 Web 應用的輕量、框架無關 Dialog 函式庫。',
     nav: createNav('zh-TW', {
-      gettingStarted: '快速開始',
-      components: '元件指南',
+      docs: '文档',
+      components: '组件',
       api: 'API 參考',
-      examples: '範例中心',
+      examples: '示例',
       guides: '指南',
-      blog: '開發日誌',
+      changelog: '更新日志',
+      versions: '版本',
     }),
     sidebar: createSidebar('zh-TW', {
-      start: '開始使用',
-      home: '首頁',
+      docs: '文档',
       gettingStarted: '快速開始',
-      components: '元件指南',
+      installation: '安装',
+      cdn: 'CDN 使用',
+      concepts: '基础概念',
+      components: '组件',
       api: 'API 參考',
       apiOverview: 'API 總覽',
+      types: 'Types',
+      globalConfig: 'Global Config',
       guides: '指南',
       guidesOverview: '指南總覽',
+      frameworks: '框架集成',
+      themes: '主题与样式',
+      migration: 'Migration',
+      troubleshooting: 'Troubleshooting',
+      faq: 'FAQ',
       workflow: '開發與發布流程',
-      examples: '範例中心',
-      blog: '開發日誌',
-      blogHome: '日誌首頁',
+      examples: 'Labs 总览',
+      changelog: '更新日志',
+      latest: 'Latest',
+      versions: '版本',
+      notes: '更新与开发笔记',
+      notesHome: '开发笔记',
       tags: '標籤總覽',
       archive: '月度歸檔',
     }),
@@ -187,26 +298,39 @@ const localeCopy: Record<LocaleKey, LocaleCopy> = {
     ogLocale: 'en_US',
     description: DEFAULT_DESCRIPTION,
     nav: createNav('en', {
-      gettingStarted: 'Quick Start',
-      components: 'Components',
+      docs: '文档',
+      components: '组件',
       api: 'API Reference',
-      examples: 'Examples',
+      examples: '示例',
       guides: 'Guides',
-      blog: 'Dev Log',
+      changelog: '更新日志',
+      versions: '版本',
     }),
     sidebar: createSidebar('en', {
-      start: 'Getting Started',
-      home: 'Home',
+      docs: '文档',
       gettingStarted: 'Quick Start',
+      installation: '安装',
+      cdn: 'CDN 使用',
+      concepts: '基础概念',
       components: 'Components',
       api: 'API Reference',
       apiOverview: 'API Overview',
+      types: 'Types',
+      globalConfig: 'Global Config',
       guides: 'Guides',
       guidesOverview: 'Guides Overview',
+      frameworks: '框架集成',
+      themes: '主题与样式',
+      migration: 'Migration',
+      troubleshooting: 'Troubleshooting',
+      faq: 'FAQ',
       workflow: 'Development Workflow',
-      examples: 'Examples',
-      blog: 'Dev Log',
-      blogHome: 'Dev Log Home',
+      examples: 'Labs 总览',
+      changelog: '更新日志',
+      latest: 'Latest',
+      versions: '版本',
+      notes: '更新与开发笔记',
+      notesHome: '开发笔记',
       tags: 'Tags',
       archive: 'Archive',
     }),
@@ -230,10 +354,14 @@ function toCanonicalPath(relativePath: string): string {
 function createThemeConfig(locale: LocaleKey): DefaultTheme.Config {
   const copy = localeCopy[locale]
 
-  return {
+  const config: DefaultTheme.Config & { version: string } = {
     logo: '/logo.svg',
     nav: copy.nav,
     sidebar: copy.sidebar,
+    docFooter: {
+      prev: '上一页',
+      next: '下一页',
+    },
     search: {
       provider: 'local',
     },
@@ -241,8 +369,11 @@ function createThemeConfig(locale: LocaleKey): DefaultTheme.Config {
       message: copy.footerMessage,
       copyright: 'Copyright (c) 2026 SoDialog',
     },
+    version: DOC_VERSION,
     socialLinks: [{ icon: 'github', link: 'https://github.com/sohophp/sodialog' }],
   }
+
+  return config
 }
 
 export default defineConfig({

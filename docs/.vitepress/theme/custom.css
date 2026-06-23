@@ -78,17 +78,119 @@ body {
 }
 
 .vp-doc:not(:has(.sod-home)) h1 {
-  font-size: clamp(2rem, 5vw, 2.8rem);
+  font-size: clamp(1.85rem, 4vw, 2.55rem);
 }
 
 .vp-doc:not(:has(.sod-home)) table {
-  border-radius: 12px;
+  display: table;
+  border-radius: 8px;
   overflow: hidden;
 }
 
 .vp-doc:not(:has(.sod-home)) div[class*='language-'] {
   border: 1px solid var(--vp-c-divider);
-  border-radius: 14px;
+  border-radius: 8px;
+}
+
+.VPDoc:not(:has(.sod-home)) .content-container {
+  max-width: 920px !important;
+}
+
+.VPDoc:not(:has(.sod-home)) .aside {
+  padding-left: 24px;
+}
+
+.VPSidebar {
+  border-right: 1px solid color-mix(in srgb, var(--sod-site-line) 82%, transparent);
+}
+
+.VPNavBarMenuLink.active,
+.VPNavBarMenuGroup.active .text {
+  color: var(--vp-c-brand-1);
+}
+
+.VPDocFooter {
+  border-top: 1px solid var(--vp-c-divider);
+}
+
+.sod-doc-grid-compact,
+.sod-lab-grid,
+.sod-version-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin: 18px 0 28px;
+}
+
+.sod-doc-tile,
+.sod-version-card {
+  padding: 16px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  background: var(--vp-c-bg);
+}
+
+.sod-doc-tile h3,
+.sod-version-card h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.sod-doc-tile p,
+.sod-version-card p {
+  margin: 8px 0 0;
+  color: var(--vp-c-text-2);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.sod-inline-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0 0;
+}
+
+.sod-inline-actions a {
+  display: inline-flex;
+  min-height: 32px;
+  align-items: center;
+  padding: 0 10px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 620;
+}
+
+.sod-api-search {
+  display: grid;
+  gap: 8px;
+  margin: 16px 0 22px;
+  padding: 14px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  background: var(--vp-c-bg-soft);
+}
+
+.sod-api-search input {
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 7px;
+  color: var(--vp-c-text-1);
+  background: var(--vp-c-bg);
+}
+
+.sod-api-search small {
+  color: var(--vp-c-text-2);
+}
+
+@media (max-width: 760px) {
+  .sod-doc-grid-compact,
+  .sod-lab-grid,
+  .sod-version-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .sod-home {

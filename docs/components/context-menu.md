@@ -4,12 +4,33 @@ description: SoDialog Context Menu 指南：基础绑定、键盘交互、关闭
 
 # Context Menu
 
-<CdnNotice />
+<DocPageHeader
+  title="Context Menu"
+  description="可键盘访问的上下文菜单，支持选择器绑定、ARIA 状态、typeahead 和 close-first 弹窗联动。"
+  lab-href="/examples/"
+  api-href="/api/context-menu"
+  source-href="https://github.com/sohophp/sodialog/blob/main/src/lib.ts"
+/>
+
+## 最短可运行示例
+
+```ts
+import { bindContextMenu } from 'sodialog'
+import 'sodialog/style.css'
+
+bindContextMenu({
+  target: '#file-row',
+  items: [
+    { id: 'rename', label: '重命名' },
+    { id: 'delete', label: '删除' },
+  ],
+})
+```
+
+## Demo / Playground
 
 <DemoPreview src="/components/context-menu-basic.html" title="Context Menu Basic Demo" :height="420" />
 <DemoPreview src="/components/context-menu-dialog.html" title="Context Menu to Dialog Demo" :height="420" />
-
-## Level 1. Basic binding
 
 ## 基础绑定
 
@@ -33,8 +54,6 @@ bindContextMenu({
 - `target` 支持选择器、单元素和元素集合。
 - 菜单项可绑定 `id`、`label` 和 `onClick`。
 - `width` 和 `height` 支持数字（按 px）或 CSS 尺寸字符串，并继续受 `minWidth`、`maxHeight` 安全限制。
-
-## Level 2. Keyboard and close policies
 
 ## 关闭策略与键盘交互
 
@@ -68,8 +87,6 @@ bindContextMenu({
 - 键盘支持 `ArrowUp`、`ArrowDown`、`Home`、`End`、`Tab`。
 - 支持字母快速定位，对中英混合标签可匹配并轮转。
 
-## Level 3. Open dialog from menu safely
-
 ## 菜单触发弹窗（close-first）
 
 ```ts
@@ -97,9 +114,14 @@ handle = bindContextMenu({
 
 该模式可避免菜单与弹窗同时存在导致的焦点与层级冲突。
 
-## Related API
+## 可访问性
 
-- [Context Menu API](/api/context-menu)
-- [Dialog API](/api/dialog)
+Context Menu 支持方向键、Home/End、Enter/Space、Escape 与 typeahead。菜单项需要稳定 `id` 与可读 `label`，禁用项不能只靠颜色区别状态。
 
-更多可视化示例见 [Examples Hub](/examples/)。
+## 相关 API
+
+<div class="sod-inline-actions">
+  <a href="/api/context-menu">Context Menu API</a>
+  <a href="/api/dialog">Dialog API</a>
+  <a href="/examples/">Labs</a>
+</div>

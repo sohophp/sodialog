@@ -6,14 +6,27 @@
 
 ### Changed
 
-- 将文档站首页升级为现代开发者产品官网，增加代码展示、能力对比、生态支持和文档入口。
-- 简化发布流程：Changelog 不再由 GitHub Actions 自动生成或回写分支。
-- Changelog 改为在功能修改时直接更新，并随代码一起提交。
+- 待记录。
+
+## 0.3.6 - 2026-06-23
+
+### Added
+
+- 新增文档站分区信息架构，覆盖文档、组件、API、示例、指南、更新日志和版本中心。
+- 新增 Modal Lab，可通过配置面板实时预览 Modal 并复制生成代码。
+- 新增统一组件页头、版本徽章、API 参数表、Labs 卡片和 CDN 示例组件。
+- 新增安装、CDN、框架集成、主题、迁移、Troubleshooting、FAQ、正式更新日志和版本页面。
+
+### Changed
+
+- 顶部导航调整为文档、组件、API、示例、指南、更新日志、版本、GitHub 与 npm。
+- Sidebar 按内容区域拆分，开发日志不再混入组件、API 和指南侧边栏。
+- 组件页改为最短示例优先，并移除教程式 Level 命名。
+- CDN 示例与版本徽章改为从 `package.json` 派生的单一版本源。
 
 ### Fixed
 
-- 修复文档站首页在桌面浏览器出现横向滚动条的问题。
-- 统一文档站 canonical、Open Graph、Sitemap 和 robots 使用 `https://sodialog.sohophp.app/`。
+- 保持文档站 canonical、Open Graph、Sitemap 和 robots 使用 `https://sodialog.sohophp.app/`。
 
 ## Release History
 

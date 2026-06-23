@@ -1,5 +1,7 @@
 # Dialog API
 
+<VersionBadge />
+
 ## Methods
 
 | Method | Signature | Description |
@@ -10,6 +12,57 @@
 | `promptModal` | `(options?: SoDialogPromptOptions)` | Open a prompt dialog and return `Promise<string | null>`. |
 | `formModal` | `(options: SoDialogFormOptions)` | Open a dynamic form dialog and return submitted values. |
 | `SoDialog.open` | `(options: SoDialogOptions)` | Open modal or offcanvas by `kind`. |
+
+## `openModal`
+
+### 签名
+
+```ts
+openModal(options: SoDialogModalOptions): SoDialogHandle
+```
+
+### 参数
+
+<ApiParamTable
+  :rows="[
+    { name: 'title', type: 'string', defaultValue: '-', required: '是', description: 'Dialog 标题文本。' },
+    { name: 'content', type: 'string | Node', defaultValue: '-', required: '是', description: 'Dialog 主体内容。' },
+    { name: 'width', type: 'number | string', defaultValue: 'auto', required: '否', description: '面板宽度；数字按 px 处理，字符串接受 CSS 尺寸。' },
+    { name: 'closeOnEsc', type: 'boolean', defaultValue: 'true', required: '否', description: '是否允许 Escape 关闭。' },
+    { name: 'onLayoutStable', type: 'SoLayoutStableHook', defaultValue: '-', required: '否', description: '布局稳定后触发，用于测量、埋点或提示。' },
+  ]"
+/>
+
+### 返回值
+
+返回 `SoDialogHandle`，可调用 `close()`、`refit()`、`setFooterButtons()` 和 `onAction()`。
+
+### 最小示例
+
+```ts
+import { openModal } from 'sodialog'
+
+openModal({
+  title: 'Hello',
+  content: '<p>Your dialog is ready.</p>',
+})
+```
+
+### 行为说明
+
+`openModal` 默认使用原生 `showModal()`，保留 `<dialog>` 焦点语义。传入显式 `width` 或 `height` 后会优先采用显式尺寸。
+
+### 边界情况
+
+如果同一个 `id` 已存在，实例复用行为以当前实现为准；需要销毁时使用返回句柄或 footer action 的 `destroy` 策略。
+
+### 相关 API
+
+<div class="sod-inline-actions">
+  <a href="/examples/modal-lab">Open Demo</a>
+  <a href="/components/modal">Modal 文档</a>
+  <a href="/api/adapter">Adapter API</a>
+</div>
 
 ## Core Options (`SoDialogBaseOptions`)
 
