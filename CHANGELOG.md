@@ -6,7 +6,12 @@
 
 ### Changed
 
-- 待记录。
+- 恢复 Blog / 开发笔记为顶部导航和全站 footer 的可发现入口，同时保持其不混入组件、API、指南 sidebar。
+- 修复 GitHub Pages workflow，使文档部署前先构建 legacy demo，并补充自定义域名 `CNAME`。
+- 将文档与可运行示例中的 CDN 版本更新到当前 `0.3.6`。
+- 增加 Blog、Changelog、旧开发日志入口和导航/footer 的文档 smoke 覆盖。
+- 修复 Blog 首页文章卡片缺少真实图片，以及英文/繁中文章图片被反引号转义导致不渲染的问题。
+- 修复英文与繁中 `Changelog`、`Versions` 及同类顶层文档入口的 404，并补齐导航、页脚、Blog 索引页的本地化文案。
 
 ## 0.3.6 - 2026-06-23
 

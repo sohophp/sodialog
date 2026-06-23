@@ -1,123 +1,38 @@
 ---
-title: 日志标签总览
+title: 筆記標籤總覽
 sidebar: false
 aside: false
-description: SoDialog 开发日志标签页，按主题查看开发记录。
+description: 依主題查看 SoDialog 開發筆記。
 ---
 
-# 日志标签总览
-
-如果说日志是时间线，那标签就是地铁换乘图。
-
-## 快速跳转
-
-- [docs](#docs)
-- [i18n](#i18n)
-- [context-menu](#context-menu)
-- [toast](#toast)
-- [release](#release)
-- [playwright](#playwright)
-- [smoke-test](#smoke-test)
-- [ci](#ci)
-- [seo](#seo)
-- [demo](#demo)
-- [quality](#quality)
-- [workflow](#workflow)
-- [api](#api)
+# 筆記標籤總覽
 
 ## docs
 
-![文档主题图](/blog/photos/docs-workflow.jpg)
-
-- [2026-06-23：让文档站说三种语言，也让发布流程少一点玄学](/zh-TW/blog/2026-06-23-devlog)
-- [2026-03-11 技术日志（一）：Playwright Smoke 接入实战](/zh-TW/blog/2026-03-11-playwright-smoke-devlog)
-- [2026-03-11 技术日志（三）：首页 SEO 元信息基线检查实录](/zh-TW/blog/2026-03-11-seo-metadata-devlog)
-- [2026-03-11：文档站上线 Blog](/zh-TW/blog/2026-03-11-devlog)
-
-## i18n
-
-![文档主题图](/blog/photos/docs-workflow.jpg)
-
-- [2026-06-23：让文档站说三种语言，也让发布流程少一点玄学](/zh-TW/blog/2026-06-23-devlog)
-
-## context-menu
-
-![交互调试图](/blog/photos/interaction-debug.jpg)
-
-- [2026-06-21：把尺寸控制权还给使用者](/zh-TW/blog/2026-06-21-devlog)
-- [2026-03-10（补记）：Context Menu 调整日](/zh-TW/blog/2026-03-10-devlog)
-
-## toast
-
-![发布核查图](/blog/photos/release-check.jpg)
-
-- [2026-03-09（补记）：Toast 队列和发布自检](/zh-TW/blog/2026-03-09-devlog)
-
-## release
-
-![发布与流程图](/blog/photos/ci-task-board.jpg)
-
-- [2026-06-23：让文档站说三种语言，也让发布流程少一点玄学](/zh-TW/blog/2026-06-23-devlog)
-- [2026-06-21：把尺寸控制权还给使用者](/zh-TW/blog/2026-06-21-devlog)
-- [2026-03-11 技术日志（二）：docs-smoke-ci 串联构建与验证](/zh-TW/blog/2026-03-11-docs-smoke-ci-devlog)
-- [2026-03-09（补记）：Toast 队列和发布自检](/zh-TW/blog/2026-03-09-devlog)
-
-## playwright
-
-![自动化测试工位图](/blog/photos/playwright-workstation.jpg)
-
-- [2026-03-11 技术日志（一）：Playwright Smoke 接入实战](/zh-TW/blog/2026-03-11-playwright-smoke-devlog)
-- [2026-03-11 技术日志（四）：Demo 可交互性回归与 iframe 断言](/zh-TW/blog/2026-03-11-demo-readiness-devlog)
-
-## smoke-test
-
-![测试与流程图](/blog/photos/playwright-workstation.jpg)
-
-- [2026-03-11 技术日志（一）：Playwright Smoke 接入实战](/zh-TW/blog/2026-03-11-playwright-smoke-devlog)
-- [2026-03-11 技术日志（二）：docs-smoke-ci 串联构建与验证](/zh-TW/blog/2026-03-11-docs-smoke-ci-devlog)
-- [2026-03-11 技术日志（四）：Demo 可交互性回归与 iframe 断言](/zh-TW/blog/2026-03-11-demo-readiness-devlog)
-
-## seo
-
-![SEO 检查图](/blog/photos/docs-workflow.jpg)
-
-- [2026-03-11 技术日志（三）：首页 SEO 元信息基线检查实录](/zh-TW/blog/2026-03-11-seo-metadata-devlog)
-
-## demo
-
-![Demo 交互回归图](/blog/photos/interaction-debug.jpg)
-
-- [2026-03-11 技术日志（四）：Demo 可交互性回归与 iframe 断言](/zh-TW/blog/2026-03-11-demo-readiness-devlog)
-
-## quality
-
-![质量基线图](/blog/photos/ci-task-board.jpg)
-
-- [2026-06-23：让文档站说三种语言，也让发布流程少一点玄学](/zh-TW/blog/2026-06-23-devlog)
-- [2026-06-21：把尺寸控制权还给使用者](/zh-TW/blog/2026-06-21-devlog)
-- [2026-03-11 技术日志（三）：首页 SEO 元信息基线检查实录](/zh-TW/blog/2026-03-11-seo-metadata-devlog)
-- [2026-03-11 技术日志（四）：Demo 可交互性回归与 iframe 断言](/zh-TW/blog/2026-03-11-demo-readiness-devlog)
-
-## ci
-
-![CI 任务板图](/blog/photos/ci-task-board.jpg)
-
-- [2026-06-23：让文档站说三种语言，也让发布流程少一点玄学](/zh-TW/blog/2026-06-23-devlog)
-- [2026-03-11 技术日志（二）：docs-smoke-ci 串联构建与验证](/zh-TW/blog/2026-03-11-docs-smoke-ci-devlog)
-
-## workflow
-
-![工作流主题图](/blog/photos/docs-workflow.jpg)
-
-- [2026-03-11 技术日志（一）：Playwright Smoke 接入实战](/zh-TW/blog/2026-03-11-playwright-smoke-devlog)
-- [2026-03-11 技术日志（二）：docs-smoke-ci 串联构建与验证](/zh-TW/blog/2026-03-11-docs-smoke-ci-devlog)
-- [2026-03-11 技术日志（三）：首页 SEO 元信息基线检查实录](/zh-TW/blog/2026-03-11-seo-metadata-devlog)
-- [2026-03-11：文档站上线 Blog](/zh-TW/blog/2026-03-11-devlog)
-- [2026-03-10（补记）：Context Menu 调整日](/zh-TW/blog/2026-03-10-devlog)
-- [2026-03-09（补记）：Toast 队列和发布自检](/zh-TW/blog/2026-03-09-devlog)
+- [文件站資訊架構與內頁 UX 重構](/zh-TW/blog/2026-06-23-docs-ia-ux-devlog)
+- [三語言文件與發布流程](/zh-TW/blog/2026-06-23-devlog)
+- [Playwright Smoke 接入實戰](/zh-TW/blog/2026-03-11-playwright-smoke-devlog)
+- [SEO 元資訊基線](/zh-TW/blog/2026-03-11-seo-metadata-devlog)
+- [Blog 上線](/zh-TW/blog/2026-03-11-devlog)
 
 ## api
 
-![API 与交互调试图](/blog/photos/interaction-debug.jpg)
+- [把尺寸控制權還給使用者](/zh-TW/blog/2026-06-21-devlog)
+- [文件站資訊架構與內頁 UX 重構](/zh-TW/blog/2026-06-23-docs-ia-ux-devlog)
 
-- [2026-06-21：把尺寸控制权还给使用者](/zh-TW/blog/2026-06-21-devlog)
+## release
+
+- [文件站資訊架構與內頁 UX 重構](/zh-TW/blog/2026-06-23-docs-ia-ux-devlog)
+- [三語言文件與發布流程](/zh-TW/blog/2026-06-23-devlog)
+- [Toast 佇列與發布自檢](/zh-TW/blog/2026-03-09-devlog)
+
+## quality
+
+- [文件站資訊架構與內頁 UX 重構](/zh-TW/blog/2026-06-23-docs-ia-ux-devlog)
+- [SEO 元資訊基線](/zh-TW/blog/2026-03-11-seo-metadata-devlog)
+- [Demo 可互動性回歸](/zh-TW/blog/2026-03-11-demo-readiness-devlog)
+
+## workflow
+
+- [Blog 上線](/zh-TW/blog/2026-03-11-devlog)
+- [Context Menu 調整](/zh-TW/blog/2026-03-10-devlog)

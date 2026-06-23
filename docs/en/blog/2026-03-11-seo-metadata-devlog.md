@@ -14,7 +14,7 @@ tags:
 
 记录时间：2026-03-11 18:10
 
-`![SEO 与结构化元信息检查图](/blog/photos/docs-workflow.jpg)
+![SEO 与结构化元信息检查图](/blog/photos/docs-workflow.jpg)
 
 这次把首页 SEO 检查从“人工点开看一眼”升级为“可执行基线”，重点是让变更后能快速发现元信息丢失。
 

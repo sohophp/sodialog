@@ -39,6 +39,7 @@ function createNav(locale: LocaleKey, copy: {
   guides: string
   changelog: string
   versions: string
+  notes: string
 }): DefaultTheme.NavItem[] {
   return [
     { text: copy.docs, link: withLocale('/getting-started', locale) },
@@ -48,6 +49,7 @@ function createNav(locale: LocaleKey, copy: {
     { text: copy.guides, link: withLocale('/guides/', locale) },
     { text: copy.changelog, link: withLocale('/changelog/', locale) },
     { text: copy.versions, link: withLocale('/versions/', locale) },
+    { text: copy.notes, link: withLocale('/blog/', locale) },
     { text: 'GitHub ↗', link: 'https://github.com/sohophp/sodialog' },
     { text: 'npm ↗', link: 'https://www.npmjs.com/package/sodialog' },
   ]
@@ -174,6 +176,7 @@ function createSidebar(locale: LocaleKey, copy: {
         { text: copy.changelog, link: withLocale('/changelog/', locale) },
         { text: copy.tags, link: withLocale('/blog/tags', locale) },
         { text: copy.archive, link: withLocale('/blog/archive', locale) },
+        { text: '2026-06-23：文档 IA 与内页 UX', link: withLocale('/blog/2026-06-23-docs-ia-ux-devlog', locale) },
         { text: '2026-06-23：三语言文档与发布流程', link: withLocale('/blog/2026-06-23-devlog', locale) },
         { text: '2026-06-21：统一尺寸 API', link: withLocale('/blog/2026-06-21-devlog', locale) },
         { text: '2026-03-11：Playwright Smoke 实战', link: withLocale('/blog/2026-03-11-playwright-smoke-devlog', locale) },
@@ -219,6 +222,7 @@ const localeCopy: Record<LocaleKey, LocaleCopy> = {
       guides: '指南',
       changelog: '更新日志',
       versions: '版本',
+      notes: '开发笔记',
     }),
     sidebar: createSidebar('root', {
       docs: '文档',
@@ -242,7 +246,7 @@ const localeCopy: Record<LocaleKey, LocaleCopy> = {
       examples: 'Labs 总览',
       changelog: '更新日志',
       latest: 'Latest',
-      versions: '版本',
+      versions: 'Versions',
       notes: '更新与开发笔记',
       notesHome: '开发笔记',
       tags: '标签总览',
@@ -255,39 +259,40 @@ const localeCopy: Record<LocaleKey, LocaleCopy> = {
     ogLocale: 'zh_TW',
     description: '面向現代 Web 應用的輕量、框架無關 Dialog 函式庫。',
     nav: createNav('zh-TW', {
-      docs: '文档',
-      components: '组件',
+      docs: '文件',
+      components: '元件',
       api: 'API 參考',
-      examples: '示例',
+      examples: '範例',
       guides: '指南',
-      changelog: '更新日志',
+      changelog: '更新日誌',
       versions: '版本',
+      notes: '開發筆記',
     }),
     sidebar: createSidebar('zh-TW', {
-      docs: '文档',
+      docs: '文件',
       gettingStarted: '快速開始',
-      installation: '安装',
+      installation: '安裝',
       cdn: 'CDN 使用',
-      concepts: '基础概念',
-      components: '组件',
+      concepts: '基礎概念',
+      components: '元件',
       api: 'API 參考',
       apiOverview: 'API 總覽',
       types: 'Types',
       globalConfig: 'Global Config',
       guides: '指南',
       guidesOverview: '指南總覽',
-      frameworks: '框架集成',
-      themes: '主题与样式',
+      frameworks: '框架整合',
+      themes: '主題與樣式',
       migration: 'Migration',
       troubleshooting: 'Troubleshooting',
       faq: 'FAQ',
       workflow: '開發與發布流程',
-      examples: 'Labs 总览',
-      changelog: '更新日志',
+      examples: 'Labs 總覽',
+      changelog: '更新日誌',
       latest: 'Latest',
       versions: '版本',
-      notes: '更新与开发笔记',
-      notesHome: '开发笔记',
+      notes: '更新與開發筆記',
+      notesHome: '開發筆記',
       tags: '標籤總覽',
       archive: '月度歸檔',
     }),
@@ -298,20 +303,21 @@ const localeCopy: Record<LocaleKey, LocaleCopy> = {
     ogLocale: 'en_US',
     description: DEFAULT_DESCRIPTION,
     nav: createNav('en', {
-      docs: '文档',
-      components: '组件',
+      docs: 'Docs',
+      components: 'Components',
       api: 'API Reference',
-      examples: '示例',
+      examples: 'Examples',
       guides: 'Guides',
-      changelog: '更新日志',
+      changelog: 'Changelog',
       versions: '版本',
+      notes: 'Notes',
     }),
     sidebar: createSidebar('en', {
-      docs: '文档',
+      docs: 'Docs',
       gettingStarted: 'Quick Start',
-      installation: '安装',
-      cdn: 'CDN 使用',
-      concepts: '基础概念',
+      installation: 'Installation',
+      cdn: 'CDN',
+      concepts: 'Core Concepts',
       components: 'Components',
       api: 'API Reference',
       apiOverview: 'API Overview',
@@ -319,18 +325,18 @@ const localeCopy: Record<LocaleKey, LocaleCopy> = {
       globalConfig: 'Global Config',
       guides: 'Guides',
       guidesOverview: 'Guides Overview',
-      frameworks: '框架集成',
-      themes: '主题与样式',
+      frameworks: 'Frameworks',
+      themes: 'Themes',
       migration: 'Migration',
       troubleshooting: 'Troubleshooting',
       faq: 'FAQ',
       workflow: 'Development Workflow',
-      examples: 'Labs 总览',
-      changelog: '更新日志',
+      examples: 'Labs Overview',
+      changelog: 'Changelog',
       latest: 'Latest',
       versions: '版本',
-      notes: '更新与开发笔记',
-      notesHome: '开发笔记',
+      notes: 'Changelog & Notes',
+      notesHome: 'Notes',
       tags: 'Tags',
       archive: 'Archive',
     }),
@@ -353,15 +359,18 @@ function toCanonicalPath(relativePath: string): string {
 
 function createThemeConfig(locale: LocaleKey): DefaultTheme.Config {
   const copy = localeCopy[locale]
+  const docFooter =
+    locale === 'en'
+      ? { prev: 'Previous page', next: 'Next page' }
+      : locale === 'zh-TW'
+        ? { prev: '上一頁', next: '下一頁' }
+        : { prev: '上一页', next: '下一页' }
 
   const config: DefaultTheme.Config & { version: string } = {
     logo: '/logo.svg',
     nav: copy.nav,
     sidebar: copy.sidebar,
-    docFooter: {
-      prev: '上一页',
-      next: '下一页',
-    },
+    docFooter,
     search: {
       provider: 'local',
     },

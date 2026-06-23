@@ -1,147 +1,78 @@
 ---
-title: 开发日志
+title: 更新與開發筆記
 sidebar: false
 aside: false
-description: 以开发者第一人称记录 SoDialog 的日常开发、补记、计划与踩坑。
+description: 記錄 SoDialog 的設計、實作、發布與長期演進。
 ---
 
-# 开发日志
+# 更新與開發筆記
 
-这里是我的开发碎碎念现场：
-
-- 记录今天改了什么
-- 补记前几天忘写的开发日志
-- 提前写下接下来要做的事，防止明天的我装作不认识今天的我
+這裡記錄 SoDialog 的設計決策、實作筆記、發布過程與專案思考。正式版本變更請查看 [更新日誌](/zh-TW/changelog/)。
 
 ## 快速入口
 
-- [标签总览](/zh-TW/blog/tags)
-- [月度归档](/zh-TW/blog/archive)
+- [標籤總覽](/zh-TW/blog/tags)
+- [月度歸檔](/zh-TW/blog/archive)
+- [正式更新日誌](/zh-TW/changelog/)
 
-## 日志流
+## 文章
 
-### [让文档站说三种语言，也让发布流程少一点玄学](/zh-TW/blog/2026-06-23-devlog)
+### [文件站從漂亮專案頁升級到元件庫工作台](/zh-TW/blog/2026-06-23-docs-ia-ux-devlog)
 
-![文档与发布流程相关照片](/blog/photos/docs-workflow.jpg)
+`2026-06-23 · docs · ux · api · release · quality`
+
+重構文件站資訊架構、內頁 UX、Labs、API Reference、版本中心與更新日誌。
+
+### [讓文件站說三種語言，也讓發布流程少一點玄學](/zh-TW/blog/2026-06-23-devlog)
 
 `2026-06-23 · docs · i18n · release · ci · quality`
 
-接入简体中文、繁体中文、英文三语言文档站，确认 npm 发布失败的真实原因，并把自动发布路径重新梳理清楚。
+接入簡體中文、繁體中文、英文三語言文件，並整理 npm 發布與驗證流程。
 
-[阅读全文](/zh-TW/blog/2026-06-23-devlog)
-
----
-
-### [把尺寸控制权还给使用者](/zh-TW/blog/2026-06-21-devlog)
-
-![交互与尺寸调试现场](/blog/photos/interaction-debug.jpg)
+### [把尺寸控制權還給使用者](/zh-TW/blog/2026-06-21-devlog)
 
 `2026-06-21 · api · context-menu · release · quality`
 
-统一四类组件的尺寸 API，修掉首次右键黑框，并把文档、测试与 v0.2.5 发布准备收进同一条闭环。
+統一 Modal、Offcanvas、Toast 與 Context Menu 的尺寸 API，並完成文件與發布前檢查。
 
-[阅读全文](/zh-TW/blog/2026-06-21-devlog)
-
----
-
-### [技术日志（一）：Playwright Smoke 接入实战](/zh-TW/blog/2026-03-11-playwright-smoke-devlog)
-
-![Playwright smoke 测试相关的工位照片](/blog/photos/playwright-workstation.jpg)
+### [Playwright Smoke 接入實戰](/zh-TW/blog/2026-03-11-playwright-smoke-devlog)
 
 `2026-03-11 · playwright · smoke-test · docs`
 
-这篇专门写 Playwright smoke：它是什么、能解决什么问题、如何在文档站落地，以及我这次具体怎么接入。
+記錄文件 smoke 測試如何接入，以及它保護哪些關鍵路徑。
 
-[阅读全文](/zh-TW/blog/2026-03-11-playwright-smoke-devlog)
-
----
-
-### [技术日志（二）：docs-smoke-ci 串联构建与验证](/zh-TW/blog/2026-03-11-docs-smoke-ci-devlog)
-
-![任务清单与流程编排相关照片](/blog/photos/ci-task-board.jpg)
+### [docs-smoke-ci 串聯構建與驗證](/zh-TW/blog/2026-03-11-docs-smoke-ci-devlog)
 
 `2026-03-11 · ci · smoke-test · release`
 
-这篇拆解了脚本编排：从 docs build 到 preview 探活，再到 Playwright 执行和进程回收，整条链路如何稳定跑。
+從 docs build 到 preview 探活，再到 Playwright 執行與程序回收。
 
-[阅读全文](/zh-TW/blog/2026-03-11-docs-smoke-ci-devlog)
-
----
-
-### [技术日志（三）：首页 SEO 元信息基线检查实录](/zh-TW/blog/2026-03-11-seo-metadata-devlog)
-
-![SEO 与结构化元信息检查图](/blog/photos/docs-workflow.jpg)
+### [首頁 SEO 元資訊基線檢查實錄](/zh-TW/blog/2026-03-11-seo-metadata-devlog)
 
 `2026-03-11 · seo · docs · quality`
 
-这篇记录了 canonical、Open Graph、Twitter Card 与 JSON-LD 的可回归检查方式，以及如何在 smoke 中稳定断言。
+記錄 canonical、Open Graph、Twitter Card 與 JSON-LD 的回歸檢查方式。
 
-[阅读全文](/zh-TW/blog/2026-03-11-seo-metadata-devlog)
-
----
-
-### [技术日志（四）：Demo 可交互性回归与 iframe 断言](/zh-TW/blog/2026-03-11-demo-readiness-devlog)
-
-![Demo 可交互回归图](/blog/photos/interaction-debug.jpg)
+### [Demo 可互動性回歸與 iframe 斷言](/zh-TW/blog/2026-03-11-demo-readiness-devlog)
 
 `2026-03-11 · playwright · demo · smoke-test`
 
-这篇记录了如何把 smoke 从“页面能打开”升级为“示例能交互”，包括 iframe 内状态与按钮可用性校验。
+把 smoke 從「頁面能開」升級為「示例能互動」。
 
-[阅读全文](/zh-TW/blog/2026-03-11-demo-readiness-devlog)
-
----
-
-### [文档站加了 Blog，我终于不用把 TODO 写在脑子里了](/zh-TW/blog/2026-03-11-devlog)
-
-![文档与开发流程相关照片](/blog/photos/docs-workflow.jpg)
+### [文件站加了 Blog](/zh-TW/blog/2026-03-11-devlog)
 
 `2026-03-11 · docs · workflow`
 
-今天把日志模块接进主导航、侧边栏和首页入口。顺手立了补记规则，防止未来的我把历史改动说成“玄学记忆”。
+新增 Blog 模組、歸檔頁與補記規則。
 
-[阅读全文](/zh-TW/blog/2026-03-11-devlog)
+### [Context Menu 調整日](/zh-TW/blog/2026-03-10-devlog)
 
----
+`2026-03-10 · context-menu · workflow`
 
-### [Context Menu 调整日，鼠标右键终于像个成年人](/zh-TW/blog/2026-03-10-devlog)
+Context Menu 互動與術語清理。
 
-![交互调试相关照片](/blog/photos/interaction-debug.jpg)
+### [Toast 佇列與發布流程自檢](/zh-TW/blog/2026-03-09-devlog)
 
-`2026-03-10（补记） · context-menu · workflow`
+`2026-03-09 · toast · release`
 
-这条主要是交互和术语清洗：看起来是小修小补，实际是在给后续排障和协作铺路，属于“省未来时间”的一天。
-
-[阅读全文](/zh-TW/blog/2026-03-10-devlog)
-
----
-
-### [Toast 队列与发布流程自检，告别“玄学通过”](/zh-TW/blog/2026-03-09-devlog)
-
-![发布核查相关照片](/blog/photos/release-check.jpg)
-
-`2026-03-09（补记） · toast · release`
-
-重点是复盘队列策略和发布清单，把“感觉做过”变成“确实做过”，顺便给后续自动化检查埋点。
-
-[阅读全文](/zh-TW/blog/2026-03-09-devlog)
-
-## 标签索引
-
-- `docs`: 文档结构、导航、信息架构
-- `context-menu`: 右键菜单交互与术语统一
-- `toast`: 消息队列、提示策略与体验稳定性
-- `release`: 发布流程、清单与回归核对
-- `i18n`: 多语言路由、文案和 SEO 元信息
-- `playwright`: 文档站端到端自动化验证
-- `smoke-test`: 轻量但关键路径可用性检查
-- `ci`: 构建、预览、测试编排脚本
-- `workflow`: 每日开发节奏、协作和复盘
-- `api`: 公开接口设计与一致性
-- `quality`: 交互修复、测试与质量基线
-
-## 更新节奏
-
-- 正常情况：每日更新 1 条
-- 忙到起飞：允许补记，但必须把“补记时间”写清楚
-- 发布前：额外写一条发布准备日志
+整理 Toast 佇列策略與發布清單。

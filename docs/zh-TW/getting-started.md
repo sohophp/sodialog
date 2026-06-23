@@ -54,8 +54,8 @@ toast({
 
 文档中的组件示例默认使用：
 
-- `https://unpkg.com/sodialog@0.2.2/dist/sodialog.css`
-- `https://unpkg.com/sodialog@0.2.2/dist/sodialog.es.js`
+- `https://unpkg.com/sodialog@0.3.6/dist/sodialog.css`
+- `https://unpkg.com/sodialog@0.3.6/dist/sodialog.es.js`
 
 这样你复制示例源码后可以直接运行，不依赖本地 `vendor` 文件。
 
@@ -63,8 +63,8 @@ toast({
 
 ```js
 const candidates = [
-  'https://unpkg.com/sodialog@0.2.2/dist/sodialog.es.js',
-  // 'https://cdn.jsdelivr.net/npm/sodialog@0.2.2/dist/sodialog.es.js', // backup
+  'https://unpkg.com/sodialog@0.3.6/dist/sodialog.es.js',
+  // 'https://cdn.jsdelivr.net/npm/sodialog@0.3.6/dist/sodialog.es.js', // backup
 ]
 ```
 

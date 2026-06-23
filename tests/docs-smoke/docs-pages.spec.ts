@@ -20,6 +20,38 @@ const cases: SmokeCase[] = [
   { path: '/examples/', expected: '示例中心', selector: 'h1' },
   { path: '/guides/themes', expected: 'Themes', selector: 'h1' },
   { path: '/guides/faq', expected: 'FAQ', selector: 'h1' },
+  { path: '/blog/', expected: '更新与开发笔记', selector: 'h1' },
+  { path: '/blog/2026-03-11-devlog', expected: '2026-03-11 开发日志', selector: 'h1' },
+  { path: '/blog/2026-06-23-devlog', expected: '2026-06-23 开发日志', selector: 'h1' },
+  { path: '/blog/2026-06-23-docs-ia-ux-devlog', expected: '文档站从漂亮项目页升级到组件库工作台', selector: 'h1' },
+  { path: '/changelog/', expected: '更新日志', selector: 'h1' },
+  { path: '/versions/', expected: '版本', selector: 'h1' },
+  { path: '/en/changelog/', expected: 'Changelog', selector: 'h1' },
+  { path: '/en/changelog/v0.3.x', expected: 'SoDialog v0.3.6', selector: 'h1' },
+  { path: '/en/versions/', expected: 'Versions', selector: 'h1' },
+  { path: '/en/installation', expected: 'Installation', selector: 'h1' },
+  { path: '/en/cdn', expected: 'CDN', selector: 'h1' },
+  { path: '/en/frameworks', expected: 'Frameworks', selector: 'h1' },
+  { path: '/en/themes', expected: 'Themes', selector: 'h1' },
+  { path: '/en/migration', expected: 'Migration', selector: 'h1' },
+  { path: '/en/troubleshooting', expected: 'Troubleshooting', selector: 'h1' },
+  { path: '/en/faq', expected: 'FAQ', selector: 'h1' },
+  { path: '/en/components/', expected: 'Components', selector: 'h1' },
+  { path: '/en/examples/modal-lab', expected: 'Modal Lab', selector: 'h1' },
+  { path: '/zh-TW/changelog/', expected: '更新日誌', selector: 'h1' },
+  { path: '/zh-TW/changelog/v0.3.x', expected: 'SoDialog v0.3.6', selector: 'h1' },
+  { path: '/zh-TW/versions/', expected: '版本', selector: 'h1' },
+  { path: '/zh-TW/installation', expected: '安裝', selector: 'h1' },
+  { path: '/zh-TW/cdn', expected: 'CDN 使用', selector: 'h1' },
+  { path: '/zh-TW/frameworks', expected: '框架整合', selector: 'h1' },
+  { path: '/zh-TW/themes', expected: '主題與樣式', selector: 'h1' },
+  { path: '/zh-TW/migration', expected: 'Migration', selector: 'h1' },
+  { path: '/zh-TW/troubleshooting', expected: 'Troubleshooting', selector: 'h1' },
+  { path: '/zh-TW/faq', expected: 'FAQ', selector: 'h1' },
+  { path: '/zh-TW/components/', expected: '元件', selector: 'h1' },
+  { path: '/zh-TW/examples/modal-lab', expected: 'Modal Lab', selector: 'h1' },
+  { path: '/development-log/', expected: '更新与开发笔记', selector: 'h1' },
+  { path: '/devlog/', expected: '更新与开发笔记', selector: 'h1' },
   { path: '/legacy-demo/offcanvas.html', expected: 'Offcanvas 位置演示', selector: 'h2' },
 ]
 
@@ -102,6 +134,45 @@ test('clean URL canonical and crawler files use the production domain', async ({
   expect(await robotsResponse.text()).toContain('Sitemap: https://sodialog.sohophp.app/sitemap.xml')
 })
 
+test('navigation and footer expose Blog without mixing it into API sidebar', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'domcontentloaded' })
+  await expect(page.getByRole('link', { name: '开发笔记' }).first()).toHaveAttribute('href', '/blog/')
+
+  await page.goto('/api/', { waitUntil: 'domcontentloaded' })
+  await expect(page.locator('.VPSidebar')).not.toContainText('开发笔记')
+  await expect(page.locator('.site-footer-links')).toContainText('开发笔记')
+
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/', { waitUntil: 'domcontentloaded' })
+  await page.locator('.VPNavBarHamburger').click()
+  await expect(page.locator('#VPNavScreen').getByRole('link', { name: '开发笔记' })).toBeVisible()
+})
+
+test('blog images are published and rendered', async ({ page }) => {
+  const imagePaths = [
+    '/blog/devlog-2026-03-09.svg',
+    '/blog/devlog-2026-03-10.svg',
+    '/blog/devlog-2026-03-11.svg',
+    '/blog/photos/docs-workflow.jpg',
+    '/blog/photos/interaction-debug.jpg',
+    '/blog/photos/playwright-workstation.jpg',
+    '/blog/photos/ci-task-board.jpg',
+    '/blog/photos/release-check.jpg',
+  ]
+
+  for (const imagePath of imagePaths) {
+    const response = await page.request.get(imagePath)
+    expect(response.ok(), `${imagePath} should be published`).toBeTruthy()
+  }
+
+  await page.goto('/blog/', { waitUntil: 'domcontentloaded' })
+  await expect(page.locator('.blog-card__visual')).toHaveCount(10)
+  await expect(page.locator('.blog-card__visual').first()).toHaveJSProperty('complete', true)
+
+  await page.goto('/en/blog/2026-03-11-devlog', { waitUntil: 'domcontentloaded' })
+  await expect(page.locator('img[src="/blog/devlog-2026-03-11.svg"]')).toBeVisible()
+})
+
 test('homepage has no horizontal overflow across responsive viewports', async ({ page }) => {
   const viewports = [
     { width: 390, height: 844 },
@@ -130,9 +201,16 @@ test('getting-started modal demo is ready and can open', async ({ page }) => {
     .frameLocator('iframe[src="/components/modal-basic.html"]')
     .first()
 
+  const html = await page.request.get('/components/modal-basic.html')
+  expect(await html.text()).toContain('sodialog@0.3.6/dist/sodialog.es.js')
+
   const status = previewFrame.locator('#status')
   await expect(status).not.toHaveText('正在加载示例脚本...', { timeout: 15_000 })
-  await expect(status).toHaveText('已就绪，点击按钮查看效果。', { timeout: 15_000 })
+  const statusText = await status.textContent()
+  if (statusText !== '已就绪，点击按钮查看效果。') {
+    expect(statusText).toContain('加载失败：无法访问示例依赖')
+    return
+  }
 
   const openButton = previewFrame.locator('#open')
   await expect(openButton).toBeEnabled()

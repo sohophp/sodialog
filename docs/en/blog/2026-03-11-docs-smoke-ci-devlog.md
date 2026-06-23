@@ -14,7 +14,7 @@ tags:
 
 记录时间：2026-03-11 15:05
 
-`![带便签和清单的任务桌面](/blog/photos/ci-task-board.jpg)
+![带便签和清单的任务桌面](/blog/photos/ci-task-board.jpg)
 
 这一篇专门写脚本层：怎么把构建、起服务、跑 smoke、回收进程串成一条完整流水线。
 
@@ -72,4 +72,4 @@ tags:
 2. 给关键路由增加更细的结构断言（比如导航关键入口是否可见）。
 3. 评估是否在 PR 阶段保留轻量 smoke，在 release 阶段再跑重一些的链路检查。
 
-`![夜空与发射轨迹风格画面](/blog/photos/night-sky-launch.jpg)
+![夜空与发射轨迹风格画面](/blog/photos/night-sky-launch.jpg)

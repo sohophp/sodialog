@@ -1,4 +1,5 @@
 import DefaultTheme from 'vitepress/theme'
+import Layout from './Layout.vue'
 import './custom.css'
 import DemoPreview from './components/DemoPreview.vue'
 import CdnNotice from './components/CdnNotice.vue'
@@ -12,6 +13,7 @@ import ModalLab from './components/ModalLab.vue'
 
 export default {
 	...DefaultTheme,
+	Layout,
 	enhanceApp({ app }) {
 		app.component('DemoPreview', DemoPreview)
 		app.component('CdnNotice', CdnNotice)

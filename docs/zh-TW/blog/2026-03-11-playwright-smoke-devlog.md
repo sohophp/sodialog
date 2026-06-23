@@ -14,7 +14,7 @@ tags:
 
 记录时间：2026-03-11 14:20
 
-`![夜间工位与代码屏幕](/blog/photos/playwright-workstation.jpg)
+![夜间工位与代码屏幕](/blog/photos/playwright-workstation.jpg)
 
 最近把文档站的 smoke 测试补齐了，顺手把整个过程记下来，给之后的自己留个“可执行说明书”。
 

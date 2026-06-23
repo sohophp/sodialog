@@ -39,7 +39,7 @@ openModal({
 
 const approved = await confirmModal({
   title: 'Ship this release?',
-  content: 'Version 0.2.5 will be published.',
+  content: 'Version 0.3.6 will be published.',
   confirmText: 'Ship it',
   cancelText: 'Not yet',
 })`,
@@ -47,7 +47,7 @@ const approved = await confirmModal({
 
 <span class="token-keyword">const</span> approved = <span class="token-keyword">await</span> <span class="token-fn">confirmModal</span>({
   <span class="token-prop">title</span>: <span class="token-string">'Ship this release?'</span>,
-  <span class="token-prop">content</span>: <span class="token-string">'Version 0.2.5 will be published.'</span>,
+  <span class="token-prop">content</span>: <span class="token-string">'Version 0.3.6 will be published.'</span>,
   <span class="token-prop">confirmText</span>: <span class="token-string">'Ship it'</span>,
   <span class="token-prop">cancelText</span>: <span class="token-string">'Not yet'</span>,
 })`,
@@ -174,7 +174,7 @@ const homeCopy: Record<HomeLocale, {
 }> = {
   'zh-CN': {
     prefix: '',
-    eyebrow: 'SoDialog 0.2.5 · 零运行时必需依赖',
+    eyebrow: 'SoDialog {version} · 零运行时必需依赖',
     headline: 'Modern Dialogs',
     headlineAccent: 'for Every Web Project',
     description: '一套轻量、框架无关、面向现代 Web 应用的 Dialog 解决方案。',
@@ -223,7 +223,7 @@ const homeCopy: Record<HomeLocale, {
   },
   'zh-TW': {
     prefix: '/zh-TW',
-    eyebrow: 'SoDialog 0.2.5 · 零執行時必需依賴',
+    eyebrow: 'SoDialog {version} · 零執行時必需依賴',
     headline: 'Modern Dialogs',
     headlineAccent: 'for Every Web Project',
     description: '一套輕量、框架無關、面向現代 Web 應用的 Dialog 解決方案。',
@@ -272,7 +272,7 @@ const homeCopy: Record<HomeLocale, {
   },
   'en-US': {
     prefix: '/en',
-    eyebrow: 'SoDialog 0.2.5 · Zero required dependencies',
+    eyebrow: 'SoDialog {version} · Zero required dependencies',
     headline: 'Modern Dialogs',
     headlineAccent: 'for Every Web Project',
     description: 'A lightweight, framework-agnostic dialog library built for modern web applications.',
@@ -321,15 +321,22 @@ const homeCopy: Record<HomeLocale, {
   },
 }
 
-const { lang } = useData()
+const { lang, theme } = useData()
 const activeExampleId = ref(examples[0].id)
 const copied = ref(false)
+const version = computed(() => {
+  const value = (theme.value as { version?: unknown }).version
+  return typeof value === 'string' ? value : '0.3.6'
+})
 const currentLocale = computed<HomeLocale>(() => {
   if (lang.value === 'zh-Hant') return 'zh-TW'
   if (lang.value === 'en-US') return 'en-US'
   return 'zh-CN'
 })
-const copy = computed(() => homeCopy[currentLocale.value])
+const copy = computed(() => ({
+  ...homeCopy[currentLocale.value],
+  eyebrow: homeCopy[currentLocale.value].eyebrow.replace('{version}', version.value),
+}))
 const benefits = computed(() => copy.value.benefits)
 const docs = computed(() => copy.value.docs)
 const activeExample = computed(() => examples.find((item) => item.id === activeExampleId.value) ?? examples[0])
@@ -386,7 +393,7 @@ const ecosystems = [
         <div class="sod-install" aria-label="npm install sodialog">
           <span aria-hidden="true">$</span>
           <code>npm install sodialog</code>
-          <span class="sod-install__status">v0.2.5</span>
+          <span class="sod-install__status">v{{ version }}</span>
         </div>
       </div>
 
@@ -526,7 +533,7 @@ const ecosystems = [
 
     <footer class="sod-home-footer">
       <div class="sod-home-footer__brand"><span class="sod-footer-logo">S</span><div><strong>SoDialog</strong><small>{{ copy.footerTagline }}</small></div></div>
-      <nav aria-label="Footer navigation"><a href="https://github.com/sohophp/sodialog">GitHub</a><a :href="localizedPath('/getting-started')">Documentation</a><span>MIT License</span><span>v0.2.5</span></nav>
+      <nav aria-label="Footer navigation"><a href="https://github.com/sohophp/sodialog">GitHub</a><a :href="localizedPath('/getting-started')">Documentation</a><span>MIT License</span><span>v{{ version }}</span></nav>
       <p>{{ copy.footerDescription }}</p>
     </footer>
   </main>

@@ -1,142 +1,121 @@
 ---
-title: 开发日志
+title: 更新与开发笔记
 sidebar: false
 aside: false
-description: 以开发者第一人称记录 SoDialog 的日常开发、补记、计划与踩坑。
+description: 记录 SoDialog 的设计、实现、发布和长期演进。
 ---
 
-# 开发日志
+# 更新与开发笔记
 
-这里是我的开发碎碎念现场：
+记录 SoDialog 的设计、实现、发布和长期演进。正式版本变化请查看 [更新日志](/changelog/)，这里保留开发笔记、发布过程、设计决策和项目思考。
 
-- 记录今天改了什么
-- 补记前几天忘写的开发日志
-- 提前写下接下来要做的事，防止明天的我装作不认识今天的我
+<div class="blog-filter-row" aria-label="文章分类">
+  <a href="/blog/">全部</a>
+  <a href="/blog/tags#docs">开发笔记</a>
+  <a href="/blog/tags#release">发布记录</a>
+  <a href="/blog/tags#api">设计决策</a>
+</div>
 
 ## 快速入口
 
 - [标签总览](/blog/tags)
 - [月度归档](/blog/archive)
+- [正式更新日志](/changelog/)
 
-## 日志流
+## 文章
 
-### [文档站从漂亮项目页升级到组件库工作台](/blog/2026-06-23-docs-ia-ux-devlog)
-
-![文档与发布流程相关照片](/blog/photos/docs-workflow.jpg)
-
-`2026-06-23 · docs · ux · api · release · quality`
-
-重构文档站信息架构、内页 UX、Labs、API Reference、版本中心和更新日志，让 SoDialog 的文档更像成熟组件库工作台。
-
-[阅读全文](/blog/2026-06-23-docs-ia-ux-devlog)
-
----
-
-### [让文档站说三种语言，也让发布流程少一点玄学](/blog/2026-06-23-devlog)
-
-![文档与发布流程相关照片](/blog/photos/docs-workflow.jpg)
-
-`2026-06-23 · docs · i18n · release · ci · quality`
-
-接入简体中文、繁体中文、英文三语言文档站，确认 npm 发布失败的真实原因，并把自动发布路径重新梳理清楚。
-
-[阅读全文](/blog/2026-06-23-devlog)
-
----
-
-### [把尺寸控制权还给使用者](/blog/2026-06-21-devlog)
-
-![交互与尺寸调试现场](/blog/photos/interaction-debug.jpg)
-
-`2026-06-21 · api · context-menu · release · quality`
-
-统一四类组件的尺寸 API，修掉首次右键黑框，并把文档、测试与 v0.2.5 发布准备收进同一条闭环。
-
-[阅读全文](/blog/2026-06-21-devlog)
-
----
-
-### [技术日志（一）：Playwright Smoke 接入实战](/blog/2026-03-11-playwright-smoke-devlog)
-
-![Playwright smoke 测试相关的工位照片](/blog/photos/playwright-workstation.jpg)
-
-`2026-03-11 · playwright · smoke-test · docs`
-
-这篇专门写 Playwright smoke：它是什么、能解决什么问题、如何在文档站落地，以及我这次具体怎么接入。
-
-[阅读全文](/blog/2026-03-11-playwright-smoke-devlog)
-
----
-
-### [技术日志（二）：docs-smoke-ci 串联构建与验证](/blog/2026-03-11-docs-smoke-ci-devlog)
-
-![任务清单与流程编排相关照片](/blog/photos/ci-task-board.jpg)
-
-`2026-03-11 · ci · smoke-test · release`
-
-这篇拆解了脚本编排：从 docs build 到 preview 探活，再到 Playwright 执行和进程回收，整条链路如何稳定跑。
-
-[阅读全文](/blog/2026-03-11-docs-smoke-ci-devlog)
-
----
-
-### [技术日志（三）：首页 SEO 元信息基线检查实录](/blog/2026-03-11-seo-metadata-devlog)
-
-![SEO 与结构化元信息检查图](/blog/photos/docs-workflow.jpg)
-
-`2026-03-11 · seo · docs · quality`
-
-这篇记录了 canonical、Open Graph、Twitter Card 与 JSON-LD 的可回归检查方式，以及如何在 smoke 中稳定断言。
-
-[阅读全文](/blog/2026-03-11-seo-metadata-devlog)
-
----
-
-### [技术日志（四）：Demo 可交互性回归与 iframe 断言](/blog/2026-03-11-demo-readiness-devlog)
-
-![Demo 可交互回归图](/blog/photos/interaction-debug.jpg)
-
-`2026-03-11 · playwright · demo · smoke-test`
-
-这篇记录了如何把 smoke 从“页面能打开”升级为“示例能交互”，包括 iframe 内状态与按钮可用性校验。
-
-[阅读全文](/blog/2026-03-11-demo-readiness-devlog)
-
----
-
-### [文档站加了 Blog，我终于不用把 TODO 写在脑子里了](/blog/2026-03-11-devlog)
-
-![文档与开发流程相关照片](/blog/photos/docs-workflow.jpg)
-
-`2026-03-11 · docs · workflow`
-
-今天把日志模块接进主导航、侧边栏和首页入口。顺手立了补记规则，防止未来的我把历史改动说成“玄学记忆”。
-
-[阅读全文](/blog/2026-03-11-devlog)
-
----
-
-### [Context Menu 调整日，鼠标右键终于像个成年人](/blog/2026-03-10-devlog)
-
-![交互调试相关照片](/blog/photos/interaction-debug.jpg)
-
-`2026-03-10（补记） · context-menu · workflow`
-
-这条主要是交互和术语清洗：看起来是小修小补，实际是在给后续排障和协作铺路，属于“省未来时间”的一天。
-
-[阅读全文](/blog/2026-03-10-devlog)
-
----
-
-### [Toast 队列与发布流程自检，告别“玄学通过”](/blog/2026-03-09-devlog)
-
-![发布核查相关照片](/blog/photos/release-check.jpg)
-
-`2026-03-09（补记） · toast · release`
-
-重点是复盘队列策略和发布清单，把“感觉做过”变成“确实做过”，顺便给后续自动化检查埋点。
-
-[阅读全文](/blog/2026-03-09-devlog)
+<div class="blog-card-list">
+  <article class="blog-card">
+    <img class="blog-card__visual" src="/blog/photos/docs-workflow.jpg" alt="文档信息架构与发布流程预览图">
+    <div>
+      <p class="blog-card__meta">2026-06-23 · docs · ux · api · release · quality · 约 3 分钟</p>
+      <h2><a href="/blog/2026-06-23-docs-ia-ux-devlog">文档站从漂亮项目页升级到组件库工作台</a></h2>
+      <p>重构文档站信息架构、内页 UX、Labs、API Reference、版本中心和更新日志，让 SoDialog 的文档更像成熟组件库工作台。</p>
+      <a class="blog-card__read" href="/blog/2026-06-23-docs-ia-ux-devlog">阅读文章 →</a>
+    </div>
+  </article>
+  <article class="blog-card">
+    <img class="blog-card__visual" src="/blog/photos/docs-workflow.jpg" alt="文档与发布流程相关照片">
+    <div>
+      <p class="blog-card__meta">2026-06-23 · docs · i18n · release · ci · quality · 约 5 分钟</p>
+      <h2><a href="/blog/2026-06-23-devlog">让文档站说三种语言，也让发布流程少一点玄学</a></h2>
+      <p>接入简体中文、繁体中文、英文三语言文档站，确认 npm 发布失败的真实原因，并把自动发布路径重新梳理清楚。</p>
+      <a class="blog-card__read" href="/blog/2026-06-23-devlog">阅读文章 →</a>
+    </div>
+  </article>
+  <article class="blog-card">
+    <img class="blog-card__visual" src="/blog/photos/interaction-debug.jpg" alt="交互与尺寸调试现场">
+    <div>
+      <p class="blog-card__meta">2026-06-21 · api · context-menu · release · quality · 约 4 分钟</p>
+      <h2><a href="/blog/2026-06-21-devlog">把尺寸控制权还给使用者</a></h2>
+      <p>统一四类组件的尺寸 API，修掉首次右键黑框，并把文档、测试与 v0.2.5 发布准备收进同一条闭环。</p>
+      <a class="blog-card__read" href="/blog/2026-06-21-devlog">阅读文章 →</a>
+    </div>
+  </article>
+  <article class="blog-card">
+    <img class="blog-card__visual" src="/blog/photos/playwright-workstation.jpg" alt="Playwright smoke 测试相关的工位照片">
+    <div>
+      <p class="blog-card__meta">2026-03-11 · playwright · smoke-test · docs · 约 4 分钟</p>
+      <h2><a href="/blog/2026-03-11-playwright-smoke-devlog">技术日志（一）：Playwright Smoke 接入实战</a></h2>
+      <p>拆解 Playwright smoke 能解决什么问题、如何在文档站落地，以及这次具体怎么接入。</p>
+      <a class="blog-card__read" href="/blog/2026-03-11-playwright-smoke-devlog">阅读文章 →</a>
+    </div>
+  </article>
+  <article class="blog-card">
+    <img class="blog-card__visual" src="/blog/photos/ci-task-board.jpg" alt="任务清单与流程编排相关照片">
+    <div>
+      <p class="blog-card__meta">2026-03-11 · ci · smoke-test · release · 约 4 分钟</p>
+      <h2><a href="/blog/2026-03-11-docs-smoke-ci-devlog">技术日志（二）：docs-smoke-ci 串联构建与验证</a></h2>
+      <p>从 docs build 到 preview 探活，再到 Playwright 执行和进程回收，记录整条链路如何稳定跑。</p>
+      <a class="blog-card__read" href="/blog/2026-03-11-docs-smoke-ci-devlog">阅读文章 →</a>
+    </div>
+  </article>
+  <article class="blog-card">
+    <img class="blog-card__visual" src="/blog/photos/docs-workflow.jpg" alt="SEO 与结构化元信息检查图">
+    <div>
+      <p class="blog-card__meta">2026-03-11 · seo · docs · quality · 约 3 分钟</p>
+      <h2><a href="/blog/2026-03-11-seo-metadata-devlog">技术日志（三）：首页 SEO 元信息基线检查实录</a></h2>
+      <p>记录 canonical、Open Graph、Twitter Card 与 JSON-LD 的可回归检查方式。</p>
+      <a class="blog-card__read" href="/blog/2026-03-11-seo-metadata-devlog">阅读文章 →</a>
+    </div>
+  </article>
+  <article class="blog-card">
+    <img class="blog-card__visual" src="/blog/photos/interaction-debug.jpg" alt="Demo 可交互回归图">
+    <div>
+      <p class="blog-card__meta">2026-03-11 · playwright · demo · smoke-test · 约 3 分钟</p>
+      <h2><a href="/blog/2026-03-11-demo-readiness-devlog">技术日志（四）：Demo 可交互性回归与 iframe 断言</a></h2>
+      <p>把 smoke 从“页面能打开”升级为“示例能交互”，包括 iframe 内状态与按钮可用性校验。</p>
+      <a class="blog-card__read" href="/blog/2026-03-11-demo-readiness-devlog">阅读文章 →</a>
+    </div>
+  </article>
+  <article class="blog-card">
+    <img class="blog-card__visual" src="/blog/devlog-2026-03-11.svg" alt="2026-03-11 开发日志代表图">
+    <div>
+      <p class="blog-card__meta">2026-03-11 · docs · workflow · 约 2 分钟</p>
+      <h2><a href="/blog/2026-03-11-devlog">文档站加了 Blog，我终于不用把 TODO 写在脑子里了</a></h2>
+      <p>把日志模块接进导航、侧边栏和首页入口，并立下补记规则。</p>
+      <a class="blog-card__read" href="/blog/2026-03-11-devlog">阅读文章 →</a>
+    </div>
+  </article>
+  <article class="blog-card">
+    <img class="blog-card__visual" src="/blog/devlog-2026-03-10.svg" alt="2026-03-10 开发日志代表图">
+    <div>
+      <p class="blog-card__meta">2026-03-10 · context-menu · workflow · 约 2 分钟</p>
+      <h2><a href="/blog/2026-03-10-devlog">Context Menu 调整日，鼠标右键终于像个成年人</a></h2>
+      <p>交互和术语清洗，为后续排障和协作铺路。</p>
+      <a class="blog-card__read" href="/blog/2026-03-10-devlog">阅读文章 →</a>
+    </div>
+  </article>
+  <article class="blog-card">
+    <img class="blog-card__visual" src="/blog/devlog-2026-03-09.svg" alt="2026-03-09 开发日志代表图">
+    <div>
+      <p class="blog-card__meta">2026-03-09 · toast · release · 约 2 分钟</p>
+      <h2><a href="/blog/2026-03-09-devlog">Toast 队列与发布流程自检，告别“玄学通过”</a></h2>
+      <p>复盘队列策略和发布清单，把“感觉做过”变成“确实做过”。</p>
+      <a class="blog-card__read" href="/blog/2026-03-09-devlog">阅读文章 →</a>
+    </div>
+  </article>
+</div>
 
 ## 标签索引
 

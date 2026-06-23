@@ -14,7 +14,7 @@ tags:
 
 记录时间：2026-03-11 18:45
 
-`![Demo 可交互回归图](/blog/photos/interaction-debug.jpg)
+![Demo 可交互回归图](/blog/photos/interaction-debug.jpg)
 
 文档 smoke 如果只检查“页面能打开”，很容易漏掉示例不可用的问题。  
 这次把重点放到 demo 真正可交互这件事上。

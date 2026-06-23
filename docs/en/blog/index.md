@@ -1,147 +1,78 @@
 ---
-title: 开发日志
+title: Notes
 sidebar: false
 aside: false
-description: 以开发者第一人称记录 SoDialog 的日常开发、补记、计划与踩坑。
+description: Design, implementation, release, and long-term project notes for SoDialog.
 ---
 
-# 开发日志
+# Changelog & Notes
 
-这里是我的开发碎碎念现场：
+This area records SoDialog design decisions, implementation notes, release work, and long-term project thinking. User-facing release notes live in the [Changelog](/en/changelog/).
 
-- 记录今天改了什么
-- 补记前几天忘写的开发日志
-- 提前写下接下来要做的事，防止明天的我装作不认识今天的我
+## Quick Links
 
-## 快速入口
+- [Tags](/en/blog/tags)
+- [Archive](/en/blog/archive)
+- [Official Changelog](/en/changelog/)
 
-- [标签总览](/en/blog/tags)
-- [月度归档](/en/blog/archive)
+## Posts
 
-## 日志流
+### [Documentation IA and Inner Page UX Refresh](/en/blog/2026-06-23-docs-ia-ux-devlog)
 
-### [让文档站说三种语言，也让发布流程少一点玄学](/en/blog/2026-06-23-devlog)
+`2026-06-23 · docs · ux · api · release · quality`
 
-![文档与发布流程相关照片](/blog/photos/docs-workflow.jpg)
+Restructured the documentation architecture, inner page UX, Labs, API Reference, version center, and changelog.
+
+### [Three-language Docs and a Less Mysterious Release Flow](/en/blog/2026-06-23-devlog)
 
 `2026-06-23 · docs · i18n · release · ci · quality`
 
-接入简体中文、繁体中文、英文三语言文档站，确认 npm 发布失败的真实原因，并把自动发布路径重新梳理清楚。
+Added Simplified Chinese, Traditional Chinese, and English documentation routes, then clarified npm publishing and release verification.
 
-[阅读全文](/en/blog/2026-06-23-devlog)
-
----
-
-### [把尺寸控制权还给使用者](/en/blog/2026-06-21-devlog)
-
-![交互与尺寸调试现场](/blog/photos/interaction-debug.jpg)
+### [Putting Size Control Back in Users' Hands](/en/blog/2026-06-21-devlog)
 
 `2026-06-21 · api · context-menu · release · quality`
 
-统一四类组件的尺寸 API，修掉首次右键黑框，并把文档、测试与 v0.2.5 发布准备收进同一条闭环。
+Unified size APIs across Modal, Offcanvas, Toast, and Context Menu, then verified docs and release readiness.
 
-[阅读全文](/en/blog/2026-06-21-devlog)
-
----
-
-### [技术日志（一）：Playwright Smoke 接入实战](/en/blog/2026-03-11-playwright-smoke-devlog)
-
-![Playwright smoke 测试相关的工位照片](/blog/photos/playwright-workstation.jpg)
+### [Playwright Smoke Testing in Practice](/en/blog/2026-03-11-playwright-smoke-devlog)
 
 `2026-03-11 · playwright · smoke-test · docs`
 
-这篇专门写 Playwright smoke：它是什么、能解决什么问题、如何在文档站落地，以及我这次具体怎么接入。
+How the docs smoke tests were introduced and what they protect.
 
-[阅读全文](/en/blog/2026-03-11-playwright-smoke-devlog)
-
----
-
-### [技术日志（二）：docs-smoke-ci 串联构建与验证](/en/blog/2026-03-11-docs-smoke-ci-devlog)
-
-![任务清单与流程编排相关照片](/blog/photos/ci-task-board.jpg)
+### [Wiring docs-smoke-ci into Build Verification](/en/blog/2026-03-11-docs-smoke-ci-devlog)
 
 `2026-03-11 · ci · smoke-test · release`
 
-这篇拆解了脚本编排：从 docs build 到 preview 探活，再到 Playwright 执行和进程回收，整条链路如何稳定跑。
+How build, preview, Playwright, and cleanup are connected into one reliable check.
 
-[阅读全文](/en/blog/2026-03-11-docs-smoke-ci-devlog)
-
----
-
-### [技术日志（三）：首页 SEO 元信息基线检查实录](/en/blog/2026-03-11-seo-metadata-devlog)
-
-![SEO 与结构化元信息检查图](/blog/photos/docs-workflow.jpg)
+### [SEO Metadata Baseline](/en/blog/2026-03-11-seo-metadata-devlog)
 
 `2026-03-11 · seo · docs · quality`
 
-这篇记录了 canonical、Open Graph、Twitter Card 与 JSON-LD 的可回归检查方式，以及如何在 smoke 中稳定断言。
+Canonical URLs, Open Graph, Twitter Card, JSON-LD, and smoke-test assertions.
 
-[阅读全文](/en/blog/2026-03-11-seo-metadata-devlog)
-
----
-
-### [技术日志（四）：Demo 可交互性回归与 iframe 断言](/en/blog/2026-03-11-demo-readiness-devlog)
-
-![Demo 可交互回归图](/blog/photos/interaction-debug.jpg)
+### [Interactive Demo Regression Checks](/en/blog/2026-03-11-demo-readiness-devlog)
 
 `2026-03-11 · playwright · demo · smoke-test`
 
-这篇记录了如何把 smoke 从“页面能打开”升级为“示例能交互”，包括 iframe 内状态与按钮可用性校验。
+How iframe demo checks moved from “page loads” to “demo is interactive.”
 
-[阅读全文](/en/blog/2026-03-11-demo-readiness-devlog)
-
----
-
-### [文档站加了 Blog，我终于不用把 TODO 写在脑子里了](/en/blog/2026-03-11-devlog)
-
-![文档与开发流程相关照片](/blog/photos/docs-workflow.jpg)
+### [The Blog Goes Live](/en/blog/2026-03-11-devlog)
 
 `2026-03-11 · docs · workflow`
 
-今天把日志模块接进主导航、侧边栏和首页入口。顺手立了补记规则，防止未来的我把历史改动说成“玄学记忆”。
+Added the Blog module, archive page, and a habit of writing development notes.
 
-[阅读全文](/en/blog/2026-03-11-devlog)
+### [Context Menu Cleanup Day](/en/blog/2026-03-10-devlog)
 
----
+`2026-03-10 · context-menu · workflow`
 
-### [Context Menu 调整日，鼠标右键终于像个成年人](/en/blog/2026-03-10-devlog)
+Interaction cleanup and terminology polish for Context Menu.
 
-![交互调试相关照片](/blog/photos/interaction-debug.jpg)
+### [Toast Queue and Release Checklist](/en/blog/2026-03-09-devlog)
 
-`2026-03-10（补记） · context-menu · workflow`
+`2026-03-09 · toast · release`
 
-这条主要是交互和术语清洗：看起来是小修小补，实际是在给后续排障和协作铺路，属于“省未来时间”的一天。
-
-[阅读全文](/en/blog/2026-03-10-devlog)
-
----
-
-### [Toast 队列与发布流程自检，告别“玄学通过”](/en/blog/2026-03-09-devlog)
-
-![发布核查相关照片](/blog/photos/release-check.jpg)
-
-`2026-03-09（补记） · toast · release`
-
-重点是复盘队列策略和发布清单，把“感觉做过”变成“确实做过”，顺便给后续自动化检查埋点。
-
-[阅读全文](/en/blog/2026-03-09-devlog)
-
-## 标签索引
-
-- `docs`: 文档结构、导航、信息架构
-- `context-menu`: 右键菜单交互与术语统一
-- `toast`: 消息队列、提示策略与体验稳定性
-- `release`: 发布流程、清单与回归核对
-- `i18n`: 多语言路由、文案和 SEO 元信息
-- `playwright`: 文档站端到端自动化验证
-- `smoke-test`: 轻量但关键路径可用性检查
-- `ci`: 构建、预览、测试编排脚本
-- `workflow`: 每日开发节奏、协作和复盘
-- `api`: 公开接口设计与一致性
-- `quality`: 交互修复、测试与质量基线
-
-## 更新节奏
-
-- 正常情况：每日更新 1 条
-- 忙到起飞：允许补记，但必须把“补记时间”写清楚
-- 发布前：额外写一条发布准备日志
+A short release-readiness note about queue behavior and checklist discipline.
