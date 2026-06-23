@@ -9,6 +9,10 @@ type SmokeCase = {
 const cases: SmokeCase[] = [
   { path: '/', expected: 'SoDialog' },
   { path: '/getting-started', expected: '快速开始', selector: 'h1' },
+  { path: '/zh-TW/', expected: 'SoDialog' },
+  { path: '/zh-TW/getting-started', expected: '快速开始', selector: 'h1' },
+  { path: '/en/', expected: 'SoDialog' },
+  { path: '/en/getting-started', expected: '快速开始', selector: 'h1' },
   { path: '/components/modal', expected: 'Modal', selector: 'h1' },
   { path: '/components/offcanvas', expected: 'Offcanvas', selector: 'h1' },
   { path: '/components/toast', expected: 'Toast', selector: 'h1' },
@@ -41,6 +45,29 @@ test('homepage exposes core SEO metadata', async ({ page }) => {
   await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', 'https://sodialog.sohophp.app/')
   await expect(page.locator('meta[name="twitter:card"]')).toHaveCount(1)
   await expect(page.locator('script[type="application/ld+json"]')).toHaveCount(1)
+})
+
+test('localized pages expose locale-aware metadata and navigation', async ({ page }) => {
+  const locales = [
+    { path: '/', canonical: 'https://sodialog.sohophp.app/', lang: 'zh-CN', ogLocale: 'zh_CN' },
+    { path: '/zh-TW/', canonical: 'https://sodialog.sohophp.app/zh-TW/', lang: 'zh-Hant', ogLocale: 'zh_TW' },
+    { path: '/en/', canonical: 'https://sodialog.sohophp.app/en/', lang: 'en-US', ogLocale: 'en_US' },
+  ]
+
+  for (const locale of locales) {
+    await page.goto(locale.path, { waitUntil: 'domcontentloaded' })
+
+    await expect(page.locator('html')).toHaveAttribute('lang', locale.lang)
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', locale.canonical)
+    await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', locale.canonical)
+    await expect(page.locator('meta[property="og:locale"]')).toHaveAttribute('content', locale.ogLocale)
+  }
+
+  await page.goto('/zh-TW/', { waitUntil: 'domcontentloaded' })
+  await expect(page.getByRole('link', { name: /快速開始/ }).first()).toHaveAttribute('href', '/zh-TW/getting-started')
+
+  await page.goto('/en/', { waitUntil: 'domcontentloaded' })
+  await expect(page.getByRole('link', { name: /Quick Start/ }).first()).toHaveAttribute('href', '/en/getting-started')
 })
 
 test('homepage exposes product sections and interactive code examples', async ({ page }) => {
