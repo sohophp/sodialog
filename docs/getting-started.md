@@ -54,21 +54,21 @@ toast({
 
 文档中的组件示例默认使用：
 
-- `https://unpkg.com/sodialog@0.3.6/dist/sodialog.css`
-- `https://unpkg.com/sodialog@0.3.6/dist/sodialog.es.js`
+- `https://cdn.jsdelivr.net/npm/sodialog@0.3.6/dist/sodialog.css`
+- `https://cdn.jsdelivr.net/npm/sodialog@0.3.6/dist/sodialog.es.js`
 
 这样你复制示例源码后可以直接运行，不依赖本地 `vendor` 文件。
 
-同时示例里保留了 `jsdelivr` 作为注释备用地址；如果你的网络对 `unpkg` 不稳定，可以把注释切换为启用：
+同时示例里保留了 `unpkg` 作为注释备用地址；如果你的网络对 `jsDelivr` 不稳定，可以把注释切换为启用：
 
 ```js
 const candidates = [
-  'https://unpkg.com/sodialog@0.3.6/dist/sodialog.es.js',
-  // 'https://cdn.jsdelivr.net/npm/sodialog@0.3.6/dist/sodialog.es.js', // backup
+  'https://cdn.jsdelivr.net/npm/sodialog@0.3.6/dist/sodialog.es.js',
+  // 'https://unpkg.com/sodialog@0.3.6/dist/sodialog.es.js', // backup
 ]
 ```
 
-切换方式：将 `jsdelivr` 这一行取消注释，或把它移动到第一行作为首选源。
+切换方式：将 `unpkg` 这一行取消注释，或把它移动到第一行作为首选源。
 
 ## 第 4 步：切换到 Adapter First 用法
 
