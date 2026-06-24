@@ -17,7 +17,7 @@ const cases: SmokeCase[] = [
   { path: '/components/offcanvas', expected: 'Offcanvas', selector: 'h1' },
   { path: '/components/toast', expected: 'Toast', selector: 'h1' },
   { path: '/components/context-menu', expected: 'Context Menu', selector: 'h1' },
-  { path: '/examples/', expected: '示例中心', selector: 'h1' },
+  { path: '/examples/', expected: '示例', selector: 'h1' },
   { path: '/guides/themes', expected: 'Themes', selector: 'h1' },
   { path: '/guides/faq', expected: 'FAQ', selector: 'h1' },
   { path: '/blog/', expected: '更新与开发笔记', selector: 'h1' },
@@ -202,7 +202,7 @@ test('getting-started modal demo is ready and can open', async ({ page }) => {
     .first()
 
   const html = await page.request.get('/components/modal-basic.html')
-  expect(await html.text()).toContain('sodialog@0.3.6/dist/sodialog.es.js')
+  expect(await html.text()).toContain('./sodialog-loader.js')
 
   const status = previewFrame.locator('#status')
   await expect(status).not.toHaveText('正在加载示例脚本...', { timeout: 15_000 })

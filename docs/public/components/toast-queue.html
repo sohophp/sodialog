@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SoDialog Toast Queue Demo</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sodialog@0.3.6/dist/sodialog.css" />
     <style>
       body {
         margin: 0;
@@ -62,28 +61,15 @@
     </div>
 
     <script type="module">
+      import { loadSoDialog } from './sodialog-loader.js'
+
       const status = document.querySelector('#status')
       const strategyNode = document.querySelector('#strategy')
       const singleButton = document.querySelector('#single')
       const batchButton = document.querySelector('#batch')
       const clearButton = document.querySelector('#clear')
-      const candidates = [
-        'https://cdn.jsdelivr.net/npm/sodialog@0.3.6/dist/sodialog.es.js',
-        // 'https://unpkg.com/sodialog@0.3.6/dist/sodialog.es.js', // backup
-      ]
 
-      const loadApi = async () => {
-        for (const url of candidates) {
-          try {
-            return await import(url)
-          } catch {
-            // Try next CDN endpoint.
-          }
-        }
-        return null
-      }
-
-      const api = await loadApi()
+      const api = await loadSoDialog()
       const getStrategy = () => strategyNode?.value || 'update'
       if (!api?.toast || !api?.SoToast || !singleButton || !batchButton || !clearButton) {
         if (status) {

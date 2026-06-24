@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SoDialog Offcanvas Basic Demo</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sodialog@0.3.6/dist/sodialog.css" />
     <style>
       body {
         margin: 0;
@@ -50,11 +49,31 @@
     </div>
 
     <script type="module">
+      const defaultVersion = '0.3.6'
+      const versionPattern = /^(latest|\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?)$/
+      const requestedVersion =
+        new URLSearchParams(window.location.search).get('sodialogVersion') ||
+        new URLSearchParams(window.location.search).get('cdnVersion') ||
+        new URLSearchParams(window.location.search).get('version') ||
+        defaultVersion
+      const version = versionPattern.test(requestedVersion) ? requestedVersion : defaultVersion
+      const packagePath = `sodialog@${version}/dist`
+      const styleLink = document.createElement('link')
+      styleLink.rel = 'stylesheet'
+      styleLink.href = `https://cdn.jsdelivr.net/npm/${packagePath}/sodialog.css`
+      styleLink.addEventListener('error', () => {
+        const fallbackHref = `https://unpkg.com/${packagePath}/sodialog.css`
+        if (styleLink.href !== fallbackHref) {
+          styleLink.href = fallbackHref
+        }
+      })
+      document.head.append(styleLink)
+
       const status = document.querySelector('#status')
       const buttons = document.querySelectorAll('button[data-placement]')
       const candidates = [
-        'https://cdn.jsdelivr.net/npm/sodialog@0.3.6/dist/sodialog.es.js',
-        // 'https://unpkg.com/sodialog@0.3.6/dist/sodialog.es.js', // backup
+        `https://cdn.jsdelivr.net/npm/${packagePath}/sodialog.es.js`,
+        `https://unpkg.com/${packagePath}/sodialog.es.js`,
       ]
 
       const loadApi = async () => {

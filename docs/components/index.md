@@ -27,6 +27,6 @@ SoDialog 的组件都基于浏览器原生 DOM 能力实现，保持零运行时
   </a>
 </div>
 
-## 其它组件
+## 其它组件 {#other-components}
 
 当前公开包以 Modal、Offcanvas、Toast 和 Context Menu 为核心组件。新的框架适配器会作为薄封装独立规划，不进入核心运行时依赖。

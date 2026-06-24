@@ -43,7 +43,7 @@ function createNav(locale: LocaleKey, copy: {
 }): DefaultTheme.NavItem[] {
   return [
     { text: copy.docs, link: withLocale('/getting-started', locale) },
-    { text: copy.components, link: withLocale('/components/modal', locale) },
+    { text: copy.components, link: withLocale('/components/', locale) },
     { text: copy.api, link: withLocale('/api/', locale) },
     { text: copy.examples, link: withLocale('/examples/', locale) },
     { text: copy.guides, link: withLocale('/guides/', locale) },
@@ -62,6 +62,8 @@ function createSidebar(locale: LocaleKey, copy: {
   cdn: string
   concepts: string
   components: string
+  componentsOverview: string
+  otherComponents: string
   api: string
   apiOverview: string
   types: string
@@ -75,6 +77,10 @@ function createSidebar(locale: LocaleKey, copy: {
   faq: string
   workflow: string
   examples: string
+  examplesOverview: string
+  runnableExamples: string
+  labs: string
+  legacyDemo: string
   changelog: string
   latest: string
   versions: string
@@ -98,11 +104,12 @@ function createSidebar(locale: LocaleKey, copy: {
     {
       text: copy.components,
       items: [
+        { text: copy.componentsOverview, link: withLocale('/components/', locale) },
         { text: 'Modal', link: withLocale('/components/modal', locale) },
         { text: 'Offcanvas', link: withLocale('/components/offcanvas', locale) },
         { text: 'Toast', link: withLocale('/components/toast', locale) },
         { text: 'Context Menu', link: withLocale('/components/context-menu', locale) },
-        { text: '其它组件', link: withLocale('/components/', locale) },
+        { text: copy.otherComponents, link: withLocale('/components/#other-components', locale) },
       ],
     },
   ]
@@ -122,11 +129,20 @@ function createSidebar(locale: LocaleKey, copy: {
   ]
   const examplesSidebar = [
     {
-      text: 'Labs',
+      text: copy.examples,
       items: [
-        { text: copy.examples, link: withLocale('/examples/', locale) },
+        { text: copy.examplesOverview, link: withLocale('/examples/', locale) },
+        { text: copy.runnableExamples, link: withLocale('/examples/#runnable-examples', locale) },
+        { text: 'Modal Basic', link: withLocale('/examples/#modal-basic', locale) },
+        { text: 'Modal Promise', link: withLocale('/examples/#modal-promise', locale) },
+        { text: 'Offcanvas', link: withLocale('/examples/#offcanvas', locale) },
+        { text: 'Toast Basic', link: withLocale('/examples/#toast-basic', locale) },
+        { text: 'Toast Queue', link: withLocale('/examples/#toast-queue', locale) },
+        { text: 'Context Menu', link: withLocale('/examples/#context-menu', locale) },
+        { text: 'Menu to Dialog', link: withLocale('/examples/#menu-to-dialog', locale) },
+        { text: copy.labs, link: withLocale('/examples/#labs', locale) },
         { text: 'Modal Lab', link: withLocale('/examples/modal-lab', locale) },
-        { text: 'Legacy Demo', link: withLocale('/demo', locale) },
+        { text: copy.legacyDemo, link: withLocale('/demo', locale) },
       ],
     },
   ]
@@ -231,6 +247,8 @@ const localeCopy: Record<LocaleKey, LocaleCopy> = {
       cdn: 'CDN 使用',
       concepts: '基础概念',
       components: '组件',
+      componentsOverview: '组件总览',
+      otherComponents: '其它组件',
       api: 'API 参考',
       apiOverview: 'API 总览',
       types: 'Types',
@@ -243,7 +261,11 @@ const localeCopy: Record<LocaleKey, LocaleCopy> = {
       troubleshooting: 'Troubleshooting',
       faq: 'FAQ',
       workflow: '开发与发布流程',
-      examples: 'Labs 总览',
+      examples: '示例',
+      examplesOverview: '示例总览',
+      runnableExamples: '可运行示例',
+      labs: '实验室',
+      legacyDemo: '旧版演示',
       changelog: '更新日志',
       latest: 'Latest',
       versions: 'Versions',
@@ -275,6 +297,8 @@ const localeCopy: Record<LocaleKey, LocaleCopy> = {
       cdn: 'CDN 使用',
       concepts: '基礎概念',
       components: '元件',
+      componentsOverview: '元件總覽',
+      otherComponents: '其它元件',
       api: 'API 參考',
       apiOverview: 'API 總覽',
       types: 'Types',
@@ -287,7 +311,11 @@ const localeCopy: Record<LocaleKey, LocaleCopy> = {
       troubleshooting: 'Troubleshooting',
       faq: 'FAQ',
       workflow: '開發與發布流程',
-      examples: 'Labs 總覽',
+      examples: '範例',
+      examplesOverview: '範例總覽',
+      runnableExamples: '可執行範例',
+      labs: '實驗室',
+      legacyDemo: '舊版演示',
       changelog: '更新日誌',
       latest: 'Latest',
       versions: '版本',
@@ -309,7 +337,7 @@ const localeCopy: Record<LocaleKey, LocaleCopy> = {
       examples: 'Examples',
       guides: 'Guides',
       changelog: 'Changelog',
-      versions: '版本',
+      versions: 'Versions',
       notes: 'Notes',
     }),
     sidebar: createSidebar('en', {
@@ -319,6 +347,8 @@ const localeCopy: Record<LocaleKey, LocaleCopy> = {
       cdn: 'CDN',
       concepts: 'Core Concepts',
       components: 'Components',
+      componentsOverview: 'Components Overview',
+      otherComponents: 'Other Components',
       api: 'API Reference',
       apiOverview: 'API Overview',
       types: 'Types',
@@ -331,10 +361,14 @@ const localeCopy: Record<LocaleKey, LocaleCopy> = {
       troubleshooting: 'Troubleshooting',
       faq: 'FAQ',
       workflow: 'Development Workflow',
-      examples: 'Labs Overview',
+      examples: 'Examples',
+      examplesOverview: 'Examples Overview',
+      runnableExamples: 'Runnable Examples',
+      labs: 'Labs',
+      legacyDemo: 'Legacy Demo',
       changelog: 'Changelog',
       latest: 'Latest',
-      versions: '版本',
+      versions: 'Versions',
       notes: 'Changelog & Notes',
       notesHome: 'Notes',
       tags: 'Tags',

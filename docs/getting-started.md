@@ -52,23 +52,13 @@ toast({
 
 ### CDN 说明（源码复制友好）
 
-文档中的组件示例默认使用：
+文档中的组件示例通过 `/components/sodialog-loader.js` 统一解析 CDN 版本，避免每个 HTML 示例重复硬编码版本号。
 
-- `https://cdn.jsdelivr.net/npm/sodialog@0.3.6/dist/sodialog.css`
-- `https://cdn.jsdelivr.net/npm/sodialog@0.3.6/dist/sodialog.es.js`
+- 默认版本集中维护在 loader 中。
+- 示例 URL 支持临时覆盖版本：`?sodialogVersion=latest`、`?sodialogVersion=0.3.6`。
+- 生产页面仍建议固定 patch 版本，不建议长期依赖 `@latest`。
 
-这样你复制示例源码后可以直接运行，不依赖本地 `vendor` 文件。
-
-同时示例里保留了 `unpkg` 作为注释备用地址；如果你的网络对 `jsDelivr` 不稳定，可以把注释切换为启用：
-
-```js
-const candidates = [
-  'https://cdn.jsdelivr.net/npm/sodialog@0.3.6/dist/sodialog.es.js',
-  // 'https://unpkg.com/sodialog@0.3.6/dist/sodialog.es.js', // backup
-]
-```
-
-切换方式：将 `unpkg` 这一行取消注释，或把它移动到第一行作为首选源。
+需要复制固定版本 CDN 地址时，请查看 [CDN 使用](/cdn)，该页面会读取当前文档对应的 npm 版本。
 
 ## 第 4 步：切换到 Adapter First 用法
 

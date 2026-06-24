@@ -14,3 +14,7 @@ SoDialog components are built on native DOM capabilities and keep zero required 
   <a class="sod-doc-tile" href="/en/components/toast"><h3>Toast</h3><p>Status feedback, queues, duplicate strategies, and live regions.</p></a>
   <a class="sod-doc-tile" href="/en/components/context-menu"><h3>Context Menu</h3><p>Right-click menus, keyboard navigation, typeahead, and dialog bridges.</p></a>
 </div>
+
+## Other Components {#other-components}
+
+The public package currently focuses on Modal, Offcanvas, Toast, and Context Menu. Framework adapters should remain thin wrappers outside the core runtime.

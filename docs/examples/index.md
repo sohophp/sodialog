@@ -1,6 +1,38 @@
-# 示例中心 Labs
+# 示例
 
-示例中心现在作为可视化实验室入口。每张卡片对应一个组件能力面，优先提供可操作 Lab；暂未迁移为 Lab 的功能仍保留原可运行 Demo 入口。
+示例中心集中放置可运行 Demo、可视化实验室和旧版演示入口。独立 HTML 示例默认使用当前文档版本的 CDN，也可以通过 URL 参数临时切换版本，例如 `?sodialogVersion=latest` 或 `?sodialogVersion=0.3.6`。
+
+## 可运行示例 {#runnable-examples}
+
+### Modal Basic {#modal-basic}
+
+<DemoPreview src="/components/modal-basic.html" title="Modal Basic" :height="360" />
+
+### Modal Promise {#modal-promise}
+
+<DemoPreview src="/components/modal-promise.html" title="Modal Promise" :height="460" />
+
+### Offcanvas {#offcanvas}
+
+<DemoPreview src="/components/offcanvas.html" title="Offcanvas Placements" :height="400" />
+
+### Toast Basic {#toast-basic}
+
+<DemoPreview src="/components/toast-basic.html" title="Toast Basic" :height="360" />
+
+### Toast Queue {#toast-queue}
+
+<DemoPreview src="/components/toast-queue.html" title="Toast Queue" :height="400" />
+
+### Context Menu {#context-menu}
+
+<DemoPreview src="/components/context-menu-basic.html" title="Context Menu Basic" :height="420" />
+
+### Menu to Dialog {#menu-to-dialog}
+
+<DemoPreview src="/components/context-menu-dialog.html" title="Context Menu to Dialog" :height="440" />
+
+## 实验室 {#labs}
 
 <div class="sod-lab-grid">
   <LabCard
@@ -37,7 +69,7 @@
   />
 </div>
 
-## Legacy Demo
+## 旧版演示
 
 <iframe src="/legacy-demo/demo.html" title="SoDialog Examples Demo" style="width:100%;min-height:760px;border:1px solid #d9dee7;border-radius:12px;background:#fff;"></iframe>
 
@@ -45,6 +77,6 @@
 
 ## 建议用法
 
-- 新功能先在对应 Lab 页补充案例。
+- 新功能先补一个独立可运行示例，再在对应 Lab 页补充可调参数。
 - API 变更后同步更新 `API Reference` 与对应 Lab 示例。
 - 发布前逐个点开 Lab 验证交互闭环与跳转。
