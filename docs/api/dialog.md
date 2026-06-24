@@ -71,6 +71,10 @@ openModal({
 | --- | --- | --- | --- | --- |
 | `title` | `string` | Yes | - | Dialog title text. |
 | `content` | `string \| Node` | Yes | - | Dialog content. |
+| `hideHeader` | `boolean` | No | `false` | Hide the generated header. Dialog keeps `aria-label` from `title`. |
+| `hideCloseButton` | `boolean` | No | `false` | Hide the header close button. |
+| `closeButtonLabel` | `string` | No | `Close` | Accessible label for the close button. |
+| `closeButtonText` | `string` | No | `×` | Visible close button text. |
 | `confirmText` | `string` | No | `确认` | Confirm button text. |
 | `cancelText` | `string` | No | `取消` | Cancel button text. |
 | `confirmAction` | `'hide' \| 'destroy'` | No | `hide` | Confirm click close strategy. |

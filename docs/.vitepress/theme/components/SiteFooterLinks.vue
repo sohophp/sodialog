@@ -13,6 +13,7 @@ const copy = computed(() => {
       api: 'API',
       examples: 'Examples',
       changelog: 'Changelog',
+      versions: 'Versions',
       notes: 'Notes',
     }
   }
@@ -25,6 +26,7 @@ const copy = computed(() => {
       api: 'API',
       examples: '範例',
       changelog: '更新日誌',
+      versions: '版本',
       notes: '開發筆記',
     }
   }
@@ -36,6 +38,7 @@ const copy = computed(() => {
     api: 'API',
     examples: '示例',
     changelog: '更新日志',
+    versions: '版本',
     notes: '开发笔记',
   }
 })
@@ -51,6 +54,7 @@ const localizedPath = (path: string) => `${copy.value.prefix}${path}`
       <a :href="localizedPath('/api/')">{{ copy.api }}</a>
       <a :href="localizedPath('/examples/')">{{ copy.examples }}</a>
       <a :href="localizedPath('/changelog/')">{{ copy.changelog }}</a>
+      <a :href="localizedPath('/versions/')">{{ copy.versions }}</a>
       <a :href="localizedPath('/blog/')">{{ copy.notes }}</a>
       <a href="https://github.com/sohophp/sodialog" target="_blank" rel="noreferrer">GitHub ↗</a>
       <a href="https://www.npmjs.com/package/sodialog" target="_blank" rel="noreferrer">npm ↗</a>

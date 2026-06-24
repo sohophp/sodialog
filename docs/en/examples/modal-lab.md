@@ -6,7 +6,7 @@ description: Modal Lab lets you configure SoDialog Modal and copy generated code
 
 <VersionBadge />
 
-Use the panel to adjust title, width, Escape behavior, and footer alignment. The preview and generated code update together.
+Use the top panel to configure modal options. The preview sits in the middle, and the generated code stays below it.
 
 <ModalLab />
 

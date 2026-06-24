@@ -6,7 +6,7 @@ description: Modal Lab：通过配置面板实时预览 SoDialog Modal 并生成
 
 <VersionBadge />
 
-左侧配置面板、中间实时预览、右侧生成代码。该 Lab 不发起远程请求，也不会引入额外运行时依赖。
+上方配置面板、中间实时预览、下方生成代码。该 Lab 覆盖 Modal 主要可配置参数，不发起远程请求，也不会引入额外运行时依赖。
 
 <ModalLab />
 

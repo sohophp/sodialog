@@ -6,7 +6,7 @@ description: Modal Lab：透過設定面板即時預覽 SoDialog Modal 並產生
 
 <VersionBadge />
 
-左側設定面板、中間即時預覽、右側產生程式碼。調整設定後，Preview 與程式碼會同步更新。
+上方設定面板、中間即時預覽、下方產生程式碼。此 Lab 覆蓋 Modal 主要可設定參數。
 
 <ModalLab />
 

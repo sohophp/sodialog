@@ -610,6 +610,10 @@ formBtn?.addEventListener('click', async () => {
 - `position?: 'center' | 'top' | 'bottom'` (默认 `center`)
 - `animation?: 'slide' | 'fade' | 'zoom'` (默认 `fade`)
 - `useModal?: boolean` (默认 `true`，`true` 使用 `showModal()`，`false` 使用 `show()`)
+- `hideHeader?: boolean`（默认 `false`，隐藏 header 后会使用 `title` 作为 `aria-label`）
+- `hideCloseButton?: boolean`（默认 `false`）
+- `closeButtonLabel?: string`（默认 `Close`）
+- `closeButtonText?: string`（默认 `×`）
 - `draggable?: boolean` (默认 `true`；传 `false` 可关闭拖动)
 - `dragHandle?: false | ('header' | 'title' | 'body' | 'footer' | 'panel' | string) | Array<'header' | 'title' | 'body' | 'footer' | 'panel' | string>` (默认 `header`，支持传数组开启多拖动区域，也可传 CSS 选择器；传 `false` 不设置拖动区域)
 - `preset?: 'deploy'`（启用内置预设风格，例如部署确认弹窗）

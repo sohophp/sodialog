@@ -18,6 +18,7 @@ const cases: SmokeCase[] = [
   { path: '/components/toast', expected: 'Toast', selector: 'h1' },
   { path: '/components/context-menu', expected: 'Context Menu', selector: 'h1' },
   { path: '/examples/', expected: '示例', selector: 'h1' },
+  { path: '/examples/offcanvas', expected: 'Offcanvas', selector: 'h1' },
   { path: '/guides/themes', expected: 'Themes', selector: 'h1' },
   { path: '/guides/faq', expected: 'FAQ', selector: 'h1' },
   { path: '/blog/', expected: '更新与开发笔记', selector: 'h1' },
@@ -27,7 +28,7 @@ const cases: SmokeCase[] = [
   { path: '/changelog/', expected: '更新日志', selector: 'h1' },
   { path: '/versions/', expected: '版本', selector: 'h1' },
   { path: '/en/changelog/', expected: 'Changelog', selector: 'h1' },
-  { path: '/en/changelog/v0.3.x', expected: 'SoDialog v0.3.7', selector: 'h1' },
+  { path: '/en/changelog/v0.3.x', expected: 'SoDialog v0.3.8', selector: 'h1' },
   { path: '/en/versions/', expected: 'Versions', selector: 'h1' },
   { path: '/en/installation', expected: 'Installation', selector: 'h1' },
   { path: '/en/cdn', expected: 'CDN', selector: 'h1' },
@@ -39,7 +40,7 @@ const cases: SmokeCase[] = [
   { path: '/en/components/', expected: 'Components', selector: 'h1' },
   { path: '/en/examples/modal-lab', expected: 'Modal Lab', selector: 'h1' },
   { path: '/zh-TW/changelog/', expected: '更新日誌', selector: 'h1' },
-  { path: '/zh-TW/changelog/v0.3.x', expected: 'SoDialog v0.3.7', selector: 'h1' },
+  { path: '/zh-TW/changelog/v0.3.x', expected: 'SoDialog v0.3.8', selector: 'h1' },
   { path: '/zh-TW/versions/', expected: '版本', selector: 'h1' },
   { path: '/zh-TW/installation', expected: '安裝', selector: 'h1' },
   { path: '/zh-TW/cdn', expected: 'CDN 使用', selector: 'h1' },
@@ -134,18 +135,23 @@ test('clean URL canonical and crawler files use the production domain', async ({
   expect(await robotsResponse.text()).toContain('Sitemap: https://sodialog.sohophp.app/sitemap.xml')
 })
 
-test('navigation and footer expose Blog without mixing it into API sidebar', async ({ page }) => {
+test('utility sections live in footer without mixing into top nav or API sidebar', async ({ page }) => {
   await page.goto('/', { waitUntil: 'domcontentloaded' })
-  await expect(page.getByRole('link', { name: '开发笔记' }).first()).toHaveAttribute('href', '/blog/')
+  const topNavText = (await page.locator('.VPNavBarMenuLink').allTextContents()).join(' ')
+  expect(topNavText).not.toContain('开发笔记')
+  expect(topNavText).not.toContain('更新日志')
+  expect(topNavText).not.toContain('版本')
 
   await page.goto('/api/', { waitUntil: 'domcontentloaded' })
   await expect(page.locator('.VPSidebar')).not.toContainText('开发笔记')
   await expect(page.locator('.site-footer-links')).toContainText('开发笔记')
+  await expect(page.locator('.site-footer-links')).toContainText('更新日志')
+  await expect(page.locator('.site-footer-links')).toContainText('版本')
 
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto('/', { waitUntil: 'domcontentloaded' })
   await page.locator('.VPNavBarHamburger').click()
-  await expect(page.locator('#VPNavScreen').getByRole('link', { name: '开发笔记' })).toBeVisible()
+  await expect(page.locator('#VPNavScreen').getByRole('link', { name: '开发笔记' })).toHaveCount(0)
 })
 
 test('blog images are published and rendered', async ({ page }) => {

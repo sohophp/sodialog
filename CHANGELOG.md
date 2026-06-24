@@ -4,6 +4,22 @@
 
 ## Unreleased
 
+## 0.3.8 - 2026-06-24
+
+### Added
+
+- 新增 Modal header 与关闭按钮配置：`hideHeader`、`hideCloseButton`、`closeButtonLabel`、`closeButtonText`。
+
+### Changed
+
+- 继续整理文档信息架构：顶部导航保留核心入口，更新日志、版本和开发笔记移动到页脚入口。
+- 示例中心改为按任务拆分独立页面，并修复 Offcanvas 示例嵌套旧网页的问题。
+- Modal Lab 调整为上中下结构，补齐可配置参数面板，并优化表单控件间距。
+
+### Fixed
+
+- 修复从 Context Menu 打开 Modal 时面板出现浏览器默认黑色焦点框的问题。
+
 ## 0.3.7 - 2026-06-24
 
 ### Added

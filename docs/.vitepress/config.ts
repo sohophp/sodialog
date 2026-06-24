@@ -36,18 +36,12 @@ function createNav(locale: LocaleKey, copy: {
   components: string
   api: string
   examples: string
-  changelog: string
-  versions: string
-  notes: string
 }): DefaultTheme.NavItem[] {
   return [
     { text: copy.docs, link: withLocale('/getting-started', locale), activeMatch: `^${withLocale('/(getting-started|installation|cdn|guides|frameworks|themes|migration|troubleshooting|faq)', locale)}` },
     { text: copy.components, link: withLocale('/components/', locale), activeMatch: `^${withLocale('/components/', locale)}` },
     { text: copy.api, link: withLocale('/api/', locale), activeMatch: `^${withLocale('/api/', locale)}` },
     { text: copy.examples, link: withLocale('/examples/', locale), activeMatch: `^${withLocale('/examples/', locale)}` },
-    { text: copy.changelog, link: withLocale('/changelog/', locale), activeMatch: `^${withLocale('/changelog/', locale)}` },
-    { text: copy.versions, link: withLocale('/versions/', locale), activeMatch: `^${withLocale('/versions/', locale)}` },
-    { text: copy.notes, link: withLocale('/blog/', locale), activeMatch: `^${withLocale('/blog/', locale)}` },
   ]
 }
 
@@ -140,34 +134,15 @@ function createSidebar(locale: LocaleKey, copy: {
       text: copy.examples,
       items: [
         { text: copy.examplesOverview, link: withLocale('/examples/', locale) },
-        { text: copy.runnableExamples, link: withLocale('/examples/#runnable-examples', locale) },
-        { text: 'Modal Basic', link: withLocale('/examples/#modal-basic', locale) },
-        { text: 'Modal Promise', link: withLocale('/examples/#modal-promise', locale) },
-        { text: 'Offcanvas', link: withLocale('/examples/#offcanvas', locale) },
-        { text: 'Toast Basic', link: withLocale('/examples/#toast-basic', locale) },
-        { text: 'Toast Queue', link: withLocale('/examples/#toast-queue', locale) },
-        { text: 'Context Menu', link: withLocale('/examples/#context-menu', locale) },
-        { text: 'Menu to Dialog', link: withLocale('/examples/#menu-to-dialog', locale) },
-        { text: copy.labs, link: withLocale('/examples/#labs', locale) },
+        { text: 'Modal Basic', link: withLocale('/examples/modal-basic', locale) },
+        { text: 'Modal Promise', link: withLocale('/examples/modal-promise', locale) },
+        { text: 'Offcanvas', link: withLocale('/examples/offcanvas', locale) },
+        { text: 'Toast Basic', link: withLocale('/examples/toast-basic', locale) },
+        { text: 'Toast Queue', link: withLocale('/examples/toast-queue', locale) },
+        { text: 'Context Menu', link: withLocale('/examples/context-menu', locale) },
+        { text: 'Menu to Dialog', link: withLocale('/examples/menu-to-dialog', locale) },
         { text: 'Modal Lab', link: withLocale('/examples/modal-lab', locale) },
         { text: copy.legacyDemo, link: withLocale('/demo', locale) },
-      ],
-    },
-  ]
-  const guidesSidebar = [
-    {
-      text: copy.guides,
-      items: [
-        { text: copy.guidesOverview, link: withLocale('/guides/', locale) },
-        { text: copy.installation, link: withLocale('/installation', locale) },
-        { text: copy.cdn, link: withLocale('/cdn', locale) },
-        { text: copy.frameworks, link: withLocale('/frameworks', locale) },
-        { text: copy.themes, link: withLocale('/themes', locale) },
-        { text: copy.migration, link: withLocale('/migration', locale) },
-        { text: copy.troubleshooting, link: withLocale('/troubleshooting', locale) },
-        { text: copy.faq, link: withLocale('/faq', locale) },
-        { text: copy.workflow, link: withLocale('/guides/workflow', locale) },
-        { text: 'Adapter Guidelines', link: withLocale('/guides/adapter-guidelines', locale) },
       ],
     },
   ]
@@ -221,12 +196,12 @@ function createSidebar(locale: LocaleKey, copy: {
     [withLocale('/components/', locale)]: componentSidebar,
     [withLocale('/api/', locale)]: apiSidebar,
     [withLocale('/examples/', locale)]: examplesSidebar,
-    [withLocale('/guides/', locale)]: guidesSidebar,
-    [withLocale('/frameworks', locale)]: guidesSidebar,
-    [withLocale('/themes', locale)]: guidesSidebar,
-    [withLocale('/migration', locale)]: guidesSidebar,
-    [withLocale('/troubleshooting', locale)]: guidesSidebar,
-    [withLocale('/faq', locale)]: guidesSidebar,
+    [withLocale('/guides/', locale)]: docsSidebar,
+    [withLocale('/frameworks', locale)]: docsSidebar,
+    [withLocale('/themes', locale)]: docsSidebar,
+    [withLocale('/migration', locale)]: docsSidebar,
+    [withLocale('/troubleshooting', locale)]: docsSidebar,
+    [withLocale('/faq', locale)]: docsSidebar,
     [withLocale('/changelog/', locale)]: changelogSidebar,
     [withLocale('/versions/', locale)]: versionsSidebar,
     [withLocale('/blog/', locale)]: blogSidebar,
@@ -243,9 +218,6 @@ const localeCopy: Record<LocaleKey, LocaleCopy> = {
       components: '组件',
       api: 'API 参考',
       examples: '示例',
-      changelog: '更新日志',
-      versions: '版本',
-      notes: '开发笔记',
     }),
     sidebar: createSidebar('root', {
       docs: '文档',
@@ -292,9 +264,6 @@ const localeCopy: Record<LocaleKey, LocaleCopy> = {
       components: '元件',
       api: 'API 參考',
       examples: '範例',
-      changelog: '更新日誌',
-      versions: '版本',
-      notes: '開發筆記',
     }),
     sidebar: createSidebar('zh-TW', {
       docs: '文件',
@@ -341,9 +310,6 @@ const localeCopy: Record<LocaleKey, LocaleCopy> = {
       components: 'Components',
       api: 'API Reference',
       examples: 'Examples',
-      changelog: 'Changelog',
-      versions: 'Versions',
-      notes: 'Notes',
     }),
     sidebar: createSidebar('en', {
       docs: 'Docs',

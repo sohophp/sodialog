@@ -93,7 +93,7 @@ body {
 }
 
 .VPDoc:not(:has(.sod-home)) .content-container {
-  max-width: 920px !important;
+  max-width: 1040px !important;
 }
 
 .VPDoc:not(:has(.sod-home)) .aside {
@@ -213,8 +213,9 @@ body {
 
 .blog-card {
   display: grid;
-  grid-template-columns: 92px minmax(0, 1fr);
-  gap: 16px;
+  grid-template-columns: minmax(180px, 0.34fr) minmax(0, 1fr);
+  gap: 18px;
+  align-items: stretch;
   padding: 16px;
   border: 1px solid var(--vp-c-divider);
   border-radius: 8px;
@@ -224,9 +225,10 @@ body {
 .blog-card__visual {
   display: block;
   width: 100%;
-  height: 92px;
+  height: 100%;
+  aspect-ratio: 16 / 10;
   object-fit: cover;
-  min-height: 92px;
+  min-height: 128px;
   border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 28%, var(--vp-c-divider));
   border-radius: 7px;
   background:
@@ -276,7 +278,8 @@ body {
   }
 
   .blog-card__visual {
-    min-height: 68px;
+    height: auto;
+    min-height: 150px;
   }
 }
 

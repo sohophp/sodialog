@@ -183,6 +183,10 @@ export interface SoDialogBaseOptions extends SoLifecycleHooks {
   content: string | Node
   traceId?: string
   preset?: SoDialogPreset
+  hideHeader?: boolean
+  hideCloseButton?: boolean
+  closeButtonLabel?: string
+  closeButtonText?: string
   confirmText?: string
   cancelText?: string
   confirmAction?: 'hide' | 'destroy'
@@ -1173,6 +1177,9 @@ export class SoDialog {
       }
     }
 
+    const hideHeader = options.hideHeader ?? false
+    const hideCloseButton = options.hideCloseButton ?? false
+
     const header = document.createElement('header')
     header.className = 'sod-header'
 
@@ -1184,18 +1191,25 @@ export class SoDialog {
     const closeButton = document.createElement('button')
     closeButton.type = 'button'
     closeButton.className = 'sod-close'
-    closeButton.setAttribute('aria-label', 'Close')
-    closeButton.textContent = '×'
+    closeButton.setAttribute('aria-label', options.closeButtonLabel ?? 'Close')
+    closeButton.textContent = options.closeButtonText ?? '×'
     closeButton.addEventListener('click', () => requestClose('close-button'))
 
-    header.append(title, closeButton)
+    header.append(title)
+    if (!hideCloseButton) {
+      header.append(closeButton)
+    }
 
     const body = document.createElement('div')
     body.className = 'sod-body'
     body.id = SoDialog.createAutoAriaId('sod-body')
     appendContent(body, options.content)
 
-    dialog.setAttribute('aria-labelledby', title.id)
+    if (hideHeader) {
+      dialog.setAttribute('aria-label', options.title)
+    } else {
+      dialog.setAttribute('aria-labelledby', title.id)
+    }
     dialog.setAttribute('aria-describedby', body.id)
     dialog.setAttribute('aria-modal', useModal ? 'true' : 'false')
 
@@ -1347,7 +1361,10 @@ export class SoDialog {
     }
 
     renderFooterButtons()
-    panel.append(header, body, footer)
+    if (!hideHeader) {
+      panel.append(header)
+    }
+    panel.append(body, footer)
 
     if (modalAutoFitEnabled) {
       cleanups.push(setupModalAutoFit(dialog, panel, header, body, footer, modalOptions))

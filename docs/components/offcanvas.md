@@ -27,7 +27,7 @@ openOffcanvas({
 
 ## Demo / Playground
 
-<DemoPreview src="/legacy-demo/offcanvas.html" code-src="/components/offcanvas.html" title="Offcanvas Playground" :height="680" />
+<DemoPreview src="/components/offcanvas.html" title="Offcanvas Playground" :height="430" />
 
 ## 位置与动画
 
@@ -79,5 +79,5 @@ Offcanvas 同样基于 `<dialog>`，打开后应有清晰标题，并在关闭�
 <div class="sod-inline-actions">
   <a href="/api/dialog">Dialog API</a>
   <a href="/api/adapter">Adapter API</a>
-  <a href="/examples/">Labs</a>
+  <a href="/examples/offcanvas">Offcanvas 示例</a>
 </div>

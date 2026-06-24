@@ -22,6 +22,10 @@
 | `confirmAction` | `'hide' \| 'destroy'` | No | `hide` | Confirm click close strategy. |
 | `closeOnEsc` | `boolean` | No | `true` | Allow `Esc` to close the dialog. |
 | `closeOnBackdrop` | `boolean` | No | `true` | Allow backdrop click close. |
+| `hideHeader` | `boolean` | No | `false` | Hide the built-in header while preserving an accessible dialog name. |
+| `hideCloseButton` | `boolean` | No | `false` | Hide the built-in close button. |
+| `closeButtonLabel` | `string` | No | `Close` | Accessible label for the close button. |
+| `closeButtonText` | `string` | No | `×` | Visible close button text or symbol. |
 | `hideFooter` | `boolean` | No | `false` | Hide default footer buttons. |
 | `footerAlign` | `'start' \| 'center' \| 'end' \| 'between'` | No | `end` | Footer layout alignment. |
 | `footerButtons` | `SoDialogFooterButton[]` | No | built-in confirm/cancel | Custom footer buttons. |

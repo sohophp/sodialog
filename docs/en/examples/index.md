@@ -1,82 +1,33 @@
 # Examples
 
-The examples hub collects runnable demos, visual labs, and the legacy demo entry. Standalone HTML examples use the current docs CDN version by default, and you can temporarily switch versions with URL parameters such as `?sodialogVersion=latest` or `?sodialogVersion=0.3.7`.
+The examples hub now links to focused pages. Each page loads one runnable demo, which keeps scrolling and iframe behavior predictable.
 
-## Runnable Examples {#runnable-examples}
+## Runnable Examples
 
-### Modal Basic {#modal-basic}
+<div class="sod-doc-grid-compact">
+  <a class="sod-doc-tile" href="/en/examples/modal-basic"><h3>Modal Basic</h3><p>Minimal modal, default footer, and header dragging.</p></a>
+  <a class="sod-doc-tile" href="/en/examples/modal-promise"><h3>Modal Promise</h3><p>Confirm, prompt, and form as a cancelable workflow.</p></a>
+  <a class="sod-doc-tile" href="/en/examples/offcanvas"><h3>Offcanvas</h3><p>Placement, sizing, and animation for edge panels.</p></a>
+  <a class="sod-doc-tile" href="/en/examples/toast-basic"><h3>Toast Basic</h3><p>Status messages, placement, and auto close.</p></a>
+  <a class="sod-doc-tile" href="/en/examples/toast-queue"><h3>Toast Queue</h3><p>Queue limit, duplicate strategy, and progress.</p></a>
+  <a class="sod-doc-tile" href="/en/examples/context-menu"><h3>Context Menu</h3><p>Right-click menu, icons, and keyboard paths.</p></a>
+  <a class="sod-doc-tile" href="/en/examples/menu-to-dialog"><h3>Menu to Dialog</h3><p>Open dialogs from menu actions.</p></a>
+</div>
 
-<DemoPreview src="/components/modal-basic.html" title="Modal Basic" :height="360" />
-
-### Modal Promise {#modal-promise}
-
-<DemoPreview src="/components/modal-promise.html" title="Modal Promise" :height="460" />
-
-### Offcanvas {#offcanvas}
-
-<DemoPreview src="/components/offcanvas.html" title="Offcanvas Placements" :height="400" />
-
-### Toast Basic {#toast-basic}
-
-<DemoPreview src="/components/toast-basic.html" title="Toast Basic" :height="360" />
-
-### Toast Queue {#toast-queue}
-
-<DemoPreview src="/components/toast-queue.html" title="Toast Queue" :height="400" />
-
-### Context Menu {#context-menu}
-
-<DemoPreview src="/components/context-menu-basic.html" title="Context Menu Basic" :height="420" />
-
-### Menu to Dialog {#menu-to-dialog}
-
-<DemoPreview src="/components/context-menu-dialog.html" title="Context Menu to Dialog" :height="440" />
-
-## Labs {#labs}
+## Labs
 
 <div class="sod-lab-grid">
-  <LabCard
-    title="Modal Lab"
-    description="Adjust title, width, Escape policy, and footer alignment while previewing generated code."
-    :tags="['Basic modal', 'Async confirm', 'Form modal', 'Custom footer', 'Lifecycle hooks']"
-    lab-href="/en/examples/modal-lab"
-    api-href="/en/api/dialog"
-    preview="modal"
-  />
-  <LabCard
-    title="Toast Lab"
-    description="Validate success, error, queue, placement, and duplicate message behavior."
-    :tags="['Success / error', 'Queue', 'Placement', 'Duplicate strategy']"
-    lab-href="/en/components/toast"
-    api-href="/en/api/toast"
-    preview="toast"
-  />
-  <LabCard
-    title="Offcanvas Lab"
-    description="Review four panel placements, sizing, animation, and mobile behavior."
-    :tags="['Placement', 'Size', 'Lifecycle', 'Mobile panel']"
-    lab-href="/en/components/offcanvas"
-    api-href="/en/api/dialog"
-    preview="offcanvas"
-  />
-  <LabCard
-    title="Context Menu Lab"
-    description="Check right-click menus, keyboard paths, typeahead, and dialog bridging."
-    :tags="['Keyboard', 'Typeahead', 'Close policy', 'Dialog bridge']"
-    lab-href="/en/components/context-menu"
-    api-href="/en/api/context-menu"
-    preview="menu"
-  />
+  <LabCard title="Modal Lab" description="Generate practical configs for confirmations, forms, deploy prompts, and drag handles." :tags="['Scenario presets', 'Drag handles', 'Deploy preset', 'Generated code']" lab-href="/en/examples/modal-lab" api-href="/en/api/dialog" preview="modal" />
+  <LabCard title="Toast Playbook" description="Validate queue, placement, and duplicate message behavior." :tags="['Queue', 'Placement', 'Duplicate strategy']" lab-href="/en/components/toast" api-href="/en/api/toast" preview="toast" />
+  <LabCard title="Offcanvas Playbook" description="Check placement, sizing, animation, and mobile panel behavior." :tags="['Placement', 'Size', 'Mobile panel']" lab-href="/en/examples/offcanvas" api-href="/en/api/dialog" preview="offcanvas" />
+  <LabCard title="Context Menu Playbook" description="Check keyboard paths, typeahead, and dialog bridging." :tags="['Keyboard', 'Typeahead', 'Dialog bridge']" lab-href="/en/examples/context-menu" api-href="/en/api/context-menu" preview="menu" />
 </div>
 
 ## Legacy Demo
 
-<iframe src="/legacy-demo/demo.html" title="SoDialog Examples Demo" style="width:100%;min-height:760px;border:1px solid #d9dee7;border-radius:12px;background:#fff;"></iframe>
+The legacy demo remains available for full-page regression checks, but it is no longer embedded in the examples index.
 
-- Open in a new tab: <a href="/legacy-demo/demo.html" target="_blank" rel="noreferrer">/legacy-demo/demo.html</a>
-
-## Suggested Workflow
-
-- Add a standalone runnable example before expanding the corresponding Lab.
-- Update `API Reference` and related Lab examples after API changes.
-- Before release, click through each runnable example and Lab path.
+<div class="sod-inline-actions">
+  <a href="/legacy-demo/demo.html" target="_blank" rel="noreferrer">Open legacy demo</a>
+  <a href="/en/demo">Legacy demo page</a>
+</div>

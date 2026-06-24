@@ -79,6 +79,39 @@ describe('SoDialog modal behavior', () => {
     expect(panel?.classList.contains('sod-preset-deploy')).toBe(true)
   })
 
+  it('can hide modal header while preserving an accessible name', () => {
+    const handle = openModal({
+      title: 'headerless',
+      content: 'x',
+      hideHeader: true,
+    })
+
+    expect(handle.dialog.querySelector('.sod-header')).toBeNull()
+    expect(handle.dialog.getAttribute('aria-label')).toBe('headerless')
+    expect(handle.dialog.hasAttribute('aria-labelledby')).toBe(false)
+  })
+
+  it('can hide or customize the modal close button', () => {
+    const withoutClose = openModal({
+      title: 'no close',
+      content: 'x',
+      hideCloseButton: true,
+    })
+
+    expect(withoutClose.dialog.querySelector('.sod-close')).toBeNull()
+
+    const customized = openModal({
+      title: 'custom close',
+      content: 'x',
+      closeButtonLabel: 'Dismiss dialog',
+      closeButtonText: 'Close',
+    })
+    const closeButton = customized.dialog.querySelector<HTMLButtonElement>('.sod-close')
+
+    expect(closeButton?.getAttribute('aria-label')).toBe('Dismiss dialog')
+    expect(closeButton?.textContent).toBe('Close')
+  })
+
   it('applies custom offcanvas width and height', () => {
     const handle = openOffcanvas({
       title: 'sized offcanvas',

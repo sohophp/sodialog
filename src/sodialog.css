@@ -50,6 +50,11 @@
   overflow: visible;
 }
 
+.sod-dialog:focus,
+.sod-dialog:focus-visible {
+  outline: none;
+}
+
 .sod-dialog::backdrop {
   background: var(--sod-backdrop-bg);
 }
@@ -58,10 +63,15 @@
   box-sizing: border-box;
   background: var(--sod-color-surface);
   color: var(--sod-color-text);
+  border: 0;
   border-radius: var(--sod-panel-radius);
   box-shadow: var(--sod-panel-shadow);
   min-width: min(var(--sod-panel-width), calc(100vw - 2rem));
   max-width: min(var(--sod-panel-width), calc(100vw - 2rem));
+}
+
+.sod-panel:focus {
+  outline: none;
 }
 
 .sod-modal .sod-panel {
