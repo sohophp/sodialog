@@ -5,8 +5,9 @@ export type SoOffcanvasPlacement = 'start' | 'end' | 'top' | 'bottom'
 export type SoOffcanvasAnimation = 'slide' | 'fade' | 'zoom'
 export type SoModalPosition = 'center' | 'top' | 'bottom'
 export type SoModalAnimation = 'slide' | 'fade' | 'zoom'
-export type SoModalDragHandleTarget = 'header' | 'title' | 'body' | 'panel' | string
+export type SoModalDragHandleTarget = 'header' | 'title' | 'body' | 'footer' | 'panel' | string
 export type SoModalDragHandle = SoModalDragHandleTarget | SoModalDragHandleTarget[]
+export type SoDialogPreset = 'deploy'
 export type SoModalScrollMode = 'body' | 'viewport' | 'none' | 'hybrid'
 export type SoCssSize = number | string
 export type SoFooterButtonVariant = 'primary' | 'outline' | 'danger' | 'success' | 'ghost' | 'link'
@@ -181,6 +182,7 @@ export interface SoDialogBaseOptions extends SoLifecycleHooks {
   title: string
   content: string | Node
   traceId?: string
+  preset?: SoDialogPreset
   confirmText?: string
   cancelText?: string
   confirmAction?: 'hide' | 'destroy'
@@ -206,7 +208,7 @@ export interface SoDialogModalOptions extends SoDialogBaseOptions {
   height?: SoCssSize
   useModal?: boolean
   draggable?: boolean
-  dragHandle?: SoModalDragHandle
+  dragHandle?: SoModalDragHandle | false
   autoFitSize?: boolean
   scrollMode?: SoModalScrollMode
   hybridSwitchRatio?: number
@@ -519,7 +521,11 @@ function resolveFooterButtonClass(variant: SoFooterButtonVariant | undefined): s
   return 'sod-btn-primary'
 }
 
-function resolveDragHandles(panel: HTMLElement, dragHandle: SoModalDragHandle | undefined): HTMLElement[] {
+function resolveDragHandles(panel: HTMLElement, dragHandle: SoModalDragHandle | false | undefined): HTMLElement[] {
+  if (dragHandle === false) {
+    return []
+  }
+
   const keys = Array.isArray(dragHandle)
     ? dragHandle.length > 0
       ? dragHandle
@@ -553,6 +559,10 @@ function resolveDragHandles(panel: HTMLElement, dragHandle: SoModalDragHandle | 
       pushUnique(panel.querySelector<HTMLElement>('.sod-body'))
       continue
     }
+    if (key === 'footer') {
+      pushUnique(panel.querySelector<HTMLElement>('.sod-footer'))
+      continue
+    }
 
     panel.querySelectorAll<HTMLElement>(key).forEach((element) => {
       pushUnique(element)
@@ -566,7 +576,7 @@ function resolveDragHandles(panel: HTMLElement, dragHandle: SoModalDragHandle | 
   return handles
 }
 
-function enableModalDrag(panel: HTMLElement, dragHandle: SoModalDragHandle | undefined): void {
+function enableModalDrag(panel: HTMLElement, dragHandle: SoModalDragHandle | false | undefined): void {
   const handles = resolveDragHandles(panel, dragHandle)
   if (handles.length === 0) {
     return
@@ -1147,6 +1157,9 @@ export class SoDialog {
       const animation = 'animation' in options ? options.animation ?? 'fade' : 'fade'
       panel.classList.add(`sod-modal-pos-${position}`)
       panel.classList.add(`sod-modal-anim-${animation}`)
+      if (options.preset) {
+        panel.classList.add(`sod-preset-${options.preset}`)
+      }
 
       if (modalWidth) {
         panel.style.width = modalWidth
@@ -1340,8 +1353,12 @@ export class SoDialog {
       cleanups.push(setupModalAutoFit(dialog, panel, header, body, footer, modalOptions))
     }
 
-    if (kind === 'modal' && 'draggable' in options && options.draggable) {
-      enableModalDrag(panel, options.dragHandle)
+    if (kind === 'modal') {
+      const draggable = 'draggable' in options ? options.draggable !== false : true
+      const dragHandle = 'dragHandle' in options ? options.dragHandle : undefined
+      if (draggable) {
+        enableModalDrag(panel, dragHandle)
+      }
     }
 
     dialog.append(panel)

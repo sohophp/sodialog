@@ -36,22 +36,18 @@ function createNav(locale: LocaleKey, copy: {
   components: string
   api: string
   examples: string
-  guides: string
   changelog: string
   versions: string
   notes: string
 }): DefaultTheme.NavItem[] {
   return [
-    { text: copy.docs, link: withLocale('/getting-started', locale) },
-    { text: copy.components, link: withLocale('/components/', locale) },
-    { text: copy.api, link: withLocale('/api/', locale) },
-    { text: copy.examples, link: withLocale('/examples/', locale) },
-    { text: copy.guides, link: withLocale('/guides/', locale) },
-    { text: copy.changelog, link: withLocale('/changelog/', locale) },
-    { text: copy.versions, link: withLocale('/versions/', locale) },
-    { text: copy.notes, link: withLocale('/blog/', locale) },
-    { text: 'GitHub ↗', link: 'https://github.com/sohophp/sodialog' },
-    { text: 'npm ↗', link: 'https://www.npmjs.com/package/sodialog' },
+    { text: copy.docs, link: withLocale('/getting-started', locale), activeMatch: `^${withLocale('/(getting-started|installation|cdn|guides|frameworks|themes|migration|troubleshooting|faq)', locale)}` },
+    { text: copy.components, link: withLocale('/components/', locale), activeMatch: `^${withLocale('/components/', locale)}` },
+    { text: copy.api, link: withLocale('/api/', locale), activeMatch: `^${withLocale('/api/', locale)}` },
+    { text: copy.examples, link: withLocale('/examples/', locale), activeMatch: `^${withLocale('/examples/', locale)}` },
+    { text: copy.changelog, link: withLocale('/changelog/', locale), activeMatch: `^${withLocale('/changelog/', locale)}` },
+    { text: copy.versions, link: withLocale('/versions/', locale), activeMatch: `^${withLocale('/versions/', locale)}` },
+    { text: copy.notes, link: withLocale('/blog/', locale), activeMatch: `^${withLocale('/blog/', locale)}` },
   ]
 }
 
@@ -96,7 +92,19 @@ function createSidebar(locale: LocaleKey, copy: {
         { text: copy.gettingStarted, link: withLocale('/getting-started', locale) },
         { text: copy.installation, link: withLocale('/installation', locale) },
         { text: copy.cdn, link: withLocale('/cdn', locale) },
-        { text: copy.concepts, link: withLocale('/guides/', locale) },
+      ],
+    },
+    {
+      text: copy.guides,
+      items: [
+        { text: copy.guidesOverview, link: withLocale('/guides/', locale) },
+        { text: copy.frameworks, link: withLocale('/frameworks', locale) },
+        { text: copy.themes, link: withLocale('/themes', locale) },
+        { text: copy.migration, link: withLocale('/migration', locale) },
+        { text: copy.troubleshooting, link: withLocale('/troubleshooting', locale) },
+        { text: copy.faq, link: withLocale('/faq', locale) },
+        { text: copy.workflow, link: withLocale('/guides/workflow', locale) },
+        { text: 'Adapter Guidelines', link: withLocale('/guides/adapter-guidelines', locale) },
       ],
     },
   ]
@@ -235,7 +243,6 @@ const localeCopy: Record<LocaleKey, LocaleCopy> = {
       components: '组件',
       api: 'API 参考',
       examples: '示例',
-      guides: '指南',
       changelog: '更新日志',
       versions: '版本',
       notes: '开发笔记',
@@ -285,7 +292,6 @@ const localeCopy: Record<LocaleKey, LocaleCopy> = {
       components: '元件',
       api: 'API 參考',
       examples: '範例',
-      guides: '指南',
       changelog: '更新日誌',
       versions: '版本',
       notes: '開發筆記',
@@ -335,7 +341,6 @@ const localeCopy: Record<LocaleKey, LocaleCopy> = {
       components: 'Components',
       api: 'API Reference',
       examples: 'Examples',
-      guides: 'Guides',
       changelog: 'Changelog',
       versions: 'Versions',
       notes: 'Notes',
@@ -405,6 +410,7 @@ function createThemeConfig(locale: LocaleKey): DefaultTheme.Config {
     nav: copy.nav,
     sidebar: copy.sidebar,
     docFooter,
+    outline: false,
     search: {
       provider: 'local',
     },
@@ -413,7 +419,10 @@ function createThemeConfig(locale: LocaleKey): DefaultTheme.Config {
       copyright: 'Copyright (c) 2026 SoDialog',
     },
     version: DOC_VERSION,
-    socialLinks: [{ icon: 'github', link: 'https://github.com/sohophp/sodialog' }],
+    socialLinks: [
+      { icon: 'github', link: 'https://github.com/sohophp/sodialog' },
+      { icon: 'npm', link: 'https://www.npmjs.com/package/sodialog' },
+    ],
   }
 
   return config

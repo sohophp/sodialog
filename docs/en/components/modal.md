@@ -30,6 +30,8 @@ openModal({
 
 `width` 和 `height` 支持数字（按 px）或 CSS 尺寸字符串；设置任一尺寸后，将关闭自动尺寸适配并优先采用显式尺寸。
 
+Modal can be dragged from the header by default. Use `draggable: false` to disable dragging, or `dragHandle: ['header', 'body', 'footer']` when those regions should all start a drag.
+
 ## Level 2. Add lifecycle and tracing
 
 ## 布局稳定钩子与 trace
@@ -49,6 +51,20 @@ openDialog({
   },
 })
 ```
+
+## Preset style
+
+```ts
+openModal({
+  title: 'Ready to deploy',
+  content: '<p>All checks passed. Production is ready.</p>',
+  preset: 'deploy',
+  confirmText: 'Deploy now',
+  cancelText: 'Cancel',
+})
+```
+
+`preset: 'deploy'` applies the built-in `sod-preset-deploy` class from the standard stylesheet. It adds no dependency and can still be customized with `--sod-*` variables.
 
 ## Level 3. Promise flow composition
 

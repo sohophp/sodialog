@@ -29,6 +29,56 @@ describe('SoDialog modal behavior', () => {
     expect(panel?.classList.contains('sod-modal-autofit')).toBe(false)
   })
 
+  it('enables header dragging by default for modals', () => {
+    const handle = openModal({
+      title: 'draggable modal',
+      content: 'x',
+    })
+
+    const panel = handle.dialog.querySelector<HTMLElement>('.sod-panel')
+    const header = handle.dialog.querySelector<HTMLElement>('.sod-header')
+    const body = handle.dialog.querySelector<HTMLElement>('.sod-body')
+
+    expect(panel?.classList.contains('sod-modal-draggable')).toBe(true)
+    expect(header?.classList.contains('sod-drag-handle')).toBe(true)
+    expect(body?.classList.contains('sod-drag-handle')).toBe(false)
+  })
+
+  it('can disable modal dragging', () => {
+    const handle = openModal({
+      title: 'static modal',
+      content: 'x',
+      draggable: false,
+    })
+
+    const panel = handle.dialog.querySelector<HTMLElement>('.sod-panel')
+    expect(panel?.classList.contains('sod-modal-draggable')).toBe(false)
+    expect(handle.dialog.querySelector<HTMLElement>('.sod-header')?.classList.contains('sod-drag-handle')).toBe(false)
+  })
+
+  it('supports body and footer drag handles', () => {
+    const handle = openModal({
+      title: 'custom handles',
+      content: 'x',
+      dragHandle: ['body', 'footer'],
+    })
+
+    expect(handle.dialog.querySelector<HTMLElement>('.sod-header')?.classList.contains('sod-drag-handle')).toBe(false)
+    expect(handle.dialog.querySelector<HTMLElement>('.sod-body')?.classList.contains('sod-drag-handle')).toBe(true)
+    expect(handle.dialog.querySelector<HTMLElement>('.sod-footer')?.classList.contains('sod-drag-handle')).toBe(true)
+  })
+
+  it('applies optional modal presets', () => {
+    const handle = openModal({
+      title: 'Ready to deploy',
+      content: 'All checks passed.',
+      preset: 'deploy',
+    })
+
+    const panel = handle.dialog.querySelector<HTMLElement>('.sod-panel')
+    expect(panel?.classList.contains('sod-preset-deploy')).toBe(true)
+  })
+
   it('applies custom offcanvas width and height', () => {
     const handle = openOffcanvas({
       title: 'sized offcanvas',

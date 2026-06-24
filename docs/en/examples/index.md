@@ -1,6 +1,6 @@
 # Examples
 
-The examples hub collects runnable demos, visual labs, and the legacy demo entry. Standalone HTML examples use the current docs CDN version by default, and you can temporarily switch versions with URL parameters such as `?sodialogVersion=latest` or `?sodialogVersion=0.3.6`.
+The examples hub collects runnable demos, visual labs, and the legacy demo entry. Standalone HTML examples use the current docs CDN version by default, and you can temporarily switch versions with URL parameters such as `?sodialogVersion=latest` or `?sodialogVersion=0.3.7`.
 
 ## Runnable Examples {#runnable-examples}
 

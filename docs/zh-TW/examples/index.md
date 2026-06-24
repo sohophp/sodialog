@@ -1,6 +1,6 @@
 # 範例
 
-範例中心集中放置可執行 Demo、視覺化實驗室與舊版演示入口。獨立 HTML 範例預設使用目前文件版本的 CDN，也可以透過 URL 參數暫時切換版本，例如 `?sodialogVersion=latest` 或 `?sodialogVersion=0.3.6`。
+範例中心集中放置可執行 Demo、視覺化實驗室與舊版演示入口。獨立 HTML 範例預設使用目前文件版本的 CDN，也可以透過 URL 參數暫時切換版本，例如 `?sodialogVersion=latest` 或 `?sodialogVersion=0.3.7`。
 
 ## 可執行範例 {#runnable-examples}
 

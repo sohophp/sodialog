@@ -4,13 +4,21 @@
 
 ## Unreleased
 
+## 0.3.7 - 2026-06-24
+
+### Added
+
+- 新增 Modal `preset: 'deploy'` 内置预设风格，可用于部署确认类紧凑弹窗。
+
 ### Changed
 
+- Modal 默认支持按住 header 拖动，并允许通过 `dragHandle` 指定 `header`、`body`、`footer` 等拖动区域，或通过 `draggable: false` 关闭。
+- 合并文档与指南的顶部导航入口，将 npm 与 GitHub 放入右侧图标链接，并精简组件内页页头与右侧 outline。
 - 恢复 Blog / 开发笔记为顶部导航和全站 footer 的可发现入口，同时保持其不混入组件、API、指南 sidebar。
 - 将文档可运行示例和 Quick Start 的 CDN 默认源切换为 jsDelivr，避免部署站点从 UNPKG 动态导入 ESM 时触发 CORS 拦截。
 - 将文档可运行示例的 CDN 版本解析收敛到共享 loader，并支持通过 URL 参数临时切换版本；同时整理示例中心和组件侧边栏入口。
 - 修复 GitHub Pages workflow，使文档部署前先构建 legacy demo，并补充自定义域名 `CNAME`。
-- 将文档与可运行示例中的 CDN 版本更新到当前 `0.3.6`。
+- 将文档与可运行示例中的 CDN 版本更新到当前 `0.3.7`。
 - 增加 Blog、Changelog、旧开发日志入口和导航/footer 的文档 smoke 覆盖。
 - 修复 Blog 首页文章卡片缺少真实图片，以及英文/繁中文章图片被反引号转义导致不渲染的问题。
 - 修复英文与繁中 `Changelog`、`Versions` 及同类顶层文档入口的 404，并补齐导航、页脚、Blog 索引页的本地化文案。

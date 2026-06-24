@@ -28,6 +28,7 @@ openModal(options: SoDialogModalOptions): SoDialogHandle
     { name: 'title', type: 'string', defaultValue: '-', required: '是', description: 'Dialog 标题文本。' },
     { name: 'content', type: 'string | Node', defaultValue: '-', required: '是', description: 'Dialog 主体内容。' },
     { name: 'width', type: 'number | string', defaultValue: 'auto', required: '否', description: '面板宽度；数字按 px 处理，字符串接受 CSS 尺寸。' },
+    { name: 'preset', type: 'deploy', defaultValue: '-', required: '否', description: '启用可选预设视觉风格。' },
     { name: 'closeOnEsc', type: 'boolean', defaultValue: 'true', required: '否', description: '是否允许 Escape 关闭。' },
     { name: 'onLayoutStable', type: 'SoLayoutStableHook', defaultValue: '-', required: '否', description: '布局稳定后触发，用于测量、埋点或提示。' },
   ]"
@@ -93,12 +94,16 @@ openModal({
 | `width` | `number \| string` | auto | Panel width. Numbers are interpreted as pixels; strings accept CSS sizes. |
 | `height` | `number \| string` | auto | Panel height. Numbers are interpreted as pixels; strings accept CSS sizes. |
 | `useModal` | `boolean` | `true` | Use native `showModal()` behavior. |
-| `draggable` | `boolean` | `false` | Enable drag interactions. |
-| `dragHandle` | `SoModalDragHandle` | `header` | Drag handle selector target(s). |
+| `draggable` | `boolean` | `true` | Enable drag interactions. Set `false` to disable dragging. |
+| `dragHandle` | `SoModalDragHandle \| false` | `header` | Drag handle selector target(s). Supports `header`, `title`, `body`, `footer`, `panel`, CSS selectors, arrays, or `false`. |
 | `autoFitSize` | `boolean` | `true` | Auto fit panel to content changes. |
 | `scrollMode` | `'body' \| 'viewport' \| 'none' \| 'hybrid'` | auto | Auto-fit scroll strategy. |
 
 Providing `width` or `height` disables automatic modal sizing so the explicit dimensions take precedence.
+
+### Presets
+
+`preset: 'deploy'` applies the compact confirmation style used by deploy/release dialogs. It is implemented as the `sod-preset-deploy` class inside the standard stylesheet, so it keeps zero runtime dependencies and can still be overridden with `--sod-*` CSS variables.
 
 ## Offcanvas-only Options (`SoDialogOffcanvasOptions`)
 

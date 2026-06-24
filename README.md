@@ -36,8 +36,6 @@ openModal({
   position: 'center',
   animation: 'fade',
   useModal: true,
-  draggable: true,
-  dragHandle: 'header',
   autoFitSize: true,
   content: '<p>这是 Modal</p>',
   confirmText: '确定',
@@ -612,8 +610,9 @@ formBtn?.addEventListener('click', async () => {
 - `position?: 'center' | 'top' | 'bottom'` (默认 `center`)
 - `animation?: 'slide' | 'fade' | 'zoom'` (默认 `fade`)
 - `useModal?: boolean` (默认 `true`，`true` 使用 `showModal()`，`false` 使用 `show()`)
-- `draggable?: boolean` (默认 `false`)
-- `dragHandle?: ('header' | 'title' | 'body' | 'panel' | string) | Array<'header' | 'title' | 'body' | 'panel' | string>` (默认 `header`，支持传数组开启多拖动区域，也可传 CSS 选择器)
+- `draggable?: boolean` (默认 `true`；传 `false` 可关闭拖动)
+- `dragHandle?: false | ('header' | 'title' | 'body' | 'footer' | 'panel' | string) | Array<'header' | 'title' | 'body' | 'footer' | 'panel' | string>` (默认 `header`，支持传数组开启多拖动区域，也可传 CSS 选择器；传 `false` 不设置拖动区域)
+- `preset?: 'deploy'`（启用内置预设风格，例如部署确认弹窗）
 - `autoFitSize?: boolean` (默认 `true`，会根据 body 内容变化自动扩/缩尺寸，例如图片加载完成后)
 - `scrollMode?: 'body' | 'hybrid' | 'viewport' | 'none'` (默认 `body`)
 - `hybridSwitchRatio?: number` (默认 `1.35`，仅 `scrollMode: 'hybrid'` 时生效，最小值 `1`)

@@ -207,6 +207,82 @@
   margin: 0 0 0.5rem;
 }
 
+.sod-modal .sod-panel.sod-preset-deploy {
+  --sod-color-surface: #fff;
+  --sod-color-text: #121722;
+  --sod-color-muted: #697386;
+  --sod-color-border: #e4e8ef;
+  --sod-panel-radius: 18px;
+  --sod-panel-shadow: 0 24px 80px rgb(15 23 42 / 16%);
+  --sod-panel-width: 390px;
+  --sod-btn-primary-bg: #04796f;
+  --sod-btn-primary-hover-bg: #056b63;
+  --sod-btn-primary-hover-border: #056b63;
+  overflow: hidden;
+}
+
+.sod-modal .sod-panel.sod-preset-deploy .sod-header {
+  padding: 20px 22px 12px;
+  border-bottom: 0;
+  gap: 12px;
+}
+
+.sod-modal .sod-panel.sod-preset-deploy .sod-title {
+  position: relative;
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  padding-left: 36px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.sod-modal .sod-panel.sod-preset-deploy .sod-title::before {
+  position: absolute;
+  left: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  color: #039568;
+  background: #d7f8e7;
+  content: "\2713";
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.sod-modal .sod-panel.sod-preset-deploy .sod-close {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  font-size: 18px;
+}
+
+.sod-modal .sod-panel.sod-preset-deploy .sod-close:hover {
+  background: #f3f5f8;
+}
+
+.sod-modal .sod-panel.sod-preset-deploy .sod-body {
+  padding: 0 22px 22px;
+  color: var(--sod-color-muted);
+  font-size: 13px;
+}
+
+.sod-modal .sod-panel.sod-preset-deploy .sod-footer {
+  margin: 0 22px 22px;
+  padding: 18px 0 0;
+  border-top: 1px solid var(--sod-color-border);
+}
+
+.sod-modal .sod-panel.sod-preset-deploy .sod-btn {
+  min-height: 40px;
+  border-radius: 8px;
+  padding: 0.5rem 0.8rem;
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .sod-prompt-wrap {
   display: grid;
   gap: 0.55rem;

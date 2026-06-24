@@ -55,7 +55,7 @@ toast({
 Docs examples resolve their CDN version through `/components/sodialog-loader.js`, so every standalone HTML example does not need to hardcode the same version.
 
 - The default version is maintained in the shared loader.
-- Example URLs can temporarily override the version: `?sodialogVersion=latest`, `?sodialogVersion=0.3.6`.
+- Example URLs can temporarily override the version: `?sodialogVersion=latest`, `?sodialogVersion=0.3.7`.
 - Production pages should still pin a patch version instead of relying on `@latest`.
 
 For fixed-version CDN snippets, see [CDN](/en/cdn). That page reads the npm version used by the current docs.

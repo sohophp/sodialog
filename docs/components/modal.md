@@ -24,6 +24,8 @@ openModal({
 })
 ```
 
+Modal 默认可以按住 header 拖动。需要关闭时传 `draggable: false`；需要让 body 或 footer 也能拖动时传 `dragHandle: ['header', 'body', 'footer']`。
+
 ## Demo / Playground
 
 <DemoPreview src="/components/modal-basic.html" title="Modal Basic Demo" :height="430" />
@@ -63,6 +65,20 @@ openDialog({
   },
 })
 ```
+
+## 预设风格
+
+```ts
+openModal({
+  title: 'Ready to deploy',
+  content: '<p>All checks passed. Production is ready.</p>',
+  preset: 'deploy',
+  confirmText: 'Deploy now',
+  cancelText: 'Cancel',
+})
+```
+
+`preset: 'deploy'` 使用标准样式里的 `sod-preset-deploy` 类实现，不引入额外 CSS 文件或运行时依赖；仍可用 `--sod-*` 变量覆盖颜色、圆角和阴影。
 
 ## Promise 组合流程
 

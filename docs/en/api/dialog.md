@@ -40,8 +40,9 @@
 | `width` | `number \| string` | auto | Panel width. Numbers are interpreted as pixels; strings accept CSS sizes. |
 | `height` | `number \| string` | auto | Panel height. Numbers are interpreted as pixels; strings accept CSS sizes. |
 | `useModal` | `boolean` | `true` | Use native `showModal()` behavior. |
-| `draggable` | `boolean` | `false` | Enable drag interactions. |
-| `dragHandle` | `SoModalDragHandle` | `header` | Drag handle selector target(s). |
+| `draggable` | `boolean` | `true` | Enable drag interactions. Set `false` to disable dragging. |
+| `dragHandle` | `SoModalDragHandle \| false` | `header` | Drag handle selector target(s). Supports `header`, `title`, `body`, `footer`, `panel`, CSS selectors, arrays, or `false`. |
+| `preset` | `'deploy'` | - | Apply an optional preset style from the standard stylesheet. |
 | `autoFitSize` | `boolean` | `true` | Auto fit panel to content changes. |
 | `scrollMode` | `'body' \| 'viewport' \| 'none' \| 'hybrid'` | auto | Auto-fit scroll strategy. |
 

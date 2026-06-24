@@ -1,6 +1,6 @@
 # 示例
 
-示例中心集中放置可运行 Demo、可视化实验室和旧版演示入口。独立 HTML 示例默认使用当前文档版本的 CDN，也可以通过 URL 参数临时切换版本，例如 `?sodialogVersion=latest` 或 `?sodialogVersion=0.3.6`。
+示例中心集中放置可运行 Demo、可视化实验室和旧版演示入口。独立 HTML 示例默认使用当前文档版本的 CDN，也可以通过 URL 参数临时切换版本，例如 `?sodialogVersion=latest` 或 `?sodialogVersion=0.3.7`。
 
 ## 可运行示例 {#runnable-examples}
 
