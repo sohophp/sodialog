@@ -10,6 +10,7 @@ import DocPageHeader from './components/DocPageHeader.vue'
 import LabCard from './components/LabCard.vue'
 import ApiParamTable from './components/ApiParamTable.vue'
 import ModalLab from './components/ModalLab.vue'
+import OffcanvasPlayground from './components/OffcanvasPlayground.vue'
 
 export default {
 	...DefaultTheme,
@@ -24,5 +25,6 @@ export default {
 		app.component('LabCard', LabCard)
 		app.component('ApiParamTable', ApiParamTable)
 		app.component('ModalLab', ModalLab)
+		app.component('OffcanvasPlayground', OffcanvasPlayground)
 	},
 }

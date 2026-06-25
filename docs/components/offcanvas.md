@@ -27,7 +27,7 @@ openOffcanvas({
 
 ## Demo / Playground
 
-<DemoPreview src="/components/offcanvas.html" title="Offcanvas Playground" :height="430" />
+<OffcanvasPlayground />
 
 ## 位置与动画
 

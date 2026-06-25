@@ -1,6 +1,6 @@
 /* global document, window, URLSearchParams */
 
-const defaultVersion = '0.3.8'
+const defaultVersion = '0.3.9'
 
 const versionPattern = /^(latest|\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?)$/
 

@@ -594,6 +594,9 @@ function enableModalDrag(panel: HTMLElement, dragHandle: SoModalDragHandle | fal
   let dragging = false
   let offsetX = 0
   let offsetY = 0
+  let startClientX = 0
+  let startClientY = 0
+  let startRect: DOMRect | null = null
   let activePointerId: number | null = null
   let activeHandle: HTMLElement | null = null
   let rafId = 0
@@ -615,7 +618,43 @@ function enableModalDrag(panel: HTMLElement, dragHandle: SoModalDragHandle | fal
     }
   }
 
+  const startDragging = () => {
+    if (!startRect || !activeHandle) {
+      return
+    }
+
+    dragging = true
+    panel.classList.add('sod-is-dragging')
+    panel.style.animation = 'none'
+    panel.style.transition = 'none'
+    panel.style.position = 'fixed'
+    panel.style.left = `${startRect.left}px`
+    panel.style.top = `${startRect.top}px`
+    panel.style.width = `${startRect.width}px`
+    panel.style.height = `${startRect.height}px`
+    panel.style.inset = 'auto'
+    panel.style.right = 'auto'
+    panel.style.bottom = 'auto'
+    panel.style.margin = '0'
+    panel.style.transform = 'none'
+    panel.style.willChange = 'left, top'
+    activeHandle.classList.add('is-dragging')
+  }
+
   const onPointerMove = (event: PointerEvent) => {
+    if (activePointerId !== event.pointerId) {
+      return
+    }
+
+    if (!dragging) {
+      const deltaX = event.clientX - startClientX
+      const deltaY = event.clientY - startClientY
+      if (Math.hypot(deltaX, deltaY) < 3) {
+        return
+      }
+      startDragging()
+    }
+
     if (!dragging) {
       return
     }
@@ -641,6 +680,18 @@ function enableModalDrag(panel: HTMLElement, dragHandle: SoModalDragHandle | fal
   }
 
   const onPointerUp = () => {
+    if (dragging && rafId !== 0) {
+      window.cancelAnimationFrame(rafId)
+      rafId = 0
+      panel.style.inset = 'auto'
+      panel.style.left = `${pendingLeft}px`
+      panel.style.top = `${pendingTop}px`
+      panel.style.right = 'auto'
+      panel.style.bottom = 'auto'
+      panel.style.margin = '0'
+      panel.style.transform = 'none'
+    }
+
     dragging = false
     handles.forEach((handle) => {
       handle.classList.remove('is-dragging')
@@ -648,11 +699,6 @@ function enableModalDrag(panel: HTMLElement, dragHandle: SoModalDragHandle | fal
     panel.classList.remove('sod-is-dragging')
     panel.style.willChange = ''
     document.body.style.userSelect = previousBodyUserSelect
-
-    if (rafId !== 0) {
-      window.cancelAnimationFrame(rafId)
-      rafId = 0
-    }
 
     if (
       activePointerId !== null &&
@@ -664,6 +710,7 @@ function enableModalDrag(panel: HTMLElement, dragHandle: SoModalDragHandle | fal
     }
     activePointerId = null
     activeHandle = null
+    startRect = null
     window.removeEventListener('pointermove', onPointerMove)
     window.removeEventListener('pointerup', onPointerUp)
     window.removeEventListener('pointercancel', onPointerUp)
@@ -681,31 +728,16 @@ function enableModalDrag(panel: HTMLElement, dragHandle: SoModalDragHandle | fal
       }
 
       event.preventDefault()
-      panel.classList.add('sod-is-dragging')
-      panel.style.animation = 'none'
-      panel.style.transition = 'none'
-      panel.style.transform = 'none'
-
       const rect = panel.getBoundingClientRect()
       offsetX = event.clientX - rect.left
       offsetY = event.clientY - rect.top
-      dragging = true
+      startClientX = event.clientX
+      startClientY = event.clientY
+      startRect = rect
       activePointerId = event.pointerId
       activeHandle = handle
 
       handle.setPointerCapture(event.pointerId)
-
-      panel.style.position = 'fixed'
-      panel.style.left = `${rect.left}px`
-      panel.style.top = `${rect.top}px`
-      panel.style.width = `${Math.round(rect.width)}px`
-      panel.style.height = `${Math.round(rect.height)}px`
-      panel.style.inset = 'auto'
-      panel.style.right = 'auto'
-      panel.style.bottom = 'auto'
-      panel.style.margin = '0'
-      panel.style.willChange = 'left, top'
-      handle.classList.add('is-dragging')
       document.body.style.userSelect = 'none'
 
       window.addEventListener('pointermove', onPointerMove)

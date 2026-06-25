@@ -6,7 +6,7 @@ description: SoDialog Offcanvas 指南：位置动画、生命周期通知与典
 
 <CdnNotice />
 
-<DemoPreview src="/components/offcanvas.html" title="Offcanvas Playground" :height="430" />
+<OffcanvasPlayground />
 
 ## Level 1. Basic placement usage
 

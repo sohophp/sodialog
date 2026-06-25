@@ -55,7 +55,7 @@ toast({
 文档中的组件示例通过 `/components/sodialog-loader.js` 统一解析 CDN 版本，避免每个 HTML 示例重复硬编码版本号。
 
 - 默认版本集中维护在 loader 中。
-- 示例 URL 支持临时覆盖版本：`?sodialogVersion=latest`、`?sodialogVersion=0.3.8`。
+- 示例 URL 支持临时覆盖版本：`?sodialogVersion=latest`、`?sodialogVersion=0.3.9`。
 - 生产页面仍建议固定 patch 版本，不建议长期依赖 `@latest`。
 
 需要复制固定版本 CDN 地址时，请查看 [CDN 使用](/cdn)，该页面会读取当前文档对应的 npm 版本。

@@ -15,6 +15,22 @@ import {
 } from '../src/lib'
 
 describe('SoDialog modal behavior', () => {
+  const dispatchPointerEvent = (
+    target: EventTarget,
+    type: string,
+    init: { button?: number; clientX?: number; clientY?: number; pointerId?: number } = {},
+  ) => {
+    const event = new Event(type, { bubbles: true, cancelable: true }) as PointerEvent
+    Object.defineProperties(event, {
+      button: { value: init.button ?? 0 },
+      clientX: { value: init.clientX ?? 0 },
+      clientY: { value: init.clientY ?? 0 },
+      pointerId: { value: init.pointerId ?? 1 },
+    })
+    target.dispatchEvent(event)
+    return event
+  }
+
   it('applies custom modal width and height', () => {
     const handle = openModal({
       title: 'sized modal',
@@ -66,6 +82,117 @@ describe('SoDialog modal behavior', () => {
     expect(handle.dialog.querySelector<HTMLElement>('.sod-header')?.classList.contains('sod-drag-handle')).toBe(false)
     expect(handle.dialog.querySelector<HTMLElement>('.sod-body')?.classList.contains('sod-drag-handle')).toBe(true)
     expect(handle.dialog.querySelector<HTMLElement>('.sod-footer')?.classList.contains('sod-drag-handle')).toBe(true)
+  })
+
+  it('waits for pointer movement before applying fixed drag styles', () => {
+    const raf = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
+      callback(0)
+      return 1
+    })
+    const handle = openModal({
+      title: 'steady drag',
+      content: 'x',
+    })
+    const panel = handle.dialog.querySelector<HTMLElement>('.sod-panel')
+    const header = handle.dialog.querySelector<HTMLElement>('.sod-header')
+
+    expect(panel).not.toBeNull()
+    expect(header).not.toBeNull()
+
+    vi.spyOn(panel!, 'getBoundingClientRect').mockReturnValue({
+      x: 100,
+      y: 120,
+      left: 100,
+      top: 120,
+      right: 460,
+      bottom: 340,
+      width: 360,
+      height: 220,
+      toJSON: () => ({}),
+    } as DOMRect)
+    header!.setPointerCapture = vi.fn()
+
+    dispatchPointerEvent(header!, 'pointerdown', { button: 0, clientX: 130, clientY: 150, pointerId: 7 })
+
+    expect(panel!.style.position).toBe('')
+    expect(panel!.classList.contains('sod-is-dragging')).toBe(false)
+
+    dispatchPointerEvent(window, 'pointermove', { clientX: 131, clientY: 151, pointerId: 7 })
+
+    expect(panel!.style.position).toBe('')
+    expect(panel!.classList.contains('sod-is-dragging')).toBe(false)
+
+    dispatchPointerEvent(window, 'pointermove', { clientX: 142, clientY: 164, pointerId: 7 })
+
+    expect(panel!.style.position).toBe('fixed')
+    expect(panel!.style.left).toBe('112px')
+    expect(panel!.style.top).toBe('134px')
+    expect(panel!.classList.contains('sod-is-dragging')).toBe(true)
+
+    raf.mockRestore()
+  })
+
+  it('keeps the dragged position stable when pressing the handle again', () => {
+    let queuedFrame: FrameRequestCallback | null = null
+    const raf = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
+      queuedFrame = callback
+      return 1
+    })
+    const cancelRaf = vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(() => {
+      queuedFrame = null
+    })
+    const handle = openModal({
+      title: 'repeat drag',
+      content: 'x',
+    })
+    const panel = handle.dialog.querySelector<HTMLElement>('.sod-panel')
+    const header = handle.dialog.querySelector<HTMLElement>('.sod-header')
+
+    expect(panel).not.toBeNull()
+    expect(header).not.toBeNull()
+
+    const rect = {
+      x: 100,
+      y: 120,
+      left: 100,
+      top: 120,
+      right: 460,
+      bottom: 340,
+      width: 360,
+      height: 220,
+      toJSON: () => ({}),
+    } as DOMRect
+    const rectSpy = vi.spyOn(panel!, 'getBoundingClientRect').mockReturnValue(rect)
+    header!.setPointerCapture = vi.fn()
+    header!.hasPointerCapture = vi.fn().mockReturnValue(false)
+
+    dispatchPointerEvent(header!, 'pointerdown', { button: 0, clientX: 130, clientY: 150, pointerId: 11 })
+    dispatchPointerEvent(window, 'pointermove', { clientX: 160, clientY: 180, pointerId: 11 })
+    dispatchPointerEvent(window, 'pointerup', { clientX: 160, clientY: 180, pointerId: 11 })
+
+    expect(queuedFrame).toBeNull()
+    expect(panel!.style.left).toBe('130px')
+    expect(panel!.style.top).toBe('150px')
+
+    rectSpy.mockReturnValue({
+      ...rect,
+      x: 130,
+      y: 150,
+      left: 130,
+      top: 150,
+      right: 490,
+      bottom: 370,
+    } as DOMRect)
+
+    dispatchPointerEvent(header!, 'pointerdown', { button: 0, clientX: 150, clientY: 170, pointerId: 12 })
+    dispatchPointerEvent(window, 'pointerup', { clientX: 150, clientY: 170, pointerId: 12 })
+
+    expect(panel!.style.left).toBe('130px')
+    expect(panel!.style.top).toBe('150px')
+    expect(panel!.classList.contains('sod-is-dragging')).toBe(false)
+
+    raf.mockRestore()
+    cancelRaf.mockRestore()
   })
 
   it('applies optional modal presets', () => {
