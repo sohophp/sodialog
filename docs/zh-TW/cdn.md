@@ -15,7 +15,7 @@ description: SoDialog CDN 使用說明：jsDelivr、UNPKG、固定版本與 ESM/
 `/components/` 下的可執行 HTML 範例使用共享 loader 解析 CDN 版本。預設值集中維護在 `/components/sodialog-loader.js`，也支援透過 URL 參數暫時覆蓋：
 
 - `?sodialogVersion=latest`
-- `?sodialogVersion=0.3.9`
+- `?sodialogVersion=0.3.10`
 
 這個能力用於驗證或排查 CDN 版本差異；生產頁面仍建議複製上方固定版本位址。
 

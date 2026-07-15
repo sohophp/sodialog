@@ -31,6 +31,18 @@ describe('SoDialog modal behavior', () => {
     return event
   }
 
+  it('removes native dialog chrome before the first open', () => {
+    const handle = openModal({
+      title: 'borderless modal',
+      content: 'x',
+    })
+
+    expect(handle.dialog.style.border).toBe('0px')
+    expect(handle.dialog.style.outline).toBe('none')
+    expect(handle.dialog.style.boxShadow).toBe('none')
+    expect(handle.dialog.open).toBe(true)
+  })
+
   it('applies custom modal width and height', () => {
     const handle = openModal({
       title: 'sized modal',

@@ -1,6 +1,6 @@
 # 示例
 
-示例中心按任务拆分为独立页面。每个页面只加载一个可运行 demo，默认使用当前文档版本的 CDN，也支持通过 URL 参数临时切换版本，例如 `?sodialogVersion=latest` 或 `?sodialogVersion=0.3.9`。
+示例中心按任务拆分为独立页面。每个页面只加载一个可运行 demo，默认使用当前文档版本的 CDN，也支持通过 URL 参数临时切换版本，例如 `?sodialogVersion=latest` 或 `?sodialogVersion=0.3.10`。
 
 ## 可运行示例
 

@@ -1102,6 +1102,11 @@ export class SoDialog {
 
     const dialog = document.createElement('dialog')
     dialog.className = `sod-dialog sod-${kind}`
+    // Reset the native dialog chrome before the element can enter the top layer.
+    // Some browsers otherwise paint the UA border/focus ring for the first frame.
+    dialog.style.border = '0'
+    dialog.style.outline = 'none'
+    dialog.style.boxShadow = 'none'
     const cleanups: Array<() => void> = []
     const layoutStableFrames = Math.max(1, options.layoutStableFrames ?? 2)
     const layoutStableOnRefit = options.layoutStableOnRefit ?? false

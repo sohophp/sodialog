@@ -55,7 +55,7 @@ toast({
 文件中的元件範例透過 `/components/sodialog-loader.js` 統一解析 CDN 版本，避免每個 HTML 範例重複硬編碼版本號。
 
 - 預設版本集中維護在 loader 中。
-- 範例 URL 支援暫時覆蓋版本：`?sodialogVersion=latest`、`?sodialogVersion=0.3.9`。
+- 範例 URL 支援暫時覆蓋版本：`?sodialogVersion=latest`、`?sodialogVersion=0.3.10`。
 - 生產頁面仍建議固定 patch 版本，不建議長期依賴 `@latest`。
 
 需要複製固定版本 CDN 位址時，請查看 [CDN 使用](/zh-TW/cdn)，該頁會讀取目前文件對應的 npm 版本。
