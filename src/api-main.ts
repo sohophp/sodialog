@@ -331,7 +331,7 @@ toast({ id: 'sync-task', content: '策略 stack', duplicateStrategy: 'stack' })<
           <table class="api-table">
             <thead><tr><th>参数</th><th>类型</th><th>默认值</th><th>说明</th></tr></thead>
             <tbody>
-              <tr><td><code>title</code></td><td><code>string</code></td><td>-</td><td>标题，必填。</td></tr>
+              <tr><td><code>title</code></td><td><code>string | HTMLElement</code></td><td>-</td><td>标题，必填；HTMLElement 会原样放入标题区域。</td></tr>
               <tr><td><code>content</code></td><td><code>string | Node</code></td><td>-</td><td>内容，必填。</td></tr>
               <tr><td><code>id</code></td><td><code>string</code></td><td>自动生成</td><td>实例 ID；同 ID 可复用。</td></tr>
               <tr><td><code>position</code></td><td><code>'center' | 'top' | 'bottom'</code></td><td><code>'center'</code></td><td>弹窗位置。</td></tr>

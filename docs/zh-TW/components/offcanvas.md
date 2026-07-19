@@ -8,6 +8,24 @@ description: SoDialog Offcanvas 指南：位置动画、生命周期通知与典
 
 <OffcanvasPlayground />
 
+## 自訂標題內容
+
+`title` 也可傳入 `HTMLElement`。節點會原樣置於標題區域，適合將編輯連結或狀態標記放在標題前方。
+
+```ts
+const title = document.createElement('span')
+const editLink = document.createElement('a')
+editLink.href = '/documents/guide/edit'
+editLink.textContent = '編輯'
+title.append(editLink, document.createTextNode(' · 使用說明'))
+
+openOffcanvas({
+  title,
+  placement: 'end',
+  content: '<p>文件內容</p>',
+})
+```
+
 ## Level 1. Basic placement usage
 
 ## 位置与动画

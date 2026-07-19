@@ -25,7 +25,7 @@ openModal(options: SoDialogModalOptions): SoDialogHandle
 
 <ApiParamTable
   :rows="[
-    { name: 'title', type: 'string', defaultValue: '-', required: '是', description: 'Dialog 标题文本。' },
+    { name: 'title', type: 'string | HTMLElement', defaultValue: '-', required: '是', description: 'Dialog 标题；HTMLElement 会原样放入标题区域。' },
     { name: 'content', type: 'string | Node', defaultValue: '-', required: '是', description: 'Dialog 主体内容。' },
     { name: 'width', type: 'number | string', defaultValue: 'auto', required: '否', description: '面板宽度；数字按 px 处理，字符串接受 CSS 尺寸。' },
     { name: 'preset', type: 'deploy', defaultValue: '-', required: '否', description: '启用可选预设视觉风格。' },
@@ -69,7 +69,7 @@ openModal({
 
 | Name | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `title` | `string` | Yes | - | Dialog title text. |
+| `title` | `string \| HTMLElement` | Yes | - | Dialog title text, or an HTMLElement rendered inside the title region. |
 | `content` | `string \| Node` | Yes | - | Dialog content. |
 | `hideHeader` | `boolean` | No | `false` | Hide the generated header. Dialog keeps `aria-label` from `title`. |
 | `hideCloseButton` | `boolean` | No | `false` | Hide the header close button. |

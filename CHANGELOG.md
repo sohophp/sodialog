@@ -4,6 +4,12 @@
 
 ## Unreleased
 
+## 0.3.11 - 2026-07-19
+
+### Added
+
+- Dialog 與 Offcanvas 的 `title` 現在可接受 `HTMLElement`，方便在標題區加入連結、圖示或其他可組合內容。
+
 ## 0.3.10 - 2026-07-15
 
 ### Fixed

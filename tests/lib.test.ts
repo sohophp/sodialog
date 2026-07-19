@@ -265,6 +265,36 @@ describe('SoDialog modal behavior', () => {
     expect(panel?.style.height).toBe('80vh')
   })
 
+  it('renders an HTMLElement title in an offcanvas and preserves its accessible name', () => {
+    const title = document.createElement('span')
+    title.dataset.testid = 'custom-title'
+    title.textContent = 'Document preview'
+
+    const handle = openOffcanvas({
+      title,
+      content: 'x',
+      placement: 'end',
+    })
+
+    const titleElement = handle.dialog.querySelector<HTMLElement>('.sod-title')
+    expect(titleElement?.querySelector('[data-testid="custom-title"]')).toBe(title)
+    expect(titleElement?.textContent).toBe('Document preview')
+    expect(handle.dialog.getAttribute('aria-labelledby')).toBe(titleElement?.id)
+  })
+
+  it('uses an HTMLElement title text as the accessible name when the header is hidden', () => {
+    const title = document.createElement('span')
+    title.textContent = 'Accessible document title'
+
+    const handle = openModal({
+      title,
+      content: 'x',
+      hideHeader: true,
+    })
+
+    expect(handle.dialog.getAttribute('aria-label')).toBe('Accessible document title')
+  })
+
   it('reuses explicit modal id instance', () => {
     const created = vi.fn()
     const reused = vi.fn()

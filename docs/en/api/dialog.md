@@ -15,7 +15,7 @@
 
 | Name | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `title` | `string` | Yes | - | Dialog title text. |
+| `title` | `string \| HTMLElement` | Yes | - | Dialog title text, or an HTMLElement rendered inside the title region. |
 | `content` | `string \| Node` | Yes | - | Dialog content. |
 | `confirmText` | `string` | No | `确认` | Confirm button text. |
 | `cancelText` | `string` | No | `取消` | Cancel button text. |

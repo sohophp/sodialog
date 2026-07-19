@@ -599,7 +599,7 @@ formBtn?.addEventListener('click', async () => {
 
 ### `openModal(options)`
 
-- `title: string`
+- `title: string | HTMLElement`（HTMLElement 會直接放入標題區域）
 - `content: string | Node`
 - `width?: number | string`（数字按像素处理；设置后优先于自动尺寸）
 - `height?: number | string`（数字按像素处理；设置后优先于自动尺寸）

@@ -25,6 +25,24 @@ openOffcanvas({
 })
 ```
 
+## 自定义标题内容
+
+`title` 也可传入 `HTMLElement`。节点会原样置于标题区域，适合将编辑链接或状态标记放在标题前方。
+
+```ts
+const title = document.createElement('span')
+const editLink = document.createElement('a')
+editLink.href = '/documents/guide/edit'
+editLink.textContent = '编辑'
+title.append(editLink, document.createTextNode(' · 使用说明'))
+
+openOffcanvas({
+  title,
+  placement: 'end',
+  content: '<p>文档内容</p>',
+})
+```
+
 ## Demo / Playground
 
 <OffcanvasPlayground />

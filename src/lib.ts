@@ -1,6 +1,7 @@
 import './sodialog.css'
 
 export type SoPanelKind = 'modal' | 'offcanvas'
+export type SoDialogTitle = string | HTMLElement
 export type SoOffcanvasPlacement = 'start' | 'end' | 'top' | 'bottom'
 export type SoOffcanvasAnimation = 'slide' | 'fade' | 'zoom'
 export type SoModalPosition = 'center' | 'top' | 'bottom'
@@ -179,7 +180,7 @@ export interface SoDialogFooterButton {
 }
 
 export interface SoDialogBaseOptions extends SoLifecycleHooks {
-  title: string
+  title: SoDialogTitle
   content: string | Node
   traceId?: string
   preset?: SoDialogPreset
@@ -425,6 +426,14 @@ function appendContent(container: HTMLElement, content: string | Node): void {
   }
 
   container.append(content)
+}
+
+function getDialogTitleText(title: SoDialogTitle): string {
+  if (typeof title === 'string') {
+    return title
+  }
+
+  return title.textContent?.trim() || 'Dialog'
 }
 
 function closeDialog(dialog: HTMLDialogElement, action: 'hide' | 'destroy' = 'hide'): void {
@@ -1222,7 +1231,7 @@ export class SoDialog {
 
     const title = document.createElement('h2')
     title.className = 'sod-title'
-    title.textContent = options.title
+    appendContent(title, options.title)
     title.id = SoDialog.createAutoAriaId('sod-title')
 
     const closeButton = document.createElement('button')
@@ -1243,7 +1252,7 @@ export class SoDialog {
     appendContent(body, options.content)
 
     if (hideHeader) {
-      dialog.setAttribute('aria-label', options.title)
+      dialog.setAttribute('aria-label', getDialogTitleText(options.title))
     } else {
       dialog.setAttribute('aria-labelledby', title.id)
     }

@@ -8,6 +8,24 @@ description: SoDialog Offcanvas 指南：位置动画、生命周期通知与典
 
 <OffcanvasPlayground />
 
+## Custom title content
+
+`title` also accepts an `HTMLElement`. The element is placed directly in the title region, which is useful for an edit link or status indicator.
+
+```ts
+const title = document.createElement('span')
+const editLink = document.createElement('a')
+editLink.href = '/documents/guide/edit'
+editLink.textContent = 'Edit'
+title.append(editLink, document.createTextNode(' · Guide'))
+
+openOffcanvas({
+  title,
+  placement: 'end',
+  content: '<p>Document content</p>',
+})
+```
+
 ## Level 1. Basic placement usage
 
 ## 位置与动画
