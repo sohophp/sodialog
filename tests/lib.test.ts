@@ -338,6 +338,24 @@ describe('SoDialog modal behavior', () => {
     expect(handle.dialog.isConnected).toBe(false)
   })
 
+  it('handles rapid repeated close requests only once', () => {
+    const beforeClose = vi.fn()
+    const afterClose = vi.fn()
+    const handle = openModal({
+      title: 'rapid close',
+      content: 'x',
+      onBeforeClose: beforeClose,
+      onAfterClose: afterClose,
+    })
+
+    handle.close()
+    handle.close()
+
+    expect(beforeClose).toHaveBeenCalledTimes(1)
+    expect(afterClose).toHaveBeenCalledTimes(1)
+    expect(handle.dialog.isConnected).toBe(false)
+  })
+
   it('submits structured values via formModal', async () => {
     const resultPromise = formModal({
       title: 'create task',
@@ -655,6 +673,22 @@ describe('SoContextMenu behavior', () => {
     const menu = document.querySelector<HTMLElement>('.sod-context-menu')
     expect(menu).toBeTruthy()
     expect(menu?.parentElement).toBe(dialog)
+  })
+
+  it('keeps a dialog context menu in the native dialog top layer', () => {
+    const modal = openModal({ title: 'image', content: 'preview' })
+    const trigger = document.createElement('img')
+    modal.dialog.querySelector('.sod-body')?.append(trigger)
+
+    const handle = bindContextMenu({
+      target: trigger,
+      items: [{ id: 'mobile', label: 'Mobile' }],
+    })
+
+    handle.openAt(40, 44, trigger)
+
+    expect(handle.element.closest('dialog')).toBe(modal.dialog)
+    expect(handle.element.parentElement).toBe(modal.dialog)
   })
 
   it('renders icon class for menu item', () => {

@@ -440,7 +440,14 @@ function closeDialog(dialog: HTMLDialogElement, action: 'hide' | 'destroy' = 'hi
   if (action === 'destroy') {
     dialog.dataset.sodDestroy = 'true'
     if (dialog.open) {
-      dialog.close()
+      // Let the close event own teardown. Removing an open dialog immediately
+      // after close() races the browser's top-layer and focus cleanup.
+      try {
+        dialog.close()
+      } catch {
+        dialog.remove()
+      }
+      return
     }
     dialog.remove()
     return
@@ -1127,7 +1134,12 @@ export class SoDialog {
       }
     }
 
+    let closeRequested = false
     const requestClose = (reason: SoLifecycleReason, action: 'hide' | 'destroy' = 'hide') => {
+      if (closeRequested || !dialog.open) {
+        return
+      }
+      closeRequested = true
       dialog.dataset.sodCloseReason = reason
       emitLifecycle(lifecycleHooks, {
         component: kind,
@@ -1440,6 +1452,11 @@ export class SoDialog {
         return
       }
 
+      if (closeRequested) {
+        event.preventDefault()
+        return
+      }
+      closeRequested = true
       dialog.dataset.sodCloseReason = 'esc'
       emitLifecycle(lifecycleHooks, {
         component: kind,
@@ -1481,6 +1498,7 @@ export class SoDialog {
       focusElementIfPossible(focusRestoreTarget)
 
       delete dialog.dataset.sodCloseReason
+      closeRequested = false
     })
 
     emitLifecycle(lifecycleHooks, {
