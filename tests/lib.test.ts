@@ -705,6 +705,25 @@ describe('SoContextMenu behavior', () => {
     expect(handle.element.parentElement).toBe(modal.dialog)
   })
 
+  it('promotes an opened context menu with the Popover API', () => {
+    const trigger = document.createElement('img')
+    document.body.append(trigger)
+    const showPopover = vi.fn()
+    const hidePopover = vi.fn()
+    const handle = bindContextMenu({
+      target: trigger,
+      items: [{ id: 'crop', label: 'Crop' }],
+    })
+    Object.assign(handle.element, { showPopover, hidePopover })
+
+    handle.openAt(40, 44, trigger)
+    handle.close()
+
+    expect(handle.element.getAttribute('popover')).toBe('manual')
+    expect(showPopover).toHaveBeenCalledTimes(1)
+    expect(hidePopover).toHaveBeenCalledTimes(1)
+  })
+
   it('renders icon class for menu item', () => {
     const trigger = document.createElement('div')
     document.body.append(trigger)

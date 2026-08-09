@@ -971,6 +971,8 @@
 
 .sod-context-menu {
   position: fixed;
+  inset: auto;
+  margin: 0;
   z-index: 1300;
   display: grid;
   gap: 0.25rem;

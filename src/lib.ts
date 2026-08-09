@@ -2985,6 +2985,7 @@ export class SoContextMenu {
       const CAPTURE_LISTENER = true
     const menuElement = document.createElement('div')
     menuElement.className = 'sod-context-menu'
+    menuElement.setAttribute('popover', 'manual')
     menuElement.setAttribute('role', 'menu')
     menuElement.hidden = true
     menuElement.setAttribute('aria-hidden', 'true')
@@ -3045,6 +3046,30 @@ export class SoContextMenu {
     let open = false
     let destroyed = false
 
+    const showInTopLayer = () => {
+      const popover = menuElement as HTMLElement & { showPopover?: () => void }
+      if (typeof popover.showPopover !== 'function') {
+        return
+      }
+      try {
+        popover.showPopover()
+      } catch {
+        // Keep the mounted-dialog fallback for browsers with partial Popover support.
+      }
+    }
+
+    const hideFromTopLayer = () => {
+      const popover = menuElement as HTMLElement & { hidePopover?: () => void }
+      if (typeof popover.hidePopover !== 'function') {
+        return
+      }
+      try {
+        popover.hidePopover()
+      } catch {
+        // Closing is intentionally idempotent, including detached/hidden popovers.
+      }
+    }
+
     const createHandle = (): SoContextMenuHandle => {
       return {
         id,
@@ -3099,6 +3124,7 @@ export class SoContextMenu {
       })
 
       open = false
+      hideFromTopLayer()
       menuElement.hidden = true
       menuElement.setAttribute('aria-hidden', 'true')
       menuElement.style.display = 'none'
@@ -3161,6 +3187,7 @@ export class SoContextMenu {
 
       open = false
       destroyed = true
+      hideFromTopLayer()
       clearTypeahead()
       if (SoContextMenu.activeHandle === handle) {
         SoContextMenu.activeHandle = null
@@ -3232,6 +3259,7 @@ export class SoContextMenu {
       menuElement.hidden = false
       menuElement.setAttribute('aria-hidden', 'false')
       menuElement.style.display = 'grid'
+      showInTopLayer()
       const next = clampPosition(x, y)
       menuElement.style.left = `${next.left}px`
       menuElement.style.top = `${next.top}px`

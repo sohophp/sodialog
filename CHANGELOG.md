@@ -4,6 +4,12 @@
 
 ## Unreleased
 
+## 0.3.14 - 2026-08-09
+
+### Fixed
+
+- Context Menu 使用 Popover API 进入浏览器 top layer，修复菜单虽挂载在 Dialog 内、仍可能被弹窗面板遮挡的问题；不支持 Popover 时继续使用 Dialog 内挂载回退。
+
 ## 0.3.13 - 2026-08-09
 
 ### Fixed
