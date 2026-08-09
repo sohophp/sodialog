@@ -2958,12 +2958,24 @@ export class SoContextMenu {
   }
 
   private static resolveMountRoot(triggerElement?: HTMLElement): HTMLElement {
-    const activeTarget =
-      triggerElement ?? (document.activeElement instanceof HTMLElement ? (document.activeElement as HTMLElement) : null)
+    const triggerDialog = triggerElement?.closest('dialog[open]')
+    if (triggerDialog instanceof HTMLElement) {
+      return triggerDialog
+    }
 
-    const dialogRoot = activeTarget?.closest('dialog[open]')
-    if (dialogRoot instanceof HTMLElement) {
-      return dialogRoot
+    const activeDialog =
+      document.activeElement instanceof HTMLElement ? document.activeElement.closest('dialog[open]') : null
+    if (activeDialog instanceof HTMLElement) {
+      return activeDialog
+    }
+
+    // A context-menu trigger may live in a legacy overlay outside the native
+    // dialog DOM. Mount into the latest open SoDialog so it still participates
+    // in the browser top layer instead of being trapped under it in <body>.
+    const openDialogs = document.querySelectorAll<HTMLElement>('dialog.sod-dialog[open]')
+    const topmostDialog = openDialogs.item(openDialogs.length - 1)
+    if (topmostDialog) {
+      return topmostDialog
     }
 
     return document.body

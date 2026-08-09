@@ -4,11 +4,16 @@
 
 ## Unreleased
 
+## 0.3.13 - 2026-08-09
+
+### Fixed
+
+- Context Menu 会优先挂载到触发元素、当前焦点或最新 SoDialog 对应的原生 Dialog top layer，修复混合旧弹窗页面中菜单被遮挡的问题。
+
 ## 0.3.12 - 2026-08-09
 
 ### Fixed
 
-- Context Menu 在原生 Dialog 内触发时会挂载到同一个 top layer，避免被弹窗遮挡。
 - Dialog 的销毁关闭统一等待 `close` 事件收尾，并忽略快速重复关闭，避免焦点恢复、清理和下一层弹窗打开之间的竞态闪退。
 
 ## 0.3.11 - 2026-07-19

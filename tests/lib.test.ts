@@ -691,6 +691,20 @@ describe('SoContextMenu behavior', () => {
     expect(handle.element.parentElement).toBe(modal.dialog)
   })
 
+  it('mounts an external trigger menu in the active SoDialog top layer', () => {
+    const trigger = document.createElement('img')
+    document.body.append(trigger)
+    const modal = openModal({ title: 'legacy host', content: 'preview' })
+    const handle = bindContextMenu({
+      target: trigger,
+      items: [{ id: 'mobile', label: 'Mobile' }],
+    })
+
+    handle.openAt(40, 44, trigger)
+
+    expect(handle.element.parentElement).toBe(modal.dialog)
+  })
+
   it('renders icon class for menu item', () => {
     const trigger = document.createElement('div')
     document.body.append(trigger)
