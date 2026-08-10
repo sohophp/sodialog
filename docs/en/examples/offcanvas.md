@@ -2,4 +2,4 @@
 
 Standalone Offcanvas example without embedding the full legacy page.
 
-<DemoPreview src="/components/offcanvas.html" title="Offcanvas Placements" :height="430" />
+<DemoPreview src="/components/offcanvas-demo.html" title="Offcanvas Placements" :height="430" />

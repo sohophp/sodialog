@@ -49,6 +49,13 @@ describe('SoDialog image preview', () => {
     expect(handle.dialog.querySelector<HTMLElement>('.sod-image-preview-viewport')?.style.overflow).toBe('auto')
   })
 
+  it('can hide the percentage display while retaining toolbar controls', () => {
+    const handle = openImagePreview('https://example.test/photo.png', { showToolbar: true, showScale: false })
+
+    expect(handle.dialog.querySelectorAll('.sod-image-preview-tool')).toHaveLength(3)
+    expect(handle.dialog.querySelector('.sod-image-preview-scale')).toBeNull()
+  })
+
   it('sizes the panel to the image without exceeding the viewport and keeps scaled dimensions centered', () => {
     const handle = openImagePreview('https://example.test/large.png', { viewportPadding: 40 })
     const panel = handle.dialog.querySelector<HTMLElement>('.sod-panel')!

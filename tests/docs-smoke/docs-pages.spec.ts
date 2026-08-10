@@ -236,7 +236,7 @@ test('image preview demo loads the documented release and opens a preview', asyn
   expect(response?.ok()).toBeTruthy()
 
   const loader = await page.request.get('/components/sodialog-loader.js')
-  expect(await loader.text()).toContain("const defaultVersion = '0.3.17'")
+  expect(await loader.text()).toContain("const defaultVersion = 'latest'")
 
   const previewFrame = page.frameLocator('iframe[src="/components/image-preview.html"]').first()
   const status = previewFrame.locator('#status')
@@ -246,4 +246,15 @@ test('image preview demo loads the documented release and opens a preview', asyn
   await previewFrame.locator('.preview-source').click()
   await expect(previewFrame.locator('dialog.sod-image-preview[open]')).toBeVisible()
   await expect(previewFrame.locator('.sod-image-preview-toolbar')).toBeVisible()
+  await expect(previewFrame.locator('.sod-image-preview-scale')).toHaveText(/%/)
+})
+
+test('offcanvas example loads the focused component demo instead of the documentation page', async ({ page }) => {
+  const response = await page.goto('/examples/offcanvas', { waitUntil: 'domcontentloaded' })
+  expect(response?.ok()).toBeTruthy()
+
+  const previewFrame = page.frameLocator('iframe[src="/components/offcanvas-demo.html"]').first()
+  await expect(previewFrame.getByRole('heading', { name: 'Offcanvas 位置演示' })).toBeVisible()
+  await expect(previewFrame.locator('#status')).toHaveText('已就绪，点击按钮查看效果。', { timeout: 15_000 })
+  await expect(previewFrame.locator('.VPNav')).toHaveCount(0)
 })

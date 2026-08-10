@@ -44,6 +44,7 @@ preview.setScale(1.5)
 | `resizeWithScale` | `boolean` | `true` | 面板是否跟隨縮放圖片調整。 |
 | `showHeader` | `boolean` | `false` | 顯示標題列與關閉按鈕。 |
 | `showToolbar` | `boolean` | `false` | 顯示縮小、比例、放大與 1:1 工具列。 |
+| `showScale` | `boolean` | `true` | 啟用工具列時是否顯示目前縮放百分比。 |
 | `overflow` | `'hidden' \| 'auto'` | `'hidden'` | 需要時啟用捲軸。 |
 
 綁定選項另接受 `root?: ParentNode`（預設 `document`）與 `selector?: string`（預設 `img`）。預覽句柄除 `SoDialogHandle` 外還提供 `image`、`scale()` 與會限制範圍的 `setScale(scale)`。宿主移除時請呼叫綁定句柄的 `destroy()`。

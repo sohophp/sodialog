@@ -334,6 +334,7 @@ export interface SoImagePreviewOptions {
   viewportPadding?: number
   showHeader?: boolean
   showToolbar?: boolean
+  showScale?: boolean
   overflow?: 'hidden' | 'auto'
   resizeWithScale?: boolean
 }
@@ -3805,6 +3806,7 @@ export function openImagePreview(
   const wheelStep = Math.max(0.01, options.wheelStep ?? 0.1)
   const viewportPadding = Math.max(0, options.viewportPadding ?? 32)
   const showToolbar = options.showToolbar ?? false
+  const showScale = options.showScale ?? true
   const overflow = options.overflow ?? 'hidden'
   const resizeWithScale = options.resizeWithScale ?? true
   let currentScale = 1
@@ -3874,10 +3876,12 @@ export function openImagePreview(
       toolbar.append(button)
     }
     createButton('Zoom out', '−', () => setScale(currentScale - wheelStep))
-    const scaleOutput = document.createElement('output')
-    scaleOutput.className = 'sod-image-preview-scale'
-    scaleOutput.value = '100%'
-    toolbar.append(scaleOutput)
+    if (showScale) {
+      const scaleOutput = document.createElement('output')
+      scaleOutput.className = 'sod-image-preview-scale'
+      scaleOutput.value = '100%'
+      toolbar.append(scaleOutput)
+    }
     createButton('Zoom in', '+', () => setScale(currentScale + wheelStep))
     createButton('Reset zoom', '1:1', () => setScale(1))
     viewport.append(toolbar)

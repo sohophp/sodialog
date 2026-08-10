@@ -50,6 +50,7 @@ preview.setScale(1.5)
 | `resizeWithScale` | `boolean` | `true` | 面板是否跟随缩放后的图片扩缩。 |
 | `showHeader` | `boolean` | `false` | 显示标题栏和关闭按钮。 |
 | `showToolbar` | `boolean` | `false` | 显示缩小、比例、放大和 1:1 工具栏。 |
+| `showScale` | `boolean` | `true` | 工具栏启用时是否显示当前缩放百分比。 |
 | `overflow` | `'hidden' \| 'auto'` | `'hidden'` | 是否允许预览区域出现滚动条。 |
 
 `SoImagePreviewBindingOptions` 额外接受 `root?: ParentNode`（默认 `document`）和 `selector?: string`（默认 `img`）。
@@ -73,6 +74,7 @@ bindImagePreview({
   root: document,
   selector: '.article img',
   showToolbar: true,
+  showScale: true,
   showHeader: true,
   overflow: 'auto',
   initialScale: 'original',

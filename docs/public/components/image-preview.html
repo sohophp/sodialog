@@ -18,7 +18,7 @@
       const api = await loadSoDialog()
       const status = document.querySelector('#status')
       if (api?.bindImagePreview) {
-        api.bindImagePreview({ root: document, selector: '.preview-source', showToolbar: true })
+        api.bindImagePreview({ root: document, selector: '.preview-source', showToolbar: true, showScale: true })
         status.textContent = '已就绪，点击图片查看预览。'
       } else {
         status.textContent = '加载失败：当前版本不支持图片预览。'

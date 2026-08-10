@@ -44,6 +44,7 @@ preview.setScale(1.5)
 | `resizeWithScale` | `boolean` | `true` | Resize the panel with the scaled image. |
 | `showHeader` | `boolean` | `false` | Show the title and close button. |
 | `showToolbar` | `boolean` | `false` | Show zoom-out, scale, zoom-in, and 1:1 controls. |
+| `showScale` | `boolean` | `true` | Show the current zoom percentage when the toolbar is enabled. |
 | `overflow` | `'hidden' \| 'auto'` | `'hidden'` | Enable scrollbars when requested. |
 
 Binding options also accept `root?: ParentNode` (default `document`) and `selector?: string` (default `img`). The preview handle exposes `image`, `scale()`, and clamped `setScale(scale)` in addition to `SoDialogHandle`. Call the binding handle's `destroy()` when its host is removed.

@@ -2,7 +2,7 @@
 
 独立 Offcanvas 示例，避免嵌入整页 legacy demo。用于检查四个方向、动画和尺寸控制。
 
-<DemoPreview src="/components/offcanvas.html" title="Offcanvas Placements" :height="430" />
+<DemoPreview src="/components/offcanvas-demo.html" title="Offcanvas Placements" :height="430" />
 
 ## 相关
 
