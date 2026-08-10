@@ -27,7 +27,7 @@ const binding = bindImagePreview({ root: document.querySelector('.help-content')
 binding.destroy()
 ```
 
-`openImagePreview` starts at scale `1`, which represents the image's original pixel dimensions. The preview viewport accepts mouse-wheel zoom; `minScale`, `maxScale`, and `wheelStep` customize the range and increment.
+`openImagePreview` defaults to a centered immersive preset with no header, toolbar, or scrollbars. It grows to the image's natural dimensions without exceeding the viewport and initially fits oversized images. Mouse-wheel zoom stays centered. Use `showHeader`, `showToolbar`, `overflow`, `viewportPadding`, `initialScale`, `minScale`, `maxScale`, and `wheelStep` to customize the behavior.
 
 ### 签名
 

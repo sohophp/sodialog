@@ -214,6 +214,12 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-width: 0;
+  max-width: calc(100vw - 2rem);
+  max-height: calc(100vh - 2rem);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .sod-image-preview .sod-body {
@@ -227,20 +233,67 @@
   width: 100%;
   height: 100%;
   overflow: auto;
-  padding: 1rem;
-  background: #111827;
-  text-align: center;
+  position: relative;
+  padding: 0;
+  background: transparent;
   outline: none;
+}
+
+.sod-image-preview-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 100%;
+  min-height: 100%;
 }
 
 .sod-image-preview-image,
 .sod-body .sod-image-preview-image {
   max-width: none;
   max-height: none;
-  transform-origin: top center;
-  transition: transform 100ms ease-out;
+  flex: 0 0 auto;
+  object-fit: contain;
+  transition: width 100ms ease-out, height 100ms ease-out;
   user-select: none;
   cursor: zoom-in;
+}
+
+.sod-image-preview-toolbar {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.35rem;
+  border-radius: 999px;
+  background: rgb(17 24 39 / 82%);
+  color: #fff;
+  transform: translateX(-50%);
+  backdrop-filter: blur(8px);
+}
+
+.sod-image-preview-tool {
+  min-width: 2rem;
+  min-height: 2rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.sod-image-preview-tool:hover,
+.sod-image-preview-tool:focus-visible {
+  background: rgb(255 255 255 / 18%);
+  outline: none;
+}
+
+.sod-image-preview-scale {
+  min-width: 3.25rem;
+  text-align: center;
+  font: 600 0.75rem/1 system-ui, sans-serif;
 }
 
 @media (prefers-reduced-motion: reduce) {

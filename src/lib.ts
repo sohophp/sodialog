@@ -330,6 +330,11 @@ export interface SoImagePreviewOptions {
   minScale?: number
   maxScale?: number
   wheelStep?: number
+  initialScale?: 'fit' | 'original' | number
+  viewportPadding?: number
+  showHeader?: boolean
+  showToolbar?: boolean
+  overflow?: 'hidden' | 'auto'
 }
 
 export interface SoImagePreviewBindingOptions extends SoImagePreviewOptions {
@@ -3797,25 +3802,39 @@ export function openImagePreview(
   const minScale = Math.max(0.01, options.minScale ?? 0.1)
   const maxScale = Math.max(minScale, options.maxScale ?? 8)
   const wheelStep = Math.max(0.01, options.wheelStep ?? 0.1)
+  const viewportPadding = Math.max(0, options.viewportPadding ?? 32)
+  const showToolbar = options.showToolbar ?? false
+  const overflow = options.overflow ?? 'hidden'
   let currentScale = 1
 
   const viewport = document.createElement('div')
   viewport.className = 'sod-image-preview-viewport'
   viewport.tabIndex = 0
   viewport.setAttribute('aria-label', alt || options.title || 'Image preview')
+  viewport.style.overflow = overflow
 
   const image = document.createElement('img')
   image.className = 'sod-image-preview-image'
   image.src = sourceUrl
   image.alt = alt
   image.draggable = false
-  viewport.append(image)
+  const stage = document.createElement('div')
+  stage.className = 'sod-image-preview-stage'
+  stage.append(image)
+  viewport.append(stage)
 
   const clampScale = (scale: number) => Math.min(maxScale, Math.max(minScale, scale))
   const setScale = (scale: number) => {
     currentScale = clampScale(scale)
-    image.style.transform = `scale(${currentScale})`
+    if (image.naturalWidth > 0 && image.naturalHeight > 0) {
+      image.style.width = `${image.naturalWidth * currentScale}px`
+      image.style.height = `${image.naturalHeight * currentScale}px`
+    }
     viewport.dataset.sodImageScale = String(currentScale)
+    const scaleOutput = viewport.querySelector<HTMLOutputElement>('.sod-image-preview-scale')
+    if (scaleOutput) {
+      scaleOutput.value = `${Math.round(currentScale * 100)}%`
+    }
   }
 
   const onWheel = (event: WheelEvent) => {
@@ -3824,18 +3843,64 @@ export function openImagePreview(
   }
   viewport.addEventListener('wheel', onWheel, { passive: false })
 
+  if (showToolbar) {
+    const toolbar = document.createElement('div')
+    toolbar.className = 'sod-image-preview-toolbar'
+    toolbar.setAttribute('role', 'toolbar')
+    toolbar.setAttribute('aria-label', 'Image zoom')
+    const createButton = (label: string, text: string, onClick: () => void) => {
+      const button = document.createElement('button')
+      button.type = 'button'
+      button.className = 'sod-image-preview-tool'
+      button.setAttribute('aria-label', label)
+      button.textContent = text
+      button.addEventListener('click', onClick)
+      toolbar.append(button)
+    }
+    createButton('Zoom out', '−', () => setScale(currentScale - wheelStep))
+    const scaleOutput = document.createElement('output')
+    scaleOutput.className = 'sod-image-preview-scale'
+    scaleOutput.value = '100%'
+    toolbar.append(scaleOutput)
+    createButton('Zoom in', '+', () => setScale(currentScale + wheelStep))
+    createButton('Reset zoom', '1:1', () => setScale(1))
+    viewport.append(toolbar)
+  }
+
   const dialogHandle = openModal({
     title: options.title || alt || 'Image preview',
     content: viewport,
-    width: 'calc(100vw - 2rem)',
-    height: 'calc(100vh - 2rem)',
+    width: 1,
+    height: 1,
+    hideHeader: !(options.showHeader ?? false),
     hideFooter: true,
     draggable: false,
     closeOnBackdrop: true,
-    onAfterClose: () => viewport.removeEventListener('wheel', onWheel),
+    onAfterClose: () => {
+      viewport.removeEventListener('wheel', onWheel)
+      window.removeEventListener('resize', sizePreview)
+    },
   })
   dialogHandle.dialog.classList.add('sod-image-preview')
-  setScale(1)
+  const panel = dialogHandle.dialog.querySelector<HTMLElement>('.sod-panel')
+  const sizePreview = () => {
+    if (!panel || image.naturalWidth <= 0 || image.naturalHeight <= 0) {
+      return
+    }
+    const headerHeight = options.showHeader ? panel.querySelector<HTMLElement>('.sod-header')?.offsetHeight ?? 0 : 0
+    const availableWidth = Math.max(1, window.innerWidth - viewportPadding)
+    const availableHeight = Math.max(1, window.innerHeight - viewportPadding - headerHeight)
+    panel.style.width = `${Math.min(image.naturalWidth, availableWidth)}px`
+    panel.style.height = `${Math.min(image.naturalHeight, availableHeight) + headerHeight}px`
+    const fitScale = Math.min(1, availableWidth / image.naturalWidth, availableHeight / image.naturalHeight)
+    const initialScale = options.initialScale ?? 'fit'
+    setScale(initialScale === 'fit' ? fitScale : initialScale === 'original' ? 1 : initialScale)
+  }
+  image.addEventListener('load', sizePreview, { once: true })
+  window.addEventListener('resize', sizePreview)
+  if (image.complete) {
+    sizePreview()
+  }
   window.setTimeout(() => viewport.focus(), 0)
 
   return {

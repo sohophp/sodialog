@@ -15,7 +15,7 @@
     <script type="module">
       import { loadSoDialog } from './sodialog-loader.js'
       const api = await loadSoDialog()
-      api?.bindImagePreview?.({ root: document, selector: '.preview-source' })
+      api?.bindImagePreview?.({ root: document, selector: '.preview-source', showToolbar: true })
     </script>
   </body>
 </html>

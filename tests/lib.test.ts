@@ -18,7 +18,7 @@ import {
 
 describe('SoDialog image preview', () => {
   it('opens an image at its original scale and zooms with the mouse wheel', () => {
-    const handle = openImagePreview('https://example.test/photo.png', { minScale: 0.5, maxScale: 2, wheelStep: 0.25 })
+    const handle = openImagePreview('https://example.test/photo.png', { minScale: 0.5, maxScale: 2, wheelStep: 0.25, initialScale: 'original' })
     const viewport = handle.dialog.querySelector<HTMLElement>('.sod-image-preview-viewport')
 
     expect(handle.image.src).toBe('https://example.test/photo.png')
@@ -29,6 +29,42 @@ describe('SoDialog image preview', () => {
     expect(handle.scale()).toBe(1)
     handle.setScale(99)
     expect(handle.scale()).toBe(2)
+  })
+
+  it('uses the centered, toolbar-free and scrollbar-free preset by default', () => {
+    const handle = openImagePreview('https://example.test/photo.png')
+    const viewport = handle.dialog.querySelector<HTMLElement>('.sod-image-preview-viewport')
+
+    expect(handle.dialog.querySelector('.sod-header')).toBeNull()
+    expect(handle.dialog.querySelector('.sod-image-preview-toolbar')).toBeNull()
+    expect(viewport?.style.overflow).toBe('hidden')
+    expect(handle.dialog.querySelector('.sod-image-preview-stage')).not.toBeNull()
+  })
+
+  it('can show a zoom toolbar and opt into scrolling', () => {
+    const handle = openImagePreview('https://example.test/photo.png', { showToolbar: true, showHeader: true, overflow: 'auto' })
+
+    expect(handle.dialog.querySelector('.sod-header')).not.toBeNull()
+    expect(handle.dialog.querySelectorAll('.sod-image-preview-tool')).toHaveLength(3)
+    expect(handle.dialog.querySelector<HTMLElement>('.sod-image-preview-viewport')?.style.overflow).toBe('auto')
+  })
+
+  it('sizes the panel to the image without exceeding the viewport and keeps scaled dimensions centered', () => {
+    const handle = openImagePreview('https://example.test/large.png', { viewportPadding: 40 })
+    const panel = handle.dialog.querySelector<HTMLElement>('.sod-panel')!
+    Object.defineProperties(handle.image, {
+      naturalWidth: { value: 2000 },
+      naturalHeight: { value: 1200 },
+    })
+
+    handle.image.dispatchEvent(new Event('load'))
+
+    expect(panel.style.width).toBe(`${window.innerWidth - 40}px`)
+    expect(panel.style.height).toBe(`${window.innerHeight - 40}px`)
+    expect(handle.scale()).toBeCloseTo(Math.min((window.innerWidth - 40) / 2000, (window.innerHeight - 40) / 1200))
+    handle.setScale(0.5)
+    expect(handle.image.style.width).toBe('1000px')
+    expect(handle.image.style.height).toBe('600px')
   })
 
   it('binds delegated image clicks and can be destroyed', () => {
