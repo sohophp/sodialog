@@ -121,6 +121,7 @@ function createSidebar(locale: LocaleKey, copy: {
       items: [
         { text: copy.apiOverview, link: withLocale('/api/', locale) },
         { text: 'Dialog API', link: withLocale('/api/dialog', locale) },
+        { text: 'Image Preview API', link: withLocale('/api/image-preview', locale) },
         { text: 'Toast API', link: withLocale('/api/toast', locale) },
         { text: 'Context Menu API', link: withLocale('/api/context-menu', locale) },
         { text: 'Adapter API', link: withLocale('/api/adapter', locale) },
@@ -136,6 +137,7 @@ function createSidebar(locale: LocaleKey, copy: {
         { text: copy.examplesOverview, link: withLocale('/examples/', locale) },
         { text: 'Modal Basic', link: withLocale('/examples/modal-basic', locale) },
         { text: 'Modal Promise', link: withLocale('/examples/modal-promise', locale) },
+        { text: 'Image Preview', link: withLocale('/examples/image-preview', locale) },
         { text: 'Offcanvas', link: withLocale('/examples/offcanvas', locale) },
         { text: 'Toast Basic', link: withLocale('/examples/toast-basic', locale) },
         { text: 'Toast Queue', link: withLocale('/examples/toast-queue', locale) },

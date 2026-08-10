@@ -9,11 +9,11 @@
 | `confirmModal` | `(options?: SoDialogConfirmOptions)` | Open a confirm dialog and return `Promise<boolean>`. |
 | `promptModal` | `(options?: SoDialogPromptOptions)` | Open a prompt dialog and return `Promise<string | null>`. |
 | `formModal` | `(options: SoDialogFormOptions)` | Open a dynamic form dialog and return submitted values. |
-| `openImagePreview` | `(source, options?)` | 以原始尺寸开启图片并支持滚轮缩放。 |
+| `openImagePreview` | `(source, options?)` | 開啟置中且可設定的圖片預覽。 |
 | `bindImagePreview` | `(options?)` | 为指定文件或元素委派图片点击预览。 |
 | `SoDialog.open` | `(options: SoDialogOptions)` | Open modal or offcanvas by `kind`. |
 
-`bindImagePreview({ root })` 可绑定帮助内容等动态区域，并返回带有 `destroy()` 的句柄用于清理监听。
+`bindImagePreview({ root })` 可綁定說明內容等動態區域，並回傳帶有 `destroy()` 的句柄清理監聽。完整契約請參考[圖片預覽 API](/zh-TW/api/image-preview)。
 
 ## Core Options (`SoDialogBaseOptions`)
 

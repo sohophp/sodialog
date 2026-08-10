@@ -9,11 +9,11 @@
 | `confirmModal` | `(options?: SoDialogConfirmOptions)` | Open a confirm dialog and return `Promise<boolean>`. |
 | `promptModal` | `(options?: SoDialogPromptOptions)` | Open a prompt dialog and return `Promise<string | null>`. |
 | `formModal` | `(options: SoDialogFormOptions)` | Open a dynamic form dialog and return submitted values. |
-| `openImagePreview` | `(source, options?)` | Open an image at original scale with mouse-wheel zoom. |
+| `openImagePreview` | `(source, options?)` | Open a centered, configurable image preview. |
 | `bindImagePreview` | `(options?)` | Delegate image clicks from a document or element. |
 | `SoDialog.open` | `(options: SoDialogOptions)` | Open modal or offcanvas by `kind`. |
 
-`bindImagePreview({ root })` enhances dynamic content such as help documents and returns a handle with `destroy()` for listener cleanup.
+`bindImagePreview({ root })` enhances dynamic content such as help documents and returns a handle with `destroy()` for listener cleanup. See the [Image Preview API](/en/api/image-preview) for the complete contract.
 
 ## Core Options (`SoDialogBaseOptions`)
 

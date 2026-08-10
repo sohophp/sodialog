@@ -7,6 +7,7 @@
 <div class="sod-doc-grid-compact">
   <a class="sod-doc-tile" href="/zh-TW/examples/modal-basic"><h3>Modal Basic</h3><p>最小 Modal、預設 footer 與 header 拖動。</p></a>
   <a class="sod-doc-tile" href="/zh-TW/examples/modal-promise"><h3>Modal Promise</h3><p>confirm、prompt、form 的可取消流程。</p></a>
+  <a class="sod-doc-tile" href="/zh-TW/examples/image-preview"><h3>Image Preview</h3><p>置中預覽、滑鼠滾輪縮放與可選控制列。</p></a>
   <a class="sod-doc-tile" href="/zh-TW/examples/offcanvas"><h3>Offcanvas</h3><p>四個方向、尺寸與動畫。</p></a>
   <a class="sod-doc-tile" href="/zh-TW/examples/toast-basic"><h3>Toast Basic</h3><p>狀態訊息、位置與自動關閉。</p></a>
   <a class="sod-doc-tile" href="/zh-TW/examples/toast-queue"><h3>Toast Queue</h3><p>佇列上限、重複策略與進度。</p></a>

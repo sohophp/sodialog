@@ -28,16 +28,17 @@ description: SoDialog API 总览：Dialog、Toast、Context Menu、Adapter 的�
 ## API Pages
 
 1. [Dialog API](/api/dialog)
-2. [Toast API](/api/toast)
-3. [Context Menu API](/api/context-menu)
-4. [Adapter API](/api/adapter)
+2. [图片预览 API](/api/image-preview)
+3. [Toast API](/api/toast)
+4. [Context Menu API](/api/context-menu)
+5. [Adapter API](/api/adapter)
 
 ## 方法索引
 
 | Domain | Methods |
 | --- | --- |
-| Methods | `openModal`, `openOffcanvas`, `confirmModal`, `promptModal`, `formModal`, `toast`, `pushMessage`, `bindContextMenu`, `configureAdapter` |
-| Types | `SoDialogModalOptions`, `SoDialogOffcanvasOptions`, `SoToastOptions`, `SoContextMenuOptions`, `SoAdapterConfig` |
+| Methods | `openModal`, `openOffcanvas`, `confirmModal`, `promptModal`, `formModal`, `openImagePreview`, `bindImagePreview`, `toast`, `pushMessage`, `bindContextMenu`, `configureAdapter` |
+| Types | `SoDialogModalOptions`, `SoDialogOffcanvasOptions`, `SoImagePreviewOptions`, `SoToastOptions`, `SoContextMenuOptions`, `SoAdapterConfig` |
 | Global config | `configureDialog`, `configureContextMenu`, `SoToast.configure`, `configureAdapter` |
 | Adapters | `SoAdapter`, `openDialog`, `bindDialogContextMenu`, `pushMessage`, `openDialogFromContextMenu` |
 | Lifecycle | `onBeforeOpen`, `onAfterOpen`, `onBeforeClose`, `onAfterClose`, `onLayoutStable`, `onAction` |
@@ -48,6 +49,7 @@ description: SoDialog API 总览：Dialog、Toast、Context Menu、Adapter 的�
 | --- | --- |
 | Dialog | `SoDialogModalOptions`, `SoDialogOffcanvasOptions`, `SoDialogHandle` |
 | Promise Dialog | `SoDialogConfirmOptions`, `SoDialogPromptOptions`, `SoDialogFormOptions`, `SoDialogFormValue` |
+| Image Preview | `SoImagePreviewOptions`, `SoImagePreviewBindingOptions`, `SoImagePreviewHandle` |
 | Toast | `SoToastOptions`, `SoToastHandle`, `SoToastPlacement`, `SoToastDuplicateStrategy` |
 | Context Menu | `SoContextMenuOptions`, `SoContextMenuHandle`, `SoContextMenuItem` |
 | Adapter | `SoAdapterConfig`, `SoAdapterLogEvent`, `SoPushMessageOptions`, `SoMessageLevel` |

@@ -11,7 +11,7 @@
 | `confirmModal` | `(options?: SoDialogConfirmOptions)` | Open a confirm dialog and return `Promise<boolean>`. |
 | `promptModal` | `(options?: SoDialogPromptOptions)` | Open a prompt dialog and return `Promise<string | null>`. |
 | `formModal` | `(options: SoDialogFormOptions)` | Open a dynamic form dialog and return submitted values. |
-| `openImagePreview` | `(source, options?)` | Open an image at original scale with mouse-wheel zoom. |
+| `openImagePreview` | `(source, options?)` | Open a centered, configurable image preview. |
 | `bindImagePreview` | `(options?)` | Delegate image clicks from a document or element to the image preview. |
 | `SoDialog.open` | `(options: SoDialogOptions)` | Open modal or offcanvas by `kind`. |
 
@@ -27,7 +27,7 @@ const binding = bindImagePreview({ root: document.querySelector('.help-content')
 binding.destroy()
 ```
 
-`openImagePreview` defaults to a centered immersive preset with no header, toolbar, or scrollbars. Its panel follows the scaled image size and can grow up to the available viewport after padding; oversized images initially fit. Mouse-wheel zoom stays centered and defaults to a safer 25%–400% range. Use `resizeWithScale`, `showHeader`, `showToolbar`, `overflow`, `viewportPadding`, `initialScale`, `minScale`, `maxScale`, and `wheelStep` to customize the behavior.
+See the complete [Image Preview API](/api/image-preview) for defaults, options, return handles, cleanup, and runnable examples.
 
 ### 签名
 

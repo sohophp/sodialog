@@ -7,6 +7,7 @@ The examples hub now links to focused pages. Each page loads one runnable demo, 
 <div class="sod-doc-grid-compact">
   <a class="sod-doc-tile" href="/en/examples/modal-basic"><h3>Modal Basic</h3><p>Minimal modal, default footer, and header dragging.</p></a>
   <a class="sod-doc-tile" href="/en/examples/modal-promise"><h3>Modal Promise</h3><p>Confirm, prompt, and form as a cancelable workflow.</p></a>
+  <a class="sod-doc-tile" href="/en/examples/image-preview"><h3>Image Preview</h3><p>Centered preview, mouse-wheel zoom, and optional controls.</p></a>
   <a class="sod-doc-tile" href="/en/examples/offcanvas"><h3>Offcanvas</h3><p>Placement, sizing, and animation for edge panels.</p></a>
   <a class="sod-doc-tile" href="/en/examples/toast-basic"><h3>Toast Basic</h3><p>Status messages, placement, and auto close.</p></a>
   <a class="sod-doc-tile" href="/en/examples/toast-queue"><h3>Toast Queue</h3><p>Queue limit, duplicate strategy, and progress.</p></a>

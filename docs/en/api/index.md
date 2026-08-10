@@ -18,15 +18,17 @@ description: SoDialog API 总览：Dialog、Toast、Context Menu、Adapter 的�
 ## API Pages
 
 1. [Dialog API](/en/api/dialog)
-2. [Toast API](/en/api/toast)
-3. [Context Menu API](/en/api/context-menu)
-4. [Adapter API](/en/api/adapter)
+2. [Image Preview API](/en/api/image-preview)
+3. [Toast API](/en/api/toast)
+4. [Context Menu API](/en/api/context-menu)
+5. [Adapter API](/en/api/adapter)
 
 ## 方法索引
 
 | Domain | Methods |
 | --- | --- |
 | Dialog | `openModal`, `openOffcanvas`, `confirmModal`, `promptModal`, `formModal` |
+| Image Preview | `openImagePreview`, `bindImagePreview` |
 | Toast | `toast`, `pushMessage`, `SoToast.configure`, `SoToast.clear`, `SoToast.closeAll` |
 | Context Menu | `bindContextMenu`, `configureContextMenu`, `openDialogFromContextMenu` |
 | Adapter | `configureAdapter`, `openDialog`, `bindDialogContextMenu`, `pushMessage` |
@@ -37,6 +39,7 @@ description: SoDialog API 总览：Dialog、Toast、Context Menu、Adapter 的�
 | --- | --- |
 | Dialog | `SoDialogModalOptions`, `SoDialogOffcanvasOptions`, `SoDialogHandle` |
 | Promise Dialog | `SoDialogConfirmOptions`, `SoDialogPromptOptions`, `SoDialogFormOptions`, `SoDialogFormValue` |
+| Image Preview | `SoImagePreviewOptions`, `SoImagePreviewBindingOptions`, `SoImagePreviewHandle` |
 | Toast | `SoToastOptions`, `SoToastHandle`, `SoToastPlacement`, `SoToastDuplicateStrategy` |
 | Context Menu | `SoContextMenuOptions`, `SoContextMenuHandle`, `SoContextMenuItem` |
 | Adapter | `SoAdapterConfig`, `SoAdapterLogEvent`, `SoPushMessageOptions`, `SoMessageLevel` |

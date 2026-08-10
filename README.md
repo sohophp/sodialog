@@ -878,6 +878,31 @@ SoToast.configure({
 })
 ```
 
+## 图片预览
+
+```ts
+import { bindImagePreview, openImagePreview } from 'sodialog'
+
+const binding = bindImagePreview({
+  root: document.querySelector('.help-content')!,
+  selector: 'img',
+})
+
+const preview = openImagePreview('/images/manual.png', {
+  showToolbar: true,
+  minScale: 0.25,
+  maxScale: 4,
+  viewportPadding: 32,
+})
+
+preview.setScale(1.5)
+binding.destroy()
+```
+
+默认图片预览仅显示居中的图片，不显示标题栏、工具栏或滚动条。面板随缩放图片扩缩，但不会超过可用视口。可使用 `initialScale`、`resizeWithScale`、`showHeader`、`showToolbar`、`overflow`、`minScale`、`maxScale` 和 `wheelStep` 调整行为。
+
+完整契约请参阅文档站的 `/api/image-preview`。
+
 ## 开发
 
 ```bash
@@ -898,8 +923,6 @@ npm run docs:test:smoke:ci
 ## GitHub Pages 首页
 
 本仓库文档已迁移到 VitePress（`docs/`）。
-
-图片内容可通过 `bindImagePreview({ root })` 增强为点击原尺寸预览；预览中支持鼠标滚轮缩放，并可通过返回句柄的 `destroy()` 清理委托监听。
 
 - 本地开发文档：`npm run dev`（推荐）或 `npm run docs:dev`
 - 文档构建产物：`docs/.vitepress/dist`
