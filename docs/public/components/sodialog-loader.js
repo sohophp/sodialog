@@ -1,6 +1,8 @@
 /* global document, window, URLSearchParams */
 
-const defaultVersion = '0.3.10'
+// Keep runnable examples on the latest documented public release. Query-string
+// overrides remain available for compatibility testing.
+const defaultVersion = '0.3.17'
 
 const versionPattern = /^(latest|\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?)$/
 

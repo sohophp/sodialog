@@ -230,3 +230,20 @@ test('getting-started modal demo is ready and can open', async ({ page }) => {
 
   await expect(previewFrame.locator('dialog[open]')).toBeVisible()
 })
+
+test('image preview demo loads the documented release and opens a preview', async ({ page }) => {
+  const response = await page.goto('/examples/image-preview', { waitUntil: 'domcontentloaded' })
+  expect(response?.ok()).toBeTruthy()
+
+  const loader = await page.request.get('/components/sodialog-loader.js')
+  expect(await loader.text()).toContain("const defaultVersion = '0.3.17'")
+
+  const previewFrame = page.frameLocator('iframe[src="/components/image-preview.html"]').first()
+  const status = previewFrame.locator('#status')
+  await expect(status).not.toHaveText('正在加载示例脚本...', { timeout: 15_000 })
+  await expect(status).toHaveText('已就绪，点击图片查看预览。')
+
+  await previewFrame.locator('.preview-source').click()
+  await expect(previewFrame.locator('dialog.sod-image-preview[open]')).toBeVisible()
+  await expect(previewFrame.locator('.sod-image-preview-toolbar')).toBeVisible()
+})
