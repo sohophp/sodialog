@@ -7,6 +7,7 @@
 <div class="sod-doc-grid-compact">
   <a class="sod-doc-tile" href="/examples/modal-basic"><h3>Modal Basic</h3><p>最小 Modal、默认 footer、默认 header 拖动。</p></a>
   <a class="sod-doc-tile" href="/examples/modal-promise"><h3>Modal Promise</h3><p>confirm、prompt、form 的串行交互流程。</p></a>
+  <a class="sod-doc-tile" href="/examples/image-preview"><h3>Image Preview</h3><p>点击原尺寸预览与鼠标滚轮缩放。</p></a>
   <a class="sod-doc-tile" href="/examples/offcanvas"><h3>Offcanvas</h3><p>四个方向、尺寸和动画的贴边面板。</p></a>
   <a class="sod-doc-tile" href="/examples/toast-basic"><h3>Toast Basic</h3><p>状态消息、位置和自动关闭。</p></a>
   <a class="sod-doc-tile" href="/examples/toast-queue"><h3>Toast Queue</h3><p>队列上限、重复策略和倒计时。</p></a>

@@ -8,11 +8,45 @@ import {
   formModal,
   openDialogFromContextMenu,
   openDialog,
+  bindImagePreview,
+  openImagePreview,
   openModal,
   openOffcanvas,
   pushMessage,
   toast,
 } from '../src/lib'
+
+describe('SoDialog image preview', () => {
+  it('opens an image at its original scale and zooms with the mouse wheel', () => {
+    const handle = openImagePreview('https://example.test/photo.png', { minScale: 0.5, maxScale: 2, wheelStep: 0.25 })
+    const viewport = handle.dialog.querySelector<HTMLElement>('.sod-image-preview-viewport')
+
+    expect(handle.image.src).toBe('https://example.test/photo.png')
+    expect(handle.scale()).toBe(1)
+    viewport?.dispatchEvent(new WheelEvent('wheel', { deltaY: -100, cancelable: true }))
+    expect(handle.scale()).toBe(1.25)
+    viewport?.dispatchEvent(new WheelEvent('wheel', { deltaY: 100, cancelable: true }))
+    expect(handle.scale()).toBe(1)
+    handle.setScale(99)
+    expect(handle.scale()).toBe(2)
+  })
+
+  it('binds delegated image clicks and can be destroyed', () => {
+    const root = document.createElement('div')
+    root.innerHTML = '<img src="https://example.test/help.png" alt="Help image">'
+    document.body.append(root)
+    const binding = bindImagePreview({ root })
+    const image = root.querySelector('img')!
+
+    image.click()
+    expect(document.querySelector('.sod-image-preview')).not.toBeNull()
+    binding.destroy()
+    document.querySelectorAll('dialog').forEach((dialog) => dialog.remove())
+    image.click()
+    expect(document.querySelector('.sod-image-preview')).toBeNull()
+    root.remove()
+  })
+})
 
 describe('SoDialog modal behavior', () => {
   const dispatchPointerEvent = (

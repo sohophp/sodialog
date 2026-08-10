@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SoDialog Image Preview Demo</title>
+    <style>
+      body { margin: 0; padding: 24px; font-family: system-ui, sans-serif; background: #f6f8fb; }
+      .preview-source { display: block; width: 240px; max-width: 100%; cursor: zoom-in; border-radius: 12px; }
+    </style>
+  </head>
+  <body>
+    <p>点击图片后使用鼠标滚轮缩放。</p>
+    <img class="preview-source" src="https://picsum.photos/id/20/1200/800" alt="Notebook on a desk" />
+    <script type="module">
+      import { loadSoDialog } from './sodialog-loader.js'
+      const api = await loadSoDialog()
+      api?.bindImagePreview?.({ root: document, selector: '.preview-source' })
+    </script>
+  </body>
+</html>

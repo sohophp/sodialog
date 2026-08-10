@@ -899,6 +899,8 @@ npm run docs:test:smoke:ci
 
 本仓库文档已迁移到 VitePress（`docs/`）。
 
+图片内容可通过 `bindImagePreview({ root })` 增强为点击原尺寸预览；预览中支持鼠标滚轮缩放，并可通过返回句柄的 `destroy()` 清理委托监听。
+
 - 本地开发文档：`npm run dev`（推荐）或 `npm run docs:dev`
 - 文档构建产物：`docs/.vitepress/dist`
 - 旧版 demo 构建：`npm run build:demo`

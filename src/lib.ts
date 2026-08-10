@@ -324,6 +324,29 @@ export interface SoDialogHandle {
   id?: string
 }
 
+export interface SoImagePreviewOptions {
+  title?: string
+  alt?: string
+  minScale?: number
+  maxScale?: number
+  wheelStep?: number
+}
+
+export interface SoImagePreviewBindingOptions extends SoImagePreviewOptions {
+  root?: ParentNode
+  selector?: string
+}
+
+export interface SoImagePreviewHandle extends SoDialogHandle {
+  image: HTMLImageElement
+  scale: () => number
+  setScale: (scale: number) => void
+}
+
+export interface SoImagePreviewBindingHandle {
+  destroy: () => void
+}
+
 export interface SoDialogFooterActionContext {
   action: string
   button: SoDialogFooterButton
@@ -3762,6 +3785,85 @@ export function toast(options: SoToastOptions): SoToastHandle {
 
 export function bindContextMenu(options: SoContextMenuOptions): SoContextMenuHandle {
   return SoContextMenu.bind(options)
+}
+
+export function openImagePreview(
+  source: string | HTMLImageElement,
+  options: SoImagePreviewOptions = {},
+): SoImagePreviewHandle {
+  const sourceElement = typeof source === 'string' ? undefined : source
+  const sourceUrl = typeof source === 'string' ? source : source.currentSrc || source.src
+  const alt = options.alt ?? sourceElement?.alt ?? ''
+  const minScale = Math.max(0.01, options.minScale ?? 0.1)
+  const maxScale = Math.max(minScale, options.maxScale ?? 8)
+  const wheelStep = Math.max(0.01, options.wheelStep ?? 0.1)
+  let currentScale = 1
+
+  const viewport = document.createElement('div')
+  viewport.className = 'sod-image-preview-viewport'
+  viewport.tabIndex = 0
+  viewport.setAttribute('aria-label', alt || options.title || 'Image preview')
+
+  const image = document.createElement('img')
+  image.className = 'sod-image-preview-image'
+  image.src = sourceUrl
+  image.alt = alt
+  image.draggable = false
+  viewport.append(image)
+
+  const clampScale = (scale: number) => Math.min(maxScale, Math.max(minScale, scale))
+  const setScale = (scale: number) => {
+    currentScale = clampScale(scale)
+    image.style.transform = `scale(${currentScale})`
+    viewport.dataset.sodImageScale = String(currentScale)
+  }
+
+  const onWheel = (event: WheelEvent) => {
+    event.preventDefault()
+    setScale(currentScale + (event.deltaY < 0 ? wheelStep : -wheelStep))
+  }
+  viewport.addEventListener('wheel', onWheel, { passive: false })
+
+  const dialogHandle = openModal({
+    title: options.title || alt || 'Image preview',
+    content: viewport,
+    width: 'calc(100vw - 2rem)',
+    height: 'calc(100vh - 2rem)',
+    hideFooter: true,
+    draggable: false,
+    closeOnBackdrop: true,
+    onAfterClose: () => viewport.removeEventListener('wheel', onWheel),
+  })
+  dialogHandle.dialog.classList.add('sod-image-preview')
+  setScale(1)
+  window.setTimeout(() => viewport.focus(), 0)
+
+  return {
+    ...dialogHandle,
+    image,
+    scale: () => currentScale,
+    setScale,
+  }
+}
+
+export function bindImagePreview(options: SoImagePreviewBindingOptions = {}): SoImagePreviewBindingHandle {
+  const root = options.root ?? document
+  const selector = options.selector ?? 'img'
+  const onClick = (event: Event) => {
+    const target = event.target
+    const element = target && typeof (target as Element).closest === 'function' ? (target as Element).closest(selector) : null
+    if (!element || element.tagName.toLowerCase() !== 'img') {
+      return
+    }
+
+    event.preventDefault()
+    openImagePreview(element as HTMLImageElement, options)
+  }
+
+  root.addEventListener('click', onClick)
+  return {
+    destroy: () => root.removeEventListener('click', onClick),
+  }
 }
 
 export function configureDialog(config: SoDialogGlobalConfig): void {

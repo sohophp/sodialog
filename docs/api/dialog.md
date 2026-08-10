@@ -11,9 +11,23 @@
 | `confirmModal` | `(options?: SoDialogConfirmOptions)` | Open a confirm dialog and return `Promise<boolean>`. |
 | `promptModal` | `(options?: SoDialogPromptOptions)` | Open a prompt dialog and return `Promise<string | null>`. |
 | `formModal` | `(options: SoDialogFormOptions)` | Open a dynamic form dialog and return submitted values. |
+| `openImagePreview` | `(source, options?)` | Open an image at original scale with mouse-wheel zoom. |
+| `bindImagePreview` | `(options?)` | Delegate image clicks from a document or element to the image preview. |
 | `SoDialog.open` | `(options: SoDialogOptions)` | Open modal or offcanvas by `kind`. |
 
 ## `openModal`
+
+## Image preview
+
+```ts
+import { bindImagePreview } from 'sodialog'
+
+const binding = bindImagePreview({ root: document.querySelector('.help-content')! })
+// Remove the delegated listener when its host is destroyed.
+binding.destroy()
+```
+
+`openImagePreview` starts at scale `1`, which represents the image's original pixel dimensions. The preview viewport accepts mouse-wheel zoom; `minScale`, `maxScale`, and `wheelStep` customize the range and increment.
 
 ### 签名
 

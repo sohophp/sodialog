@@ -4,6 +4,12 @@
 
 ## Unreleased
 
+## 0.3.15 - 2026-08-10
+
+### Added
+
+- 新增 `openImagePreview` 与 `bindImagePreview`，支持点击图片以原始尺寸打开预览，并使用鼠标滚轮在可配置范围内缩放。
+
 ## 0.3.14 - 2026-08-09
 
 ### Fixed
