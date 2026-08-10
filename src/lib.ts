@@ -335,6 +335,7 @@ export interface SoImagePreviewOptions {
   showHeader?: boolean
   showToolbar?: boolean
   overflow?: 'hidden' | 'auto'
+  resizeWithScale?: boolean
 }
 
 export interface SoImagePreviewBindingOptions extends SoImagePreviewOptions {
@@ -3799,13 +3800,27 @@ export function openImagePreview(
   const sourceElement = typeof source === 'string' ? undefined : source
   const sourceUrl = typeof source === 'string' ? source : source.currentSrc || source.src
   const alt = options.alt ?? sourceElement?.alt ?? ''
-  const minScale = Math.max(0.01, options.minScale ?? 0.1)
-  const maxScale = Math.max(minScale, options.maxScale ?? 8)
+  const minScale = Math.max(0.01, options.minScale ?? 0.25)
+  const maxScale = Math.max(minScale, options.maxScale ?? 4)
   const wheelStep = Math.max(0.01, options.wheelStep ?? 0.1)
   const viewportPadding = Math.max(0, options.viewportPadding ?? 32)
   const showToolbar = options.showToolbar ?? false
   const overflow = options.overflow ?? 'hidden'
+  const resizeWithScale = options.resizeWithScale ?? true
   let currentScale = 1
+  let panel: HTMLElement | null = null
+
+  const resizePanel = () => {
+    if (!panel || image.naturalWidth <= 0 || image.naturalHeight <= 0) {
+      return
+    }
+    const headerHeight = options.showHeader ? panel.querySelector<HTMLElement>('.sod-header')?.offsetHeight ?? 0 : 0
+    const availableWidth = Math.max(1, window.innerWidth - viewportPadding)
+    const availableHeight = Math.max(1, window.innerHeight - viewportPadding - headerHeight)
+    const scaleForPanel = resizeWithScale ? currentScale : 1
+    panel.style.width = `${Math.min(image.naturalWidth * scaleForPanel, availableWidth)}px`
+    panel.style.height = `${Math.min(image.naturalHeight * scaleForPanel, availableHeight) + headerHeight}px`
+  }
 
   const viewport = document.createElement('div')
   viewport.className = 'sod-image-preview-viewport'
@@ -3829,6 +3844,7 @@ export function openImagePreview(
     if (image.naturalWidth > 0 && image.naturalHeight > 0) {
       image.style.width = `${image.naturalWidth * currentScale}px`
       image.style.height = `${image.naturalHeight * currentScale}px`
+      resizePanel()
     }
     viewport.dataset.sodImageScale = String(currentScale)
     const scaleOutput = viewport.querySelector<HTMLOutputElement>('.sod-image-preview-scale')
@@ -3882,7 +3898,7 @@ export function openImagePreview(
     },
   })
   dialogHandle.dialog.classList.add('sod-image-preview')
-  const panel = dialogHandle.dialog.querySelector<HTMLElement>('.sod-panel')
+  panel = dialogHandle.dialog.querySelector<HTMLElement>('.sod-panel')
   const sizePreview = () => {
     if (!panel || image.naturalWidth <= 0 || image.naturalHeight <= 0) {
       return
@@ -3890,8 +3906,6 @@ export function openImagePreview(
     const headerHeight = options.showHeader ? panel.querySelector<HTMLElement>('.sod-header')?.offsetHeight ?? 0 : 0
     const availableWidth = Math.max(1, window.innerWidth - viewportPadding)
     const availableHeight = Math.max(1, window.innerHeight - viewportPadding - headerHeight)
-    panel.style.width = `${Math.min(image.naturalWidth, availableWidth)}px`
-    panel.style.height = `${Math.min(image.naturalHeight, availableHeight) + headerHeight}px`
     const fitScale = Math.min(1, availableWidth / image.naturalWidth, availableHeight / image.naturalHeight)
     const initialScale = options.initialScale ?? 'fit'
     setScale(initialScale === 'fit' ? fitScale : initialScale === 'original' ? 1 : initialScale)

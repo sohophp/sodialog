@@ -59,12 +59,37 @@ describe('SoDialog image preview', () => {
 
     handle.image.dispatchEvent(new Event('load'))
 
-    expect(panel.style.width).toBe(`${window.innerWidth - 40}px`)
-    expect(panel.style.height).toBe(`${window.innerHeight - 40}px`)
-    expect(handle.scale()).toBeCloseTo(Math.min((window.innerWidth - 40) / 2000, (window.innerHeight - 40) / 1200))
+    const fitScale = Math.min((window.innerWidth - 40) / 2000, (window.innerHeight - 40) / 1200)
+    expect(panel.style.width).toBe(`${2000 * fitScale}px`)
+    expect(panel.style.height).toBe(`${1200 * fitScale}px`)
+    expect(handle.scale()).toBeCloseTo(fitScale)
     handle.setScale(0.5)
     expect(handle.image.style.width).toBe('1000px')
     expect(handle.image.style.height).toBe('600px')
+    expect(panel.style.width).toBe('984px')
+    expect(panel.style.height).toBe('600px')
+  })
+
+  it('grows and shrinks the viewport with the scaled image while enforcing safer default limits', () => {
+    const handle = openImagePreview('https://example.test/small.png', { initialScale: 'original', viewportPadding: 40 })
+    const panel = handle.dialog.querySelector<HTMLElement>('.sod-panel')!
+    Object.defineProperties(handle.image, {
+      naturalWidth: { value: 400 },
+      naturalHeight: { value: 300 },
+    })
+    handle.image.dispatchEvent(new Event('load'))
+
+    expect(panel.style.width).toBe('400px')
+    expect(panel.style.height).toBe('300px')
+    handle.setScale(2)
+    expect(panel.style.width).toBe('800px')
+    expect(panel.style.height).toBe('600px')
+    handle.setScale(0)
+    expect(handle.scale()).toBe(0.25)
+    expect(panel.style.width).toBe('100px')
+    expect(panel.style.height).toBe('75px')
+    handle.setScale(99)
+    expect(handle.scale()).toBe(4)
   })
 
   it('binds delegated image clicks and can be destroyed', () => {

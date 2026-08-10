@@ -27,7 +27,7 @@ const binding = bindImagePreview({ root: document.querySelector('.help-content')
 binding.destroy()
 ```
 
-`openImagePreview` defaults to a centered immersive preset with no header, toolbar, or scrollbars. It grows to the image's natural dimensions without exceeding the viewport and initially fits oversized images. Mouse-wheel zoom stays centered. Use `showHeader`, `showToolbar`, `overflow`, `viewportPadding`, `initialScale`, `minScale`, `maxScale`, and `wheelStep` to customize the behavior.
+`openImagePreview` defaults to a centered immersive preset with no header, toolbar, or scrollbars. Its panel follows the scaled image size and can grow up to the available viewport after padding; oversized images initially fit. Mouse-wheel zoom stays centered and defaults to a safer 25%–400% range. Use `resizeWithScale`, `showHeader`, `showToolbar`, `overflow`, `viewportPadding`, `initialScale`, `minScale`, `maxScale`, and `wheelStep` to customize the behavior.
 
 ### 签名
 
