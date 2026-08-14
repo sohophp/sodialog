@@ -32,7 +32,7 @@
   <body>
     <div class="card">
       <h2>Modal 基础演示</h2>
-      <p>点击按钮打开一个标准 Modal。</p>
+      <p>点击按钮打开一个必须明确确认或取消的 Modal。</p>
       <button id="open" disabled>Loading...</button>
       <p id="status" style="margin-top: 10px; color: #475569; font-size: 13px">正在加载示例脚本...</p>
     </div>
@@ -51,19 +51,25 @@
         }
       } else {
         openButton.disabled = false
-        openButton.textContent = 'Open Modal'
+        openButton.textContent = 'Open Blocking Confirm'
         if (status) {
           status.textContent = '已就绪，点击按钮查看效果。'
           status.style.color = '#0f766e'
         }
 
         openButton.addEventListener('click', () => {
-          api.openModal({
+          const confirm = api.blockingConfirm ?? ((options) => api.confirmModal({
+            ...options,
+            useModal: true,
+            hideCloseButton: true,
+            closeOnBackdrop: false,
+            closeOnEsc: false,
+          }))
+          void confirm({
             title: '删除确认',
             content: '<p>确认删除当前记录吗？</p>',
             confirmText: '确认',
             cancelText: '取消',
-            useModal: true,
           })
         })
       }

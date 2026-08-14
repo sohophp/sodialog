@@ -82,6 +82,19 @@ openModal({
 
 ## Promise 组合流程
 
+需要在用户明确选择前阻止页面其它操作时，使用 `blockingConfirm`。它不允许通过关闭按钮、遮罩或 Escape 跳过选择：
+
+```ts
+import { blockingConfirm } from 'sodialog'
+
+const shouldDelete = await blockingConfirm({
+  title: '删除确认',
+  content: '<p>确认删除当前记录吗？</p>',
+  confirmText: '删除',
+  cancelText: '取消',
+})
+```
+
 ```ts
 import { confirmModal, promptModal, formModal, pushMessage } from 'sodialog'
 

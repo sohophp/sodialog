@@ -241,6 +241,11 @@ export interface SoDialogConfirmOptions
   onCancel?: () => void
 }
 
+export type SoDialogBlockingConfirmOptions = Omit<
+  SoDialogConfirmOptions,
+  'useModal' | 'hideCloseButton' | 'closeOnBackdrop' | 'closeOnEsc' | 'footerButtons' | 'hideFooter'
+>
+
 export type SoPromptInputType = 'text' | 'password' | 'email' | 'search' | 'url' | 'tel'
 export type SoFormFieldType = SoPromptInputType | 'number' | 'textarea' | 'select' | 'checkbox'
 
@@ -1645,6 +1650,16 @@ export class SoDialog {
           settle(false)
         },
       })
+    })
+  }
+
+  static blockingConfirm(options: SoDialogBlockingConfirmOptions = {}): Promise<boolean> {
+    return this.confirm({
+      ...options,
+      useModal: true,
+      hideCloseButton: true,
+      closeOnBackdrop: false,
+      closeOnEsc: false,
     })
   }
 
@@ -3776,6 +3791,10 @@ export function openOffcanvas(options: Omit<SoDialogOffcanvasOptions, 'kind'>): 
 
 export function confirmModal(options: SoDialogConfirmOptions = {}): Promise<boolean> {
   return SoDialog.confirm(options)
+}
+
+export function blockingConfirm(options: SoDialogBlockingConfirmOptions = {}): Promise<boolean> {
+  return SoDialog.blockingConfirm(options)
 }
 
 export function promptModal(options: SoDialogPromptOptions = {}): Promise<string | null> {

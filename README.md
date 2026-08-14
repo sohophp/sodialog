@@ -345,6 +345,17 @@ toast({
 })
 ```
 
+需要像原生确认框一样先处理当前窗口、禁止通过关闭按钮、遮罩或 Escape 跳过选择时，使用 `blockingConfirm()` 并等待结果：
+
+```ts
+const shouldDelete = await blockingConfirm({
+  title: '删除确认',
+  content: '<p>确定删除这条记录吗？</p>',
+  confirmText: '删除',
+  cancelText: '取消',
+})
+```
+
 ### 3) Promise 调用：`promptModal`
 
 ```ts

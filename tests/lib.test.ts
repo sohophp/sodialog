@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import {
   bindContextMenu,
+  blockingConfirm,
   bindDialogContextMenu,
   configureContextMenu,
   configureDialog,
@@ -143,6 +144,27 @@ describe('SoDialog modal behavior', () => {
     expect(handle.dialog.style.outline).toBe('none')
     expect(handle.dialog.style.boxShadow).toBe('none')
     expect(handle.dialog.open).toBe(true)
+  })
+
+  it('blocks background dismissal until the user chooses a confirm action', async () => {
+    const resultPromise = blockingConfirm({ content: 'Delete this record?' })
+    const dialog = document.querySelector<HTMLDialogElement>('.sod-dialog')!
+
+    expect(dialog.open).toBe(true)
+    expect(dialog.getAttribute('aria-modal')).toBe('true')
+    expect(dialog.querySelector('.sod-close')).toBeNull()
+
+    dialog.click()
+    const cancelEvent = new Event('cancel', { cancelable: true })
+    dialog.dispatchEvent(cancelEvent)
+
+    expect(cancelEvent.defaultPrevented).toBe(true)
+    expect(dialog.open).toBe(true)
+
+    dialog.querySelector<HTMLButtonElement>('[data-action="cancel"]')?.click()
+    await vi.runAllTimersAsync()
+
+    await expect(resultPromise).resolves.toBe(false)
   })
 
   it('applies custom modal width and height', () => {

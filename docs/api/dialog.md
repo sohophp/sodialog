@@ -9,11 +9,29 @@
 | `openModal` | `(options: SoDialogModalOptions)` | Open a modal dialog. |
 | `openOffcanvas` | `(options: Omit<SoDialogOffcanvasOptions, 'kind'>)` | Open an offcanvas panel dialog. |
 | `confirmModal` | `(options?: SoDialogConfirmOptions)` | Open a confirm dialog and return `Promise<boolean>`. |
+| `blockingConfirm` | `(options?: SoDialogBlockingConfirmOptions)` | Open a native modal confirmation that must be answered with one of its action buttons. |
 | `promptModal` | `(options?: SoDialogPromptOptions)` | Open a prompt dialog and return `Promise<string | null>`. |
 | `formModal` | `(options: SoDialogFormOptions)` | Open a dynamic form dialog and return submitted values. |
 | `openImagePreview` | `(source, options?)` | Open a centered, configurable image preview. |
 | `bindImagePreview` | `(options?)` | Delegate image clicks from a document or element to the image preview. |
 | `SoDialog.open` | `(options: SoDialogOptions)` | Open modal or offcanvas by `kind`. |
+
+## `blockingConfirm`
+
+`blockingConfirm` is the closest browser-safe equivalent to `window.confirm()`: it uses native `showModal()` to prevent interaction with the rest of the page, disables the close button, backdrop dismissal and Escape, and returns `Promise<boolean>`. JavaScript execution itself remains asynchronous, so callers should `await` the result.
+
+```ts
+import { blockingConfirm } from 'sodialog'
+
+if (await blockingConfirm({
+  title: 'Delete record',
+  content: '<p>This action cannot be undone.</p>',
+  confirmText: 'Delete',
+  cancelText: 'Cancel',
+})) {
+  await deleteRecord()
+}
+```
 
 ## `openModal`
 
