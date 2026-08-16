@@ -27,6 +27,7 @@ description: SoDialog API 总览：Dialog、Toast、Context Menu、Adapter 的�
 
 | Domain | Methods |
 | --- | --- |
+| Theme | `setTheme`, `getTheme` |
 | Dialog | `openModal`, `openOffcanvas`, `confirmModal`, `promptModal`, `formModal` |
 | Image Preview | `openImagePreview`, `bindImagePreview` |
 | Toast | `toast`, `pushMessage`, `SoToast.configure`, `SoToast.clear`, `SoToast.closeAll` |
@@ -38,6 +39,7 @@ description: SoDialog API 总览：Dialog、Toast、Context Menu、Adapter 的�
 | Domain | Key Types |
 | --- | --- |
 | Dialog | `SoDialogModalOptions`, `SoDialogOffcanvasOptions`, `SoDialogHandle` |
+| Theme | `SoThemePreset` (`classic` \| `modern` \| `minimal`) |
 | Promise Dialog | `SoDialogConfirmOptions`, `SoDialogPromptOptions`, `SoDialogFormOptions`, `SoDialogFormValue` |
 | Image Preview | `SoImagePreviewOptions`, `SoImagePreviewBindingOptions`, `SoImagePreviewHandle` |
 | Toast | `SoToastOptions`, `SoToastHandle`, `SoToastPlacement`, `SoToastDuplicateStrategy` |
@@ -99,7 +101,9 @@ pushMessage('success', '操作成功', { traceId: 'trace-order-001' })
 ## 全局配置示例
 
 ```ts
-import { configureDialog, configureContextMenu } from 'sodialog'
+import { setTheme, configureDialog, configureContextMenu } from 'sodialog'
+
+setTheme('modern')
 
 configureDialog({
   modalDefaults: { footerAlign: 'center', closeOnEsc: false },

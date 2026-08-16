@@ -6,11 +6,26 @@ description: 使用 SoDialog CSS Variables 创建品牌主题，并保持与宿�
 
 SoDialog 使用带 `--sod-*` 前缀的 CSS Variables 提供主题能力，不要求 CSS-in-JS、预处理器或框架插件。
 
+## 内置主题
+
+`classic` 保持既有视觉，`modern` 提供更精致的产品化界面，`minimal` 适合信息密度较高的后台。默认仍为 `classic`。
+
+```ts
+import { setTheme, openModal, toast } from 'sodialog'
+
+setTheme('modern')
+
+openModal({ title: '设置', content: '全局使用 modern' })
+toast({ content: '这一条单独使用 minimal', theme: 'minimal' })
+```
+
+`setTheme()` 会更新已经打开、且没有单独指定 `theme` 的 Modal、Offcanvas、Toast 和 Context Menu。每个组件也可以通过 `theme: 'classic' | 'modern' | 'minimal'` 覆盖全局主题。
+
 ## 品牌主题示例
 
 ```css
 .sod-dialog,
-.sod-toast-container,
+.sod-toast,
 .sod-context-menu {
   --sod-color-surface: #0b1020;
   --sod-color-text: #f8fafc;
@@ -19,6 +34,17 @@ SoDialog 使用带 `--sod-*` 前缀的 CSS Variables 提供主题能力，不要
   --sod-focus-ring: #67e8f9;
   --sod-btn-primary-bg: #06b6d4;
   --sod-panel-radius: 1rem;
+}
+```
+
+可以在内置主题类上只覆盖品牌变量：
+
+```css
+.sod-theme-modern {
+  --sod-btn-primary-bg: #7c3aed;
+  --sod-btn-primary-hover-bg: #6d28d9;
+  --sod-focus-ring: #c4b5fd;
+  --sod-panel-radius: 1.125rem;
 }
 ```
 

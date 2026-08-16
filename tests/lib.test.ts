@@ -7,6 +7,7 @@ import {
   configureDialog,
   configureAdapter,
   formModal,
+  getTheme,
   openDialogFromContextMenu,
   openDialog,
   bindImagePreview,
@@ -14,8 +15,54 @@ import {
   openModal,
   openOffcanvas,
   pushMessage,
+  setTheme,
   toast,
 } from '../src/lib'
+
+describe('SoDialog theme presets', () => {
+  it('applies the global theme to dialogs, toasts, and context menus', () => {
+    setTheme('modern')
+
+    const modal = openModal({ title: 'Modern modal', content: 'x' })
+    const message = toast({ content: 'Saved' })
+    const trigger = document.createElement('button')
+    document.body.append(trigger)
+    const menu = bindContextMenu({ target: trigger, items: [{ label: 'Open' }] })
+
+    expect(getTheme()).toBe('modern')
+    expect(modal.dialog.classList.contains('sod-theme-modern')).toBe(true)
+    expect(message.element.classList.contains('sod-theme-modern')).toBe(true)
+    expect(menu.element.classList.contains('sod-theme-modern')).toBe(true)
+
+    setTheme('classic')
+  })
+
+  it('updates globally themed elements while preserving local overrides', () => {
+    setTheme('classic')
+    const globalModal = openModal({ title: 'Global', content: 'x' })
+    const localModal = openModal({ title: 'Local', content: 'x', theme: 'minimal' })
+
+    setTheme('modern')
+
+    expect(globalModal.dialog.classList.contains('sod-theme-modern')).toBe(true)
+    expect(localModal.dialog.classList.contains('sod-theme-minimal')).toBe(true)
+    expect(localModal.dialog.dataset.sodThemeScope).toBe('local')
+
+    setTheme('classic')
+  })
+
+  it('rejects unknown runtime theme names', () => {
+    expect(() => setTheme('neon' as never)).toThrow(TypeError)
+  })
+
+  it('updates the theme of a reused toast', () => {
+    const message = toast({ id: 'theme-update', content: 'Saving', theme: 'minimal' })
+    toast({ id: 'theme-update', content: 'Saved', theme: 'modern' })
+
+    expect(message.element.classList.contains('sod-theme-modern')).toBe(true)
+    expect(message.element.classList.contains('sod-theme-minimal')).toBe(false)
+  })
+})
 
 describe('SoDialog image preview', () => {
   it('opens an image at its original scale and zooms with the mouse wheel', () => {

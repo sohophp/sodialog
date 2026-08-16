@@ -4,6 +4,17 @@
 
 ## Unreleased
 
+## 0.3.20 - 2026-08-16
+
+### Added
+
+- 新增全域 `setTheme()` / `getTheme()` 与单组件 `theme` API，内置向后兼容的 `classic`、产品化 `modern` 和紧凑 `minimal` 三种主题。
+- Modal、Offcanvas、Toast 与 Context Menu 现在共享作用域化主题变量；全域主题切换会即时更新未设置局部主题的已开启组件。
+
+### Changed
+
+- 默认 CSS Variables 从全局 `:root` 收敛到 SoDialog 元件根节点，避免污染宿主页面。
+
 ## 0.3.19 - 2026-08-14
 
 ### Added

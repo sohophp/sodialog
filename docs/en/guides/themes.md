@@ -6,11 +6,26 @@ description: 使用 SoDialog CSS Variables 创建品牌主题，并保持与宿�
 
 SoDialog 使用带 `--sod-*` 前缀的 CSS Variables 提供主题能力，不要求 CSS-in-JS、预处理器或框架插件。
 
+## Built-in themes
+
+`classic` preserves the existing look, `modern` provides a polished product UI, and `minimal` suits dense admin interfaces. The default remains `classic`.
+
+```ts
+import { setTheme, openModal, toast } from 'sodialog'
+
+setTheme('modern')
+
+openModal({ title: 'Settings', content: 'Uses the global modern theme' })
+toast({ content: 'Uses a local minimal override', theme: 'minimal' })
+```
+
+`setTheme()` updates open Modal, Offcanvas, Toast, and Context Menu instances that do not have a local theme. Each component accepts `theme: 'classic' | 'modern' | 'minimal'` as an override.
+
 ## 品牌主题示例
 
 ```css
 .sod-dialog,
-.sod-toast-container,
+.sod-toast,
 .sod-context-menu {
   --sod-color-surface: #0b1020;
   --sod-color-text: #f8fafc;
@@ -19,6 +34,17 @@ SoDialog 使用带 `--sod-*` 前缀的 CSS Variables 提供主题能力，不要
   --sod-focus-ring: #67e8f9;
   --sod-btn-primary-bg: #06b6d4;
   --sod-panel-radius: 1rem;
+}
+```
+
+Brand tokens can refine a built-in theme without overriding internal selectors:
+
+```css
+.sod-theme-modern {
+  --sod-btn-primary-bg: #7c3aed;
+  --sod-btn-primary-hover-bg: #6d28d9;
+  --sod-focus-ring: #c4b5fd;
+  --sod-panel-radius: 1.125rem;
 }
 ```
 

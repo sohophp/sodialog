@@ -27,8 +27,11 @@ npm install sodialog
 ## 使用
 
 ```ts
-import { openModal, openOffcanvas, confirmModal, promptModal, formModal, toast, bindContextMenu } from 'sodialog'
+import { setTheme, openModal, openOffcanvas, confirmModal, promptModal, formModal, toast, bindContextMenu } from 'sodialog'
 import 'sodialog/style.css'
+
+// classic（默认）、modern 或 minimal；也可在单个组件传入 theme 覆盖。
+setTheme('modern')
 
 openModal({
   id: 'order-delete',

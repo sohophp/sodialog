@@ -1,4 +1,6 @@
-:root {
+.sod-dialog,
+.sod-toast,
+.sod-context-menu {
   --sod-color-surface: #fff;
   --sod-color-text: #212529;
   --sod-color-muted: #6c757d;
@@ -38,6 +40,163 @@
   --sod-menu-border: #dee2e6;
   --sod-menu-shadow: 0 0.6rem 1.4rem rgb(0 0 0 / 18%);
   --sod-menu-item-hover-bg: #f1f3f5;
+}
+
+/* Theme presets stay scoped to SoDialog roots and can be refined with --sod-* variables. */
+.sod-theme-modern {
+  --sod-color-surface: #fff;
+  --sod-color-text: #172033;
+  --sod-color-muted: #697386;
+  --sod-color-border: #e5e9f0;
+  --sod-focus-ring: #77a7ff;
+  --sod-backdrop-bg: rgb(15 23 42 / 46%);
+  --sod-panel-radius: 0.875rem;
+  --sod-panel-shadow: 0 1.5rem 4.5rem rgb(15 23 42 / 18%), 0 0.25rem 1rem rgb(15 23 42 / 8%);
+  --sod-btn-primary-bg: #1769e0;
+  --sod-btn-primary-hover-bg: #1159c4;
+  --sod-btn-primary-hover-border: #1159c4;
+  --sod-btn-outline-color: #5d6879;
+  --sod-btn-outline-hover-bg: #f1f5f9;
+  --sod-btn-outline-hover-color: #172033;
+  --sod-btn-ghost-hover-bg: #f1f5f9;
+  --sod-btn-link-color: #1769e0;
+  --sod-btn-link-hover-color: #1159c4;
+  --sod-toast-border: #e5e9f0;
+  --sod-toast-shadow: 0 1rem 3rem rgb(15 23 42 / 15%), 0 0.125rem 0.5rem rgb(15 23 42 / 8%);
+  --sod-menu-border: #e5e9f0;
+  --sod-menu-shadow: 0 1rem 3rem rgb(15 23 42 / 16%), 0 0.125rem 0.5rem rgb(15 23 42 / 8%);
+  --sod-menu-item-hover-bg: #f1f5f9;
+}
+
+.sod-theme-minimal {
+  --sod-color-surface: #fff;
+  --sod-color-text: #18181b;
+  --sod-color-muted: #71717a;
+  --sod-color-border: #e4e4e7;
+  --sod-focus-ring: #a1a1aa;
+  --sod-backdrop-bg: rgb(24 24 27 / 36%);
+  --sod-panel-radius: 0.5rem;
+  --sod-panel-shadow: 0 0.75rem 2.5rem rgb(24 24 27 / 14%);
+  --sod-btn-primary-bg: #27272a;
+  --sod-btn-primary-hover-bg: #09090b;
+  --sod-btn-primary-hover-border: #09090b;
+  --sod-btn-outline-color: #52525b;
+  --sod-btn-outline-hover-bg: #f4f4f5;
+  --sod-btn-outline-hover-color: #18181b;
+  --sod-btn-ghost-hover-bg: #f4f4f5;
+  --sod-btn-link-color: #27272a;
+  --sod-btn-link-hover-color: #09090b;
+  --sod-toast-border: #e4e4e7;
+  --sod-toast-shadow: 0 0.75rem 2rem rgb(24 24 27 / 13%);
+  --sod-menu-border: #e4e4e7;
+  --sod-menu-shadow: 0 0.75rem 2rem rgb(24 24 27 / 14%);
+  --sod-menu-item-hover-bg: #f4f4f5;
+}
+
+.sod-dialog.sod-theme-modern::backdrop {
+  backdrop-filter: blur(3px);
+}
+
+.sod-dialog.sod-theme-modern .sod-panel,
+.sod-dialog.sod-theme-minimal .sod-panel {
+  border: 1px solid var(--sod-color-border);
+  overflow: hidden;
+}
+
+.sod-dialog.sod-theme-modern .sod-header {
+  padding: 1rem 1.125rem 0.875rem;
+}
+
+.sod-dialog.sod-theme-modern .sod-title {
+  font-size: 1rem;
+  font-weight: 650;
+  letter-spacing: -0.012em;
+}
+
+.sod-dialog.sod-theme-modern .sod-body {
+  padding: 1.125rem;
+}
+
+.sod-dialog.sod-theme-modern .sod-footer {
+  padding: 0.875rem 1.125rem;
+  background: #fbfcfe;
+}
+
+.sod-dialog.sod-theme-modern .sod-close,
+.sod-dialog.sod-theme-minimal .sod-close {
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border-radius: 0.5rem;
+  font-size: 1.25rem;
+  transition: color 140ms ease, background-color 140ms ease;
+}
+
+.sod-dialog.sod-theme-modern .sod-close:hover,
+.sod-dialog.sod-theme-minimal .sod-close:hover {
+  color: var(--sod-color-text);
+  background: var(--sod-btn-ghost-hover-bg);
+}
+
+.sod-dialog.sod-theme-modern .sod-btn {
+  min-height: 2.375rem;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.875rem;
+  font-weight: 650;
+}
+
+.sod-dialog.sod-theme-minimal .sod-header,
+.sod-dialog.sod-theme-minimal .sod-body,
+.sod-dialog.sod-theme-minimal .sod-footer {
+  padding-inline: 0.875rem;
+}
+
+.sod-dialog.sod-theme-minimal .sod-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.sod-dialog.sod-theme-minimal .sod-btn {
+  min-height: 2.125rem;
+  border-radius: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.84rem;
+}
+
+.sod-toast.sod-theme-modern {
+  border-radius: 0.75rem;
+}
+
+.sod-toast.sod-theme-modern .sod-toast-header {
+  padding: 0.75rem 0.875rem 0;
+}
+
+.sod-toast.sod-theme-modern .sod-toast-body {
+  padding: 0.5rem 0.875rem 0.875rem;
+}
+
+.sod-toast.sod-theme-minimal {
+  border-radius: 0.5rem;
+  box-shadow: var(--sod-toast-shadow);
+}
+
+.sod-context-menu.sod-theme-modern {
+  gap: 0.2rem;
+  padding: 0.4rem;
+  border-radius: 0.75rem;
+}
+
+.sod-context-menu.sod-theme-modern .sod-context-menu-item {
+  min-height: 2.25rem;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.625rem;
+}
+
+.sod-context-menu.sod-theme-minimal {
+  border-radius: 0.5rem;
 }
 
 .sod-dialog {

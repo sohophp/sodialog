@@ -9,6 +9,7 @@ export type SoModalAnimation = 'slide' | 'fade' | 'zoom'
 export type SoModalDragHandleTarget = 'header' | 'title' | 'body' | 'footer' | 'panel' | string
 export type SoModalDragHandle = SoModalDragHandleTarget | SoModalDragHandleTarget[]
 export type SoDialogPreset = 'deploy'
+export type SoThemePreset = 'classic' | 'modern' | 'minimal'
 export type SoModalScrollMode = 'body' | 'viewport' | 'none' | 'hybrid'
 export type SoCssSize = number | string
 export type SoFooterButtonVariant = 'primary' | 'outline' | 'danger' | 'success' | 'ghost' | 'link'
@@ -105,6 +106,7 @@ export interface SoContextMenuOptions extends SoLifecycleHooks {
   traceId?: string
   target: string | Element | Iterable<Element> | ArrayLike<Element>
   items: SoContextMenuItem[]
+  theme?: SoThemePreset
   className?: string
   attrs?: Record<string, string>
   offsetX?: number
@@ -183,6 +185,7 @@ export interface SoDialogBaseOptions extends SoLifecycleHooks {
   title: SoDialogTitle
   content: string | Node
   traceId?: string
+  theme?: SoThemePreset
   preset?: SoDialogPreset
   hideHeader?: boolean
   hideCloseButton?: boolean
@@ -299,6 +302,7 @@ export interface SoDialogGlobalConfig {
 }
 
 export interface SoContextMenuGlobalConfig {
+  theme?: SoThemePreset
   className?: string
   attrs?: Record<string, string>
   offsetX?: number
@@ -374,6 +378,7 @@ export type SoDialogActionListener = (context: SoDialogFooterActionContext) => v
 export interface SoToastOptions extends SoLifecycleHooks {
   id?: string
   traceId?: string
+  theme?: SoThemePreset
   title?: string
   content: string | Node
   placement?: SoToastPlacement
@@ -398,7 +403,9 @@ export interface SoToastHandle {
   id: string
   element: HTMLElement
   close: (reason?: Exclude<SoToastCloseReason, 'timeout' | 'close-button'>) => void
-  update: (patch: Partial<Pick<SoToastOptions, 'title' | 'content' | 'variant' | 'duration' | 'width' | 'height'>>) => void
+  update: (
+    patch: Partial<Pick<SoToastOptions, 'title' | 'content' | 'variant' | 'duration' | 'theme' | 'width' | 'height'>>,
+  ) => void
   pause: () => void
   resume: () => void
 }
@@ -410,6 +417,7 @@ interface SoToastResolvedOptions
     Pick<
       SoToastOptions,
       | 'title'
+      | 'theme'
       | 'className'
       | 'attrs'
       | 'onShown'
@@ -452,6 +460,39 @@ interface SoToastPlacementState {
   container: HTMLElement
   active: SoToastRecord[]
   pending: SoToastRecord[]
+}
+
+const themePresets: readonly SoThemePreset[] = ['classic', 'modern', 'minimal']
+let globalTheme: SoThemePreset = 'classic'
+
+function normalizeTheme(theme: SoThemePreset | undefined): SoThemePreset {
+  return theme && themePresets.includes(theme) ? theme : globalTheme
+}
+
+function applyTheme(element: HTMLElement, theme?: SoThemePreset): void {
+  themePresets.forEach((preset) => element.classList.remove(`sod-theme-${preset}`))
+  element.classList.add(`sod-theme-${normalizeTheme(theme)}`)
+  element.dataset.sodThemeScope = theme ? 'local' : 'global'
+}
+
+/** Set the default theme for new components and update open globally themed components. */
+export function setTheme(theme: SoThemePreset): void {
+  if (!themePresets.includes(theme)) {
+    throw new TypeError(`Unknown SoDialog theme: ${String(theme)}`)
+  }
+
+  globalTheme = theme
+  if (typeof document === 'undefined') {
+    return
+  }
+
+  document
+    .querySelectorAll<HTMLElement>('[data-sod-theme-scope="global"]')
+    .forEach((element) => applyTheme(element))
+}
+
+export function getTheme(): SoThemePreset {
+  return globalTheme
 }
 
 function appendContent(container: HTMLElement, content: string | Node): void {
@@ -1117,6 +1158,7 @@ export class SoDialog {
         const existed = this.modalRegistry.get(modalId)
 
         if (existed && existed.isConnected) {
+          applyTheme(existed, options.theme)
           emitLifecycle(lifecycleHooks, {
             component: kind,
             phase: 'before-open',
@@ -1153,6 +1195,7 @@ export class SoDialog {
 
     const dialog = document.createElement('dialog')
     dialog.className = `sod-dialog sod-${kind}`
+    applyTheme(dialog, options.theme)
     // Reset the native dialog chrome before the element can enter the top layer.
     // Some browsers otherwise paint the UA border/focus ring for the first frame.
     dialog.style.border = '0'
@@ -2097,6 +2140,7 @@ export class SoToast {
     duplicateStrategy: SoToastDuplicateStrategy
     newestOnTop: boolean
     maxVisible: number
+    theme?: SoThemePreset
     width?: SoCssSize
     height?: SoCssSize
   } = {
@@ -2127,6 +2171,7 @@ export class SoToast {
       duplicateStrategy: options.duplicateStrategy ?? this.defaults.duplicateStrategy,
       newestOnTop: options.newestOnTop ?? this.defaults.newestOnTop,
       maxVisible: Math.max(1, options.maxVisible ?? this.defaults.maxVisible),
+      theme: options.theme ?? this.defaults.theme,
       width: options.width ?? this.defaults.width,
       height: options.height ?? this.defaults.height,
       title: options.title,
@@ -2215,6 +2260,7 @@ export class SoToast {
     const { options } = record
     const element = document.createElement('article')
     element.className = `sod-toast sod-toast-${options.variant}`
+    applyTheme(element, options.theme)
     if (options.className?.trim()) {
       element.className = `${element.className} ${options.className.trim()}`
     }
@@ -2504,6 +2550,7 @@ export class SoToast {
         | 'newestOnTop'
         | 'maxVisible'
         | 'showProgress'
+        | 'theme'
         | 'className'
         | 'attrs'
         | 'width'
@@ -2545,6 +2592,11 @@ export class SoToast {
       record.element.classList.remove('sod-toast-default', 'sod-toast-info', 'sod-toast-success', 'sod-toast-warning', 'sod-toast-danger')
       record.element.classList.add(`sod-toast-${patch.variant}`)
       record.element.setAttribute('role', this.resolveRole(patch.variant))
+    }
+
+    if (patch.theme !== undefined) {
+      record.options.theme = patch.theme
+      applyTheme(record.element, patch.theme)
     }
 
     if (patch.duration !== undefined) {
@@ -2792,6 +2844,7 @@ export class SoToast {
         newestOnTop: options.newestOnTop,
         maxVisible: options.maxVisible,
         showProgress: options.showProgress,
+        theme: options.theme,
         className: options.className,
         attrs: options.attrs,
         width: options.width,
@@ -2906,6 +2959,9 @@ export class SoToast {
     }
     if (defaults.maxVisible !== undefined) {
       this.defaults.maxVisible = Math.max(1, defaults.maxVisible)
+    }
+    if (defaults.theme !== undefined) {
+      this.defaults.theme = defaults.theme
     }
     if (defaults.width !== undefined) {
       this.defaults.width = defaults.width
@@ -3030,6 +3086,7 @@ export class SoContextMenu {
       const CAPTURE_LISTENER = true
     const menuElement = document.createElement('div')
     menuElement.className = 'sod-context-menu'
+    applyTheme(menuElement, options.theme ?? this.globalConfig.theme)
     menuElement.setAttribute('popover', 'manual')
     menuElement.setAttribute('role', 'menu')
     menuElement.hidden = true

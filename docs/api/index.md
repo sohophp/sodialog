@@ -37,9 +37,9 @@ description: SoDialog API 总览：Dialog、Toast、Context Menu、Adapter 的�
 
 | Domain | Methods |
 | --- | --- |
-| Methods | `openModal`, `openOffcanvas`, `confirmModal`, `promptModal`, `formModal`, `openImagePreview`, `bindImagePreview`, `toast`, `pushMessage`, `bindContextMenu`, `configureAdapter` |
-| Types | `SoDialogModalOptions`, `SoDialogOffcanvasOptions`, `SoImagePreviewOptions`, `SoToastOptions`, `SoContextMenuOptions`, `SoAdapterConfig` |
-| Global config | `configureDialog`, `configureContextMenu`, `SoToast.configure`, `configureAdapter` |
+| Methods | `setTheme`, `getTheme`, `openModal`, `openOffcanvas`, `confirmModal`, `promptModal`, `formModal`, `openImagePreview`, `bindImagePreview`, `toast`, `pushMessage`, `bindContextMenu`, `configureAdapter` |
+| Types | `SoThemePreset`, `SoDialogModalOptions`, `SoDialogOffcanvasOptions`, `SoImagePreviewOptions`, `SoToastOptions`, `SoContextMenuOptions`, `SoAdapterConfig` |
+| Global config | `setTheme`, `configureDialog`, `configureContextMenu`, `SoToast.configure`, `configureAdapter` |
 | Adapters | `SoAdapter`, `openDialog`, `bindDialogContextMenu`, `pushMessage`, `openDialogFromContextMenu` |
 | Lifecycle | `onBeforeOpen`, `onAfterOpen`, `onBeforeClose`, `onAfterClose`, `onLayoutStable`, `onAction` |
 
@@ -48,6 +48,7 @@ description: SoDialog API 总览：Dialog、Toast、Context Menu、Adapter 的�
 | Domain | Key Types |
 | --- | --- |
 | Dialog | `SoDialogModalOptions`, `SoDialogOffcanvasOptions`, `SoDialogHandle` |
+| Theme | `SoThemePreset` (`classic` \| `modern` \| `minimal`) |
 | Promise Dialog | `SoDialogConfirmOptions`, `SoDialogPromptOptions`, `SoDialogFormOptions`, `SoDialogFormValue` |
 | Image Preview | `SoImagePreviewOptions`, `SoImagePreviewBindingOptions`, `SoImagePreviewHandle` |
 | Toast | `SoToastOptions`, `SoToastHandle`, `SoToastPlacement`, `SoToastDuplicateStrategy` |
@@ -57,7 +58,9 @@ description: SoDialog API 总览：Dialog、Toast、Context Menu、Adapter 的�
 ## Global config
 
 ```ts
-import { configureDialog, configureContextMenu, SoToast } from 'sodialog'
+import { setTheme, configureDialog, configureContextMenu, SoToast } from 'sodialog'
+
+setTheme('modern')
 
 configureDialog({
   modalDefaults: { footerAlign: 'center', closeOnEsc: false },
