@@ -4,6 +4,12 @@
 
 ## Unreleased
 
+## 0.3.21 - 2026-08-17
+
+### Fixed
+
+- Toast 容器现在会通过 Popover API 进入浏览器 top layer，确保原生模态 Dialog 开启时提示仍显示在最上方；不支持 Popover 的浏览器继续使用最高层级样式回退。
+
 ## 0.3.20 - 2026-08-16
 
 ### Added

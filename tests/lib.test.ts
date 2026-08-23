@@ -605,6 +605,30 @@ describe('SoDialog modal behavior', () => {
 })
 
 describe('SoToast behavior', () => {
+  it('promotes the toast layer to the browser top layer', () => {
+    const showPopover = vi.fn()
+    const hidePopover = vi.fn()
+    Object.defineProperty(HTMLElement.prototype, 'showPopover', {
+      value: showPopover,
+      configurable: true,
+    })
+    Object.defineProperty(HTMLElement.prototype, 'hidePopover', {
+      value: hidePopover,
+      configurable: true,
+    })
+
+    try {
+      toast({ content: 'Visible above modal', duration: false })
+      const layer = document.querySelector<HTMLElement>('.sod-toast-layer')
+
+      expect(layer?.getAttribute('popover')).toBe('manual')
+      expect(showPopover).toHaveBeenCalledTimes(1)
+    } finally {
+      delete (HTMLElement.prototype as typeof HTMLElement.prototype & { showPopover?: () => void }).showPopover
+      delete (HTMLElement.prototype as typeof HTMLElement.prototype & { hidePopover?: () => void }).hidePopover
+    }
+  })
+
   it('applies and updates custom width and height', () => {
     const handle = toast({
       content: 'sized toast',

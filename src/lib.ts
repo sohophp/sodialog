@@ -2245,6 +2245,7 @@ export class SoToast {
     container.className = `sod-toast-layer sod-toast-layer-${placement}`
     container.setAttribute('aria-live', 'polite')
     container.setAttribute('aria-atomic', 'false')
+    container.setAttribute('popover', 'manual')
     document.body.append(container)
 
     const created: SoToastPlacementState = {
@@ -2254,6 +2255,33 @@ export class SoToast {
     }
     this.placementState.set(placement, created)
     return created
+  }
+
+  /**
+   * Promote the toast layer into the browser top layer whenever possible.
+   * A regular fixed element cannot render above a modal <dialog>, regardless
+   * of z-index. Manual popover is the native, non-invasive way to keep toast
+   * feedback visible above dialogs and offcanvas panels.
+   */
+  private static promoteToastLayer(container: HTMLElement): void {
+    const popover = container as HTMLElement & {
+      showPopover?: () => void
+      hidePopover?: () => void
+    }
+    if (typeof popover.showPopover !== 'function') {
+      return
+    }
+
+    try {
+      popover.hidePopover?.()
+    } catch {
+      // The layer may not be open yet.
+    }
+    try {
+      popover.showPopover()
+    } catch {
+      // Keep the fixed-position/z-index fallback for older implementations.
+    }
   }
 
   private static createToastElement(record: SoToastRecord): void {
@@ -2397,6 +2425,8 @@ export class SoToast {
   private static mountRecord(state: SoToastPlacementState, record: SoToastRecord): void {
     record.status = 'active'
     this.emitToastLifecycle(record, 'before-open')
+
+    this.promoteToastLayer(state.container)
 
     if (record.options.newestOnTop) {
       state.container.prepend(record.element)
