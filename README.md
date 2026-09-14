@@ -710,6 +710,8 @@ off()
 
 ### `openOffcanvas(options)`
 
+Offcanvas 使用固定标题及底部操作区，长内容只在 `.sod-body` 内滚动并受动态视口高度约束；不需要依赖宿主页面或 `globalThis` 的滚动条。
+
 在 `openModal` 参数基础上新增：
 
 - `placement?: 'start' | 'end' | 'top' | 'bottom'` (默认 `end`)

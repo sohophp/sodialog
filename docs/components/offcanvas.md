@@ -66,6 +66,8 @@ const openPanel = (placement: 'start' | 'end' | 'top' | 'bottom') => {
 
 `width` 和 `height` 接受数字或 CSS 尺寸字符串。数字按像素处理，例如 `width: 480`；字符串可使用 `40vw`、`75vh` 或 `calc(...)`。
 
+Offcanvas 面板始终受当前动态视口高度约束。标题和底部操作区保持可见，内容超过可用高度时仅 `.sod-body` 滚动，因此长表单的最后一个控件仍可通过滚轮、触控、方向键、Page Down 或 End 到达。宿主页面无需启用全局滚动条。
+
 ## 生命周期通知
 
 ```ts

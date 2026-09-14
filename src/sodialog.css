@@ -826,9 +826,13 @@
 .sod-offcanvas[open] {
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
 }
 
 .sod-offcanvas .sod-panel {
+  display: flex;
+  flex-direction: column;
   position: fixed;
   margin: 0;
   min-width: 0;
@@ -836,6 +840,23 @@
   border-radius: 0;
   width: min(360px, 90vw);
   height: 100vh;
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
+}
+
+.sod-offcanvas .sod-header,
+.sod-offcanvas .sod-footer {
+  flex: 0 0 auto;
+}
+
+.sod-offcanvas .sod-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
 }
 
 .sod-offcanvas .sod-panel.sod-placement-start {

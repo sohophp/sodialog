@@ -434,6 +434,7 @@ describe('SoDialog modal behavior', () => {
     const panel = handle.dialog.querySelector<HTMLElement>('.sod-panel')
     expect(panel?.style.width).toBe('480px')
     expect(panel?.style.height).toBe('80vh')
+    expect(handle.dialog.querySelector<HTMLElement>('.sod-body')?.tabIndex).toBe(0)
   })
 
   it('renders an HTMLElement title in an offcanvas and preserves its accessible name', () => {

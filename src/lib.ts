@@ -1339,6 +1339,12 @@ export class SoDialog {
     const body = document.createElement('div')
     body.className = 'sod-body'
     body.id = SoDialog.createAutoAriaId('sod-body')
+    if (kind === 'offcanvas') {
+      // The body is the only scroll owner in a viewport-bound offcanvas. Make
+      // it explicitly keyboard focusable across browsers so Page Down and End
+      // can always reach long-form actions.
+      body.tabIndex = 0
+    }
     appendContent(body, options.content)
 
     if (hideHeader) {
