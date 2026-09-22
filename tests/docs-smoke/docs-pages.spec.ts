@@ -245,18 +245,23 @@ test('getting-started modal demo is ready and can open', async ({ page }) => {
   await expect(previewFrame.locator('dialog[open]')).toBeVisible()
 })
 
-test('image preview demo loads the documentation build and opens a preview', async ({ page }) => {
+test('image preview demo loads the published CDN version and opens a preview', async ({ page }) => {
+  const cdnRequests: string[] = []
+  page.on('request', (request) => {
+    if (request.url().includes('sodialog@')) cdnRequests.push(request.url())
+  })
   const response = await page.goto('/examples/image-preview', { waitUntil: 'domcontentloaded' })
   expect(response?.ok()).toBeTruthy()
 
   const loader = await page.request.get('/components/sodialog-loader.js')
-  expect(await loader.text()).toContain('local = true')
-  expect((await page.request.get('/components/runtime/sodialog.es.js')).ok()).toBeTruthy()
+  expect(await loader.text()).toContain("const defaultVersion = '0.3.22'")
 
   const previewFrame = page.frameLocator('iframe[src="/components/image-preview.html"]').first()
   const status = previewFrame.locator('#status')
   await expect(status).not.toHaveText('正在加载示例脚本...', { timeout: 15_000 })
   await expect(status).toHaveText('已就绪，点击图片查看预览。')
+  expect(cdnRequests).toContain('https://unpkg.com/sodialog@0.3.22/dist/sodialog.es.js')
+  expect(cdnRequests).toContain('https://unpkg.com/sodialog@0.3.22/dist/sodialog.css')
 
   await previewFrame.locator('.preview-source').click()
   await expect(previewFrame.locator('dialog.sod-image-preview[open]')).toBeVisible()
@@ -274,7 +279,7 @@ test('offcanvas example loads the focused component demo instead of the document
   await expect(previewFrame.locator('.VPNav')).toHaveCount(0)
 })
 
-test('tooltip example works with the current local library build', async ({ page }) => {
+test('tooltip example works with the published CDN version', async ({ page }) => {
   await page.goto('/examples/tooltip', { waitUntil: 'domcontentloaded' })
   const frame = page.frameLocator('iframe[src="/components/tooltip-basic.html"]').first()
   await expect(frame.locator('#status')).toHaveText('已就绪。')
@@ -300,17 +305,6 @@ test('example version override reaches the preview frame', async ({ page }) => {
     'src',
     '/components/tooltip-basic.html?sodialogVersion=0.3.21',
   )
-})
-
-test('examples never silently replace a missing local build with a CDN release', async ({ page }) => {
-  const cdnRequests: string[] = []
-  page.on('request', (request) => {
-    if (/cdn\.jsdelivr\.net|unpkg\.com/.test(request.url())) cdnRequests.push(request.url())
-  })
-  await page.route('**/components/runtime/sodialog.es.js', (route) => route.abort())
-  await page.goto('/components/tooltip-basic.html', { waitUntil: 'domcontentloaded' })
-  await expect(page.locator('#status')).toContainText('加载失败')
-  expect(cdnRequests).toEqual([])
 })
 
 test('tags input example preserves form values and reset', async ({ page }) => {

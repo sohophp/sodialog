@@ -11,7 +11,6 @@ node_modules
 dist
 dist-ssr
 docs/.vitepress/.temp/
-docs/public/components/runtime/
 *.local
 .history
 prompts/

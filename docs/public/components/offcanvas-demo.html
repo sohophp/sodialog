@@ -61,7 +61,7 @@
       const resizeStatus = document.querySelector('#resize-status')
       const storageKey = 'sod-docs-offcanvas-width'
 
-      const api = await loadSoDialog({ local: true })
+      const api = await loadSoDialog()
       if (!api?.openOffcanvas) {
         if (status) {
           status.textContent = '加载失败：无法访问示例依赖，请检查网络或代理。'

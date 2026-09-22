@@ -52,9 +52,9 @@ toast({
 
 ### CDN 說明（方便複製原始碼）
 
-文件中的元件範例預設使用與網站同次建置的本地套件。`/components/sodialog-loader.js` 負責載入，並可暫時切換至指定的 CDN 版本。
+文件中的元件範例透過 `/components/sodialog-loader.js` 載入已發布的 `sodialog@0.3.22` CDN 檔案，JavaScript 與 CSS 使用同一版本。
 
-- 指定版本時，loader 使用 CDN；未指定版本時使用本站建置產物。
+- 預設版本固定為 `0.3.22`；可透過網址參數暫時切換至其他已發布版本。
 - 範例 URL 支援暫時覆蓋版本：`?sodialogVersion=latest`、`?sodialogVersion=0.3.10`。
 - 生產頁面仍建議固定 patch 版本，不建議長期依賴 `@latest`。
 

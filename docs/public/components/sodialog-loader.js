@@ -1,15 +1,10 @@
 /* global document, window, URLSearchParams */
 
-// Examples use the library built with these docs. Query-string overrides select
-// a published CDN version for compatibility checks.
-const defaultVersion = 'latest'
+// Keep examples on the latest verified npm release. Query-string overrides
+// select another published version for compatibility checks.
+const defaultVersion = '0.3.22'
 
 const versionPattern = /^(latest|\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?)$/
-
-function hasVersionOverride() {
-  const params = new URLSearchParams(window.location.search)
-  return ['sodialogVersion', 'cdnVersion', 'version'].some((key) => params.has(key))
-}
 
 export function getSoDialogVersion() {
   const params = new URLSearchParams(window.location.search)
@@ -28,17 +23,16 @@ export function getSoDialogCdnUrls() {
 
   return {
     version,
-    css: `https://cdn.jsdelivr.net/npm/${packagePath}/sodialog.css`,
-    cssFallback: `https://unpkg.com/${packagePath}/sodialog.css`,
+    css: `https://unpkg.com/${packagePath}/sodialog.css`,
+    cssFallback: `https://cdn.jsdelivr.net/npm/${packagePath}/sodialog.css`,
     modules: [
-      `https://cdn.jsdelivr.net/npm/${packagePath}/sodialog.es.js`,
       `https://unpkg.com/${packagePath}/sodialog.es.js`,
+      `https://cdn.jsdelivr.net/npm/${packagePath}/sodialog.es.js`,
     ],
   }
 }
 
-export function loadSoDialogStyle({ local = true } = {}) {
-  const useLocal = local && !hasVersionOverride()
+export function loadSoDialogStyle() {
   const { css, cssFallback } = getSoDialogCdnUrls()
   const existing = document.querySelector('link[data-sodialog-style]')
 
@@ -46,10 +40,10 @@ export function loadSoDialogStyle({ local = true } = {}) {
 
   const link = document.createElement('link')
   link.rel = 'stylesheet'
-  link.href = useLocal ? '/components/runtime/sodialog.css' : css
+  link.href = css
   link.dataset.sodialogStyle = 'true'
   link.addEventListener('error', () => {
-    if (!useLocal && link.href !== cssFallback) {
+    if (link.href !== cssFallback) {
       link.href = cssFallback
     }
   })
@@ -58,15 +52,10 @@ export function loadSoDialogStyle({ local = true } = {}) {
   return link
 }
 
-export async function loadSoDialog({ local = true } = {}) {
-  const useLocal = local && !hasVersionOverride()
-  loadSoDialogStyle({ local: useLocal })
+export async function loadSoDialog() {
+  loadSoDialogStyle()
 
-  const modules = useLocal
-    ? ['/components/runtime/sodialog.es.js']
-    : getSoDialogCdnUrls().modules
-
-  for (const url of modules) {
+  for (const url of getSoDialogCdnUrls().modules) {
     try {
       return await import(url)
     } catch {

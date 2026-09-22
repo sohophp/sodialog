@@ -26,7 +26,7 @@
     <script type="module">
       import { loadSoDialog } from './sodialog-loader.js'
       const status = document.querySelector('#status')
-      const api = await loadSoDialog({ local: true })
+      const api = await loadSoDialog()
       if (!api?.bindTooltip) {
         status.textContent = '加载失败：无法访问 Tooltip 示例依赖。'
       } else {

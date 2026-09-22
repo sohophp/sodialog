@@ -34,7 +34,7 @@
       const form = document.querySelector('#tag-form')
       const source = document.querySelector('#keywords')
       const status = document.querySelector('#status')
-      const api = await loadSoDialog({ local: true })
+      const api = await loadSoDialog()
       if (!api?.createTagsInput) {
         status.textContent = '加载失败：无法访问 Tags Input 示例依赖。'
       } else {

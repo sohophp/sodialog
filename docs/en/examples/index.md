@@ -1,6 +1,6 @@
 # Examples
 
-Each example page loads one runnable demo. By default, demos use the library built with this documentation, so the behavior matches the current code. Add `?sodialogVersion=latest` to use a published CDN version instead.
+Each example page loads one runnable demo. Demos use the published `sodialog@0.3.22` CDN version by default. Add `?sodialogVersion=latest` to try another published version.
 
 ## Runnable Examples
 
