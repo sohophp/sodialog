@@ -1,5 +1,10 @@
 import './sodialog.css'
 
+export { createTagsInput } from './tags-input'
+export type { SoTagsInputHandle, SoTagsInputOptions } from './tags-input'
+export { SoTooltip, bindTooltip, configureTooltip } from './tooltip'
+export type { SoTooltipContent, SoTooltipDefaults, SoTooltipHandle, SoTooltipOptions, SoTooltipPlacement, SoTooltipTarget } from './tooltip'
+
 export type SoPanelKind = 'modal' | 'offcanvas'
 export type SoDialogTitle = string | HTMLElement
 export type SoOffcanvasPlacement = 'start' | 'end' | 'top' | 'bottom'
@@ -234,6 +239,16 @@ export interface SoDialogOffcanvasOptions extends SoDialogBaseOptions {
   animation?: SoOffcanvasAnimation
   width?: SoCssSize
   height?: SoCssSize
+  resizable?: boolean | SoOffcanvasResizeOptions
+}
+
+export interface SoOffcanvasResizeOptions {
+  minWidth?: number
+  maxWidth?: number
+  storageKey?: string
+  handleLabel?: string
+  step?: number
+  largeStep?: number
 }
 
 export interface SoDialogConfirmOptions
@@ -327,6 +342,8 @@ export interface SoDialogHandle {
   dialog: HTMLDialogElement
   close: () => void
   refit: () => void
+  setWidth: (width: SoCssSize) => void
+  getWidth: () => number
   setFooterButtons: (buttons: SoDialogFooterButton[]) => void
   updateFooterButton: (id: string, updates: Partial<SoDialogFooterButton>) => boolean
   onAction: (listener: SoDialogActionListener) => () => void
@@ -1068,6 +1085,18 @@ export class SoDialog {
   private static globalConfig: SoDialogGlobalConfig = {}
   private static modalIdSeed = 0
   private static ariaIdSeed = 0
+  private static openOffcanvasDialogs = new Set<HTMLDialogElement>()
+
+  private static updateOffcanvasScrollLock(dialog?: HTMLDialogElement, open = false): void {
+    for (const activeDialog of this.openOffcanvasDialogs) {
+      if (!activeDialog.isConnected || !activeDialog.open) this.openOffcanvasDialogs.delete(activeDialog)
+    }
+    if (dialog) {
+      if (open) this.openOffcanvasDialogs.add(dialog)
+      else this.openOffcanvasDialogs.delete(dialog)
+    }
+    document.documentElement.classList.toggle('sod-offcanvas-open', this.openOffcanvasDialogs.size > 0)
+  }
 
   private static createAutoModalId(): string {
     this.modalIdSeed += 1
@@ -1085,6 +1114,11 @@ export class SoDialog {
         dialog,
         close: () => closeDialog(dialog),
         refit: () => dialog.dispatchEvent(new Event('sod:refit')),
+        setWidth: (width: SoCssSize) => {
+          const panel = dialog.querySelector<HTMLElement>('.sod-panel')
+          if (panel) panel.style.width = resolveCssSize(width) ?? ''
+        },
+        getWidth: () => dialog.querySelector<HTMLElement>('.sod-panel')?.getBoundingClientRect().width ?? 0,
         setFooterButtons: () => undefined,
         updateFooterButton: () => false,
         onAction: () => () => undefined,
@@ -1105,6 +1139,8 @@ export class SoDialog {
       }
     }
 
+    if (dialog.classList.contains('sod-offcanvas')) this.updateOffcanvasScrollLock(dialog, true)
+
     dialog.dispatchEvent(new Event('sod:refit'))
 
     panel?.focus()
@@ -1118,6 +1154,11 @@ export class SoDialog {
       dialog,
       close: () => closeDialog(dialog),
       refit: () => dialog.dispatchEvent(new Event('sod:refit')),
+      setWidth: (width: SoCssSize) => {
+        const existingPanel = dialog.querySelector<HTMLElement>('.sod-panel')
+        if (existingPanel) existingPanel.style.width = resolveCssSize(width) ?? ''
+      },
+      getWidth: () => dialog.querySelector<HTMLElement>('.sod-panel')?.getBoundingClientRect().width ?? 0,
       setFooterButtons: () => undefined,
       updateFooterButton: () => false,
       onAction: () => () => undefined,
@@ -1278,6 +1319,12 @@ export class SoDialog {
     const panel = document.createElement('section')
     panel.className = 'sod-panel'
     panel.tabIndex = -1
+    let setPanelWidth = (width: SoCssSize) => {
+      panel.style.width = resolveCssSize(width) ?? ''
+    }
+    let getPanelWidth = () => panel.getBoundingClientRect().width || Number.parseFloat(panel.style.width) || 0
+    let suppressBackdropClick = false
+    let backdropPointerDown = false
 
     if (kind === 'offcanvas') {
       const placement = 'placement' in options ? options.placement ?? 'end' : 'end'
@@ -1393,6 +1440,8 @@ export class SoDialog {
         dialog,
         close: () => requestClose('api'),
         refit: () => dialog.dispatchEvent(new Event('sod:refit')),
+        setWidth: (width: SoCssSize) => setPanelWidth(width),
+        getWidth: () => getPanelWidth(),
         setFooterButtons: (buttons: SoDialogFooterButton[]) => {
           footerButtons = [...buttons]
           renderFooterButtons()
@@ -1508,6 +1557,120 @@ export class SoDialog {
     }
     panel.append(body, footer)
 
+    if (kind === 'offcanvas' && 'resizable' in options && options.resizable && ['start', 'end'].includes(options.placement ?? 'end')) {
+      const resizeOptions = options.resizable === true ? {} : options.resizable
+      const placement = options.placement ?? 'end'
+      const minWidth = Math.max(160, resizeOptions.minWidth ?? 320)
+      const configuredMaxWidth = Math.max(minWidth, resizeOptions.maxWidth ?? Number.POSITIVE_INFINITY)
+      const maximumWidth = () => Math.max(minWidth, Math.min(configuredMaxWidth, window.innerWidth))
+      const clampWidth = (width: number) => Math.min(maximumWidth(), Math.max(minWidth, width))
+      const resizeHandle = document.createElement('div')
+      resizeHandle.className = 'sod-offcanvas-resize-handle'
+      resizeHandle.tabIndex = 0
+      resizeHandle.setAttribute('role', 'separator')
+      resizeHandle.setAttribute('aria-orientation', 'vertical')
+      resizeHandle.setAttribute('aria-label', resizeOptions.handleLabel ?? 'Resize panel')
+      let currentWidth = Number.parseFloat(panel.style.width) || 360
+      const applyWidth = (width: number, persist = false) => {
+        currentWidth = clampWidth(width)
+        panel.style.width = `${currentWidth}px`
+        resizeHandle.setAttribute('aria-valuemin', String(minWidth))
+        resizeHandle.setAttribute('aria-valuemax', String(maximumWidth()))
+        resizeHandle.setAttribute('aria-valuenow', String(Math.round(currentWidth)))
+        dialog.dispatchEvent(new CustomEvent('sod:resize', { detail: { width: currentWidth } }))
+        if (persist && resizeOptions.storageKey) {
+          try {
+            window.localStorage.setItem(resizeOptions.storageKey, String(currentWidth))
+          } catch {
+            // Storage can be unavailable in privacy-restricted contexts.
+          }
+        }
+      }
+      setPanelWidth = (width: SoCssSize) => {
+        if (typeof width === 'number' || /^\d+(?:\.\d+)?(?:px)?$/.test(width.trim())) {
+          applyWidth(typeof width === 'number' ? width : Number.parseFloat(width))
+          return
+        }
+        panel.style.width = resolveCssSize(width) ?? ''
+        currentWidth = getPanelWidth()
+      }
+      getPanelWidth = () => panel.getBoundingClientRect().width || currentWidth
+      if (resizeOptions.storageKey) {
+        try {
+          const storedWidth = Number.parseFloat(window.localStorage.getItem(resizeOptions.storageKey) ?? '')
+          if (Number.isFinite(storedWidth)) currentWidth = storedWidth
+        } catch {
+          // Storage can be unavailable in privacy-restricted contexts.
+        }
+      }
+      applyWidth(currentWidth)
+      let startX = 0
+      let startWidth = currentWidth
+      const onPointerMove = (event: PointerEvent) => {
+        const delta = placement === 'end' ? startX - event.clientX : event.clientX - startX
+        if (Math.abs(delta) > 2) suppressBackdropClick = true
+        applyWidth(startWidth + delta)
+      }
+      const finishResize = () => {
+        dialog.classList.remove('sod-is-resizing')
+        document.removeEventListener('pointermove', onPointerMove)
+        document.removeEventListener('pointerup', finishResize)
+        document.removeEventListener('pointercancel', finishResize)
+        applyWidth(currentWidth, true)
+        dialog.dispatchEvent(new CustomEvent('sod:resizeend', { detail: { width: currentWidth } }))
+      }
+      const onPointerDown = (event: PointerEvent) => {
+        if (event.button !== 0) return
+        startX = event.clientX
+        startWidth = getPanelWidth()
+        dialog.classList.add('sod-is-resizing')
+        document.addEventListener('pointermove', onPointerMove)
+        document.addEventListener('pointerup', finishResize)
+        document.addEventListener('pointercancel', finishResize)
+      }
+      const onMouseMove = (event: MouseEvent) => onPointerMove(event as PointerEvent)
+      const finishMouseResize = () => {
+        document.removeEventListener('mousemove', onMouseMove)
+        document.removeEventListener('mouseup', finishMouseResize)
+        finishResize()
+      }
+      const onMouseDown = (event: MouseEvent) => {
+        if (event.button !== 0) return
+        event.preventDefault()
+        startX = event.clientX
+        startWidth = getPanelWidth()
+        dialog.classList.add('sod-is-resizing')
+        document.addEventListener('mousemove', onMouseMove)
+        document.addEventListener('mouseup', finishMouseResize)
+      }
+      const onKeyDown = (event: KeyboardEvent) => {
+        const step = event.shiftKey ? resizeOptions.largeStep ?? 50 : resizeOptions.step ?? 10
+        let nextWidth: number | undefined
+        if (event.key === 'Home') nextWidth = minWidth
+        if (event.key === 'End') nextWidth = maximumWidth()
+        if (event.key === 'ArrowLeft') nextWidth = currentWidth + (placement === 'end' ? step : -step)
+        if (event.key === 'ArrowRight') nextWidth = currentWidth + (placement === 'end' ? -step : step)
+        if (nextWidth === undefined) return
+        event.preventDefault()
+        applyWidth(nextWidth, true)
+        dialog.dispatchEvent(new CustomEvent('sod:resizeend', { detail: { width: currentWidth } }))
+      }
+      resizeHandle.addEventListener('pointerdown', onPointerDown)
+      resizeHandle.addEventListener('mousedown', onMouseDown)
+      resizeHandle.addEventListener('keydown', onKeyDown)
+      panel.append(resizeHandle)
+      cleanups.push(() => {
+        resizeHandle.removeEventListener('pointerdown', onPointerDown)
+        resizeHandle.removeEventListener('mousedown', onMouseDown)
+        resizeHandle.removeEventListener('keydown', onKeyDown)
+        document.removeEventListener('pointermove', onPointerMove)
+        document.removeEventListener('pointerup', finishResize)
+        document.removeEventListener('pointercancel', finishResize)
+        document.removeEventListener('mousemove', onMouseMove)
+        document.removeEventListener('mouseup', finishMouseResize)
+      })
+    }
+
     if (modalAutoFitEnabled) {
       cleanups.push(setupModalAutoFit(dialog, panel, header, body, footer, modalOptions))
     }
@@ -1523,10 +1686,20 @@ export class SoDialog {
     dialog.append(panel)
 
     if (options.closeOnBackdrop ?? true) {
+      dialog.addEventListener('pointerdown', (event) => {
+        backdropPointerDown = event.target === dialog
+      })
       dialog.addEventListener('click', (event) => {
-        if (event.target === dialog) {
+        if (suppressBackdropClick) {
+          suppressBackdropClick = false
+          event.preventDefault()
+          event.stopPropagation()
+          return
+        }
+        if (event.target === dialog && backdropPointerDown) {
           requestClose('backdrop')
         }
+        backdropPointerDown = false
       })
     }
 
@@ -1550,9 +1723,20 @@ export class SoDialog {
         reason: 'esc',
         traceId,
       })
+      // The native close happens only after every cancel listener has run.
+      // A nested editor or another consumer may deliberately prevent that
+      // particular Escape. Do not leave the dialog permanently close-locked
+      // when the browser therefore keeps it open.
+      queueMicrotask(() => {
+        if (dialog.open && closeRequested && dialog.dataset.sodCloseReason === 'esc') {
+          closeRequested = false
+          delete dialog.dataset.sodCloseReason
+        }
+      })
     })
 
     dialog.addEventListener('close', () => {
+      if (kind === 'offcanvas') SoDialog.updateOffcanvasScrollLock(dialog, false)
       const reason = (dialog.dataset.sodCloseReason as SoLifecycleReason | undefined) ?? 'api'
       emitLifecycle(lifecycleHooks, {
         component: kind,
@@ -1601,6 +1785,7 @@ export class SoDialog {
     } else {
       dialog.show()
     }
+    if (kind === 'offcanvas') this.updateOffcanvasScrollLock(dialog, true)
 
     dialog.dispatchEvent(new Event('sod:refit'))
 

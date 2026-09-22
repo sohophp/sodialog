@@ -32,14 +32,16 @@ description: SoDialog API 总览：Dialog、Toast、Context Menu、Adapter 的�
 3. [Toast API](/api/toast)
 4. [Context Menu API](/api/context-menu)
 5. [Adapter API](/api/adapter)
+6. [Tags Input API](/api/tags-input)
+7. [Tooltip API](/api/tooltip)
 
 ## 方法索引
 
 | Domain | Methods |
 | --- | --- |
-| Methods | `setTheme`, `getTheme`, `openModal`, `openOffcanvas`, `confirmModal`, `promptModal`, `formModal`, `openImagePreview`, `bindImagePreview`, `toast`, `pushMessage`, `bindContextMenu`, `configureAdapter` |
-| Types | `SoThemePreset`, `SoDialogModalOptions`, `SoDialogOffcanvasOptions`, `SoImagePreviewOptions`, `SoToastOptions`, `SoContextMenuOptions`, `SoAdapterConfig` |
-| Global config | `setTheme`, `configureDialog`, `configureContextMenu`, `SoToast.configure`, `configureAdapter` |
+| Methods | `setTheme`, `getTheme`, `openModal`, `openOffcanvas`, `confirmModal`, `promptModal`, `formModal`, `openImagePreview`, `bindImagePreview`, `toast`, `pushMessage`, `bindContextMenu`, `bindTooltip`, `configureTooltip`, `createTagsInput`, `configureAdapter` |
+| Types | `SoThemePreset`, `SoDialogModalOptions`, `SoDialogOffcanvasOptions`, `SoImagePreviewOptions`, `SoToastOptions`, `SoContextMenuOptions`, `SoTooltipOptions`, `SoAdapterConfig` |
+| Global config | `setTheme`, `configureDialog`, `configureContextMenu`, `configureTooltip`, `SoToast.configure`, `configureAdapter` |
 | Adapters | `SoAdapter`, `openDialog`, `bindDialogContextMenu`, `pushMessage`, `openDialogFromContextMenu` |
 | Lifecycle | `onBeforeOpen`, `onAfterOpen`, `onBeforeClose`, `onAfterClose`, `onLayoutStable`, `onAction` |
 
@@ -47,12 +49,14 @@ description: SoDialog API 总览：Dialog、Toast、Context Menu、Adapter 的�
 
 | Domain | Key Types |
 | --- | --- |
-| Dialog | `SoDialogModalOptions`, `SoDialogOffcanvasOptions`, `SoDialogHandle` |
+| Dialog | `SoDialogModalOptions`, `SoDialogOffcanvasOptions`, `SoOffcanvasResizeOptions`, `SoDialogHandle` |
 | Theme | `SoThemePreset` (`classic` \| `modern` \| `minimal`) |
 | Promise Dialog | `SoDialogConfirmOptions`, `SoDialogPromptOptions`, `SoDialogFormOptions`, `SoDialogFormValue` |
 | Image Preview | `SoImagePreviewOptions`, `SoImagePreviewBindingOptions`, `SoImagePreviewHandle` |
 | Toast | `SoToastOptions`, `SoToastHandle`, `SoToastPlacement`, `SoToastDuplicateStrategy` |
 | Context Menu | `SoContextMenuOptions`, `SoContextMenuHandle`, `SoContextMenuItem` |
+| Tooltip | `SoTooltipOptions`, `SoTooltipDefaults`, `SoTooltipHandle`, `SoTooltipTarget`, `SoTooltipContent`, `SoTooltipPlacement` |
+| Tags Input | `SoTagsInputOptions`, `SoTagsInputHandle` |
 | Adapter | `SoAdapterConfig`, `SoAdapterLogEvent`, `SoPushMessageOptions`, `SoMessageLevel` |
 
 ## Global config

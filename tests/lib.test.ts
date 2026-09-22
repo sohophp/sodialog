@@ -6,6 +6,7 @@ import {
   configureContextMenu,
   configureDialog,
   configureAdapter,
+  createTagsInput,
   formModal,
   getTheme,
   openDialogFromContextMenu,
@@ -18,6 +19,61 @@ import {
   setTheme,
   toast,
 } from '../src/lib'
+
+describe('SoDialog tags input', () => {
+  it('creates tags from typed and pasted separators while syncing the source value', () => {
+    const source = document.createElement('textarea')
+    source.value = 'display, embedded'
+    document.body.append(source)
+    const changes = vi.fn()
+    source.addEventListener('sod:tags-change', changes)
+    const tags = createTagsInput(source)
+
+    expect(tags.values()).toEqual(['display', 'embedded'])
+    tags.input.value = 'HDMI'
+    tags.input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }))
+    expect(tags.values()).toEqual(['display', 'embedded', 'HDMI'])
+    expect(source.value).toBe('display,embedded,HDMI')
+    expect(changes).toHaveBeenCalledTimes(1)
+
+    const paste = new Event('paste', { bubbles: true, cancelable: true }) as ClipboardEvent
+    Object.defineProperty(paste, 'clipboardData', { value: { getData: () => 'touch;industrial' } })
+    tags.input.dispatchEvent(paste)
+    expect(tags.values()).toEqual(['display', 'embedded', 'HDMI', 'touch', 'industrial'])
+    tags.destroy()
+    expect(source.classList.contains('sod-tags-input-source')).toBe(false)
+  })
+
+  it('rejects duplicates, respects the limit, and removes the last tag with Backspace', () => {
+    const source = document.createElement('input')
+    document.body.append(source)
+    const tags = createTagsInput(source, { maxTags: 2 })
+
+    expect(tags.add('LCD')).toBe(true)
+    expect(tags.add('lcd')).toBe(false)
+    expect(tags.add('OLED')).toBe(true)
+    expect(tags.add('AMOLED')).toBe(false)
+    tags.input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Backspace', bubbles: true }))
+    expect(tags.values()).toEqual(['LCD'])
+  })
+
+  it('accepts external source updates and restores form defaults after reset', () => {
+    const form = document.createElement('form')
+    const source = document.createElement('input')
+    source.defaultValue = 'one,two'
+    source.value = 'one,two'
+    form.append(source)
+    document.body.append(form)
+    const tags = createTagsInput(source)
+
+    source.value = 'three;four'
+    source.dispatchEvent(new Event('input', { bubbles: true }))
+    expect(tags.values()).toEqual(['three', 'four'])
+    form.reset()
+    vi.runAllTimers()
+    expect(tags.values()).toEqual(['one', 'two'])
+  })
+})
 
 describe('SoDialog theme presets', () => {
   it('applies the global theme to dialogs, toasts, and context menus', () => {
@@ -435,6 +491,73 @@ describe('SoDialog modal behavior', () => {
     expect(panel?.style.width).toBe('480px')
     expect(panel?.style.height).toBe('80vh')
     expect(handle.dialog.querySelector<HTMLElement>('.sod-body')?.tabIndex).toBe(0)
+  })
+
+  it('locks window scrolling while any offcanvas is open', () => {
+    const first = openOffcanvas({ title: 'first', content: 'x' })
+    const second = openOffcanvas({ title: 'second', content: 'x' })
+
+    expect(document.documentElement.classList.contains('sod-offcanvas-open')).toBe(true)
+    first.close()
+    expect(document.documentElement.classList.contains('sod-offcanvas-open')).toBe(true)
+    second.close()
+    expect(document.documentElement.classList.contains('sod-offcanvas-open')).toBe(false)
+  })
+
+  it('resizes an end offcanvas by pointer and keyboard and persists its width', () => {
+    const storageKey = 'sodialog:test-width'
+    window.localStorage.removeItem(storageKey)
+    const handle = openOffcanvas({
+      title: 'resizable offcanvas',
+      content: 'x',
+      placement: 'end',
+      width: 480,
+      resizable: { minWidth: 320, maxWidth: 800, storageKey, step: 20 },
+    })
+    const grip = handle.dialog.querySelector<HTMLElement>('.sod-offcanvas-resize-handle')!
+
+    dispatchPointerEvent(grip, 'pointerdown', { clientX: 500 })
+    dispatchPointerEvent(document, 'pointermove', { clientX: 400 })
+    dispatchPointerEvent(document, 'pointerup', { clientX: 400 })
+
+    expect(handle.getWidth()).toBe(580)
+    expect(window.localStorage.getItem(storageKey)).toBe('580')
+    grip.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }))
+    expect(handle.getWidth()).toBe(560)
+    expect(grip.getAttribute('aria-valuenow')).toBe('560')
+    handle.setWidth(999)
+    expect(handle.getWidth()).toBe(800)
+  })
+
+  it('can still close after another consumer prevents an Escape dismissal', async () => {
+    const handle = openOffcanvas({
+      title: 'editor offcanvas',
+      content: 'x',
+      placement: 'end',
+      width: 480,
+      closeOnEsc: true,
+      resizable: true,
+    })
+    handle.dialog.addEventListener('cancel', (event) => event.preventDefault(), { once: true })
+
+    handle.dialog.dispatchEvent(new Event('cancel', { cancelable: true }))
+    await Promise.resolve()
+
+    expect(handle.dialog.open).toBe(true)
+    handle.dialog.querySelector<HTMLButtonElement>('.sod-close')?.click()
+    expect(handle.dialog.open).toBe(false)
+  })
+
+  it('supports start placement direction and explicit resize opt-out', () => {
+    const start = openOffcanvas({ title: 'start', content: 'x', placement: 'start', width: 400, resizable: true })
+    const grip = start.dialog.querySelector<HTMLElement>('.sod-offcanvas-resize-handle')!
+    dispatchPointerEvent(grip, 'pointerdown', { clientX: 400 })
+    dispatchPointerEvent(document, 'pointermove', { clientX: 460 })
+    dispatchPointerEvent(document, 'pointerup', { clientX: 460 })
+    expect(start.getWidth()).toBe(460)
+
+    const fixed = openOffcanvas({ title: 'fixed', content: 'x', resizable: false })
+    expect(fixed.dialog.querySelector('.sod-offcanvas-resize-handle')).toBeNull()
   })
 
   it('renders an HTMLElement title in an offcanvas and preserves its accessible name', () => {

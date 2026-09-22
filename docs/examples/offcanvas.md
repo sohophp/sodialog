@@ -1,6 +1,6 @@
 # Offcanvas
 
-独立 Offcanvas 示例，避免嵌入整页 legacy demo。用于检查四个方向、动画和尺寸控制。
+独立 Offcanvas 示例展示四个方向、可调宽面板、长表单滚动和宽度记忆。拖动面板内侧边缘，或聚焦调宽手柄使用方向键、Home、End。
 
 <DemoPreview src="/components/offcanvas-demo.html" title="Offcanvas Placements" :height="430" />
 

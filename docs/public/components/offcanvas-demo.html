@@ -38,14 +38,17 @@
   <body>
     <div class="card">
       <h2>Offcanvas 位置演示</h2>
-      <p>点击按钮打开不同方向的 Offcanvas。</p>
+      <p>选择方向，或打开可调宽长表单。桌面可拖动面板内侧边缘；聚焦边缘后可用方向键、Home 和 End 调宽。</p>
       <p id="status" style="margin-top: 10px; color: #475569; font-size: 13px">正在加载示例脚本...</p>
       <div class="row">
         <button data-placement="start" disabled>Start</button>
         <button data-placement="end" disabled>End</button>
         <button data-placement="top" disabled>Top</button>
         <button data-placement="bottom" disabled>Bottom</button>
+        <button id="resizable" type="button" disabled>可调宽长表单</button>
+        <button id="reset-width" type="button" disabled>清除记忆宽度</button>
       </div>
+      <p id="resize-status" style="color: #475569; font-size: 13px"></p>
     </div>
 
     <script type="module">
@@ -53,8 +56,12 @@
 
       const status = document.querySelector('#status')
       const buttons = document.querySelectorAll('button[data-placement]')
+      const resizeButton = document.querySelector('#resizable')
+      const resetButton = document.querySelector('#reset-width')
+      const resizeStatus = document.querySelector('#resize-status')
+      const storageKey = 'sod-docs-offcanvas-width'
 
-      const api = await loadSoDialog()
+      const api = await loadSoDialog({ local: true })
       if (!api?.openOffcanvas) {
         if (status) {
           status.textContent = '加载失败：无法访问示例依赖，请检查网络或代理。'
@@ -72,6 +79,28 @@
               content: `<p>当前位置: ${placement}</p>`,
             })
           })
+        })
+        resizeButton.disabled = false
+        resetButton.disabled = false
+        resizeButton.addEventListener('click', () => {
+          const fields = Array.from({ length: 18 }, (_, index) =>
+            `<label style="display:block;margin:12px 0">字段 ${index + 1}<input ${index === 17 ? 'id="last-field"' : ''} style="display:block;width:100%;box-sizing:border-box;padding:8px" value="示例内容 ${index + 1}"></label>`,
+          ).join('')
+          const panel = api.openOffcanvas({
+            title: '可调宽长表单',
+            placement: 'end',
+            width: 560,
+            resizable: { minWidth: 320, maxWidth: 900, storageKey, handleLabel: '调整面板宽度' },
+            content: `<p>向下滚动检查最后一个字段。再次打开可验证宽度记忆。</p>${fields}`,
+          })
+          resizeStatus.textContent = `当前宽度：${Math.round(panel.getWidth())}px`
+          panel.dialog.addEventListener('sod:resizeend', () => {
+            resizeStatus.textContent = `已记忆宽度：${Math.round(panel.getWidth())}px`
+          })
+        })
+        resetButton.addEventListener('click', () => {
+          localStorage.removeItem(storageKey)
+          resizeStatus.textContent = '已清除记忆宽度。'
         })
         if (status) {
           status.textContent = '已就绪，点击按钮查看效果。'

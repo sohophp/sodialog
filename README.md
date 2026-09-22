@@ -1,6 +1,6 @@
 # SoDialog
 
-基于 HTML5 `dialog` 的可复用弹窗库，支持 **Modal** 与 **Offcanvas**，并通过 JavaScript 动态创建 HTML 元素。
+基于浏览器原生 Dialog 与 DOM API 的零运行时依赖组件库，提供 Modal、Offcanvas、Toast、Context Menu、Tooltip 和 Tags Input。
 
 ## 目录
 
@@ -13,6 +13,7 @@
 - [API 独立页](#api-独立页)
 - [Promise API](#promise-api)
 - [Toast 常见示例](#toast-常见示例)
+- [组件文档与示例](#组件文档与示例)
 - [开发](#开发)
 - [GitHub Pages 首页](#github-pages-首页)
 - [文档体系](#文档体系)
@@ -27,11 +28,19 @@ npm install sodialog
 ## 使用
 
 ```ts
-import { setTheme, openModal, openOffcanvas, confirmModal, promptModal, formModal, toast, bindContextMenu } from 'sodialog'
+import { setTheme, openModal, openOffcanvas, confirmModal, promptModal, formModal, toast, bindContextMenu, bindTooltip, createTagsInput } from 'sodialog'
 import 'sodialog/style.css'
 
 // classic（默认）、modern 或 minimal；也可在单个组件传入 theme 覆盖。
 setTheme('modern')
+
+createTagsInput(document.querySelector('#keywords'), {
+  maxTags: 20,
+  separators: [',', ';', '，', '；', '\n'],
+})
+
+const saveTooltip = bindTooltip({ target: '#save-button', content: '保存当前设置' })
+// 页面卸载时调用 saveTooltip.destroy()
 
 openModal({
   id: 'order-delete',
@@ -710,7 +719,7 @@ off()
 
 ### `openOffcanvas(options)`
 
-Offcanvas 使用固定标题及底部操作区，长内容只在 `.sod-body` 内滚动并受动态视口高度约束；不需要依赖宿主页面或 `globalThis` 的滚动条。
+Offcanvas 默认锁定页面滚动并占满动态视口高度。标题及底部操作区固定，长内容只在 `.sod-body` 内滚动；关闭最后一个 Offcanvas 后自动恢复页面滚动。
 
 在 `openModal` 参数基础上新增：
 
@@ -718,6 +727,7 @@ Offcanvas 使用固定标题及底部操作区，长内容只在 `.sod-body` 内
 - `animation?: 'slide' | 'fade' | 'zoom'` (默认 `slide`)
 - `width?: number | string`（数字按像素处理，也可传入 CSS 尺寸字符串）
 - `height?: number | string`（数字按像素处理，也可传入 CSS 尺寸字符串）
+- `resizable?: boolean | SoOffcanvasResizeOptions`（左右面板启用拖动及键盘调宽；可配置最小/最大宽度、步进和本地记忆键）
 
 示例（类似 Bootstrap Offcanvas 多位置）：
 
@@ -726,6 +736,16 @@ openOffcanvas({ title: 'Left', placement: 'start', animation: 'slide', content: 
 openOffcanvas({ title: 'Right', placement: 'end', animation: 'slide', content: '<p>Right</p>' })
 openOffcanvas({ title: 'Top', placement: 'top', animation: 'fade', content: '<p>Top</p>' })
 openOffcanvas({ title: 'Bottom', placement: 'bottom', animation: 'zoom', content: '<p>Bottom</p>' })
+```
+
+```ts
+openOffcanvas({
+  title: 'Resizable',
+  placement: 'end',
+  width: 640,
+  resizable: { minWidth: 360, maxWidth: 1200, storageKey: 'admin-detail-width' },
+  content: '<p>Drag the inner edge, or focus it and use arrow keys.</p>',
+})
 ```
 
 ### `SoDialog.open(options)`
@@ -919,6 +939,12 @@ binding.destroy()
 
 完整契约请参阅文档站的 `/api/image-preview`。
 
+## 组件文档与示例
+
+- Tooltip：[组件指南](https://sodialog.sohophp.app/components/tooltip)、[API](https://sodialog.sohophp.app/api/tooltip)、[示例](https://sodialog.sohophp.app/examples/tooltip)。
+- Tags Input：[组件指南](https://sodialog.sohophp.app/components/tags-input)、[API](https://sodialog.sohophp.app/api/tags-input)、[示例](https://sodialog.sohophp.app/examples/tags-input)。
+- 可调宽 Offcanvas：[组件指南](https://sodialog.sohophp.app/components/offcanvas)、[API](https://sodialog.sohophp.app/api/dialog)、[示例](https://sodialog.sohophp.app/examples/offcanvas)。
+
 ## 开发
 
 ```bash
@@ -954,8 +980,8 @@ npm run docs:test:smoke:ci
 ## 文档体系
 
 - VitePress 文档站：`docs/`
-- 本地开发：`npm run docs:dev`
-- 构建产物：`npm run docs:build`（输出 `docs/.vitepress/dist`）
+- 本地开发：`npm run docs:dev`（先构建供组件示例使用的本地库产物）
+- 构建产物：`npm run docs:build`（输出 `docs/.vitepress/dist`；组件示例使用同次构建的库产物）
 - `README.md`：使用方式、API、发布流程总览
 - `CHANGELOG.md`：人工维护的用户可见变更记录
 - `RELEASE_CHECKLIST.md`：发布前人工检查清单

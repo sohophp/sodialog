@@ -4,9 +4,22 @@
 
 ## Unreleased
 
+### Added
+
+- 新增零依赖 Tooltip：支持选择器委托、纯文本内容、四向定位与视口避让、鼠标和键盘触发、触摸长按、ARIA 描述关联及完整清理 API。
+- 新增零依赖 `createTagsInput()` API，可渐进增强现有 `input`／`textarea`，支持键盘输入、粘贴分隔、去重、数量限制、删除、表单重置及原字段值双向同步。
+- Offcanvas 新增 `resizable` 公共配置，左右面板支持鼠标、触控和键盘调宽，可限制宽度、设置步进并通过 `storageKey` 记忆用户宽度；句柄同步新增 `setWidth()` 与 `getWidth()`。
+
 ### Fixed
 
+- 原生 `cancel` 事件被嵌套编辑器阻止时，不再残留永久关闭锁；后续 Escape、关闭按钮和程序关闭仍可正常工作。
+- Offcanvas 调宽手柄改为不可见的边缘热区，保留拖动光标与键盘操作，但不再显示蓝色竖线或聚焦光晕。
+- Offcanvas 默认锁定宿主页面滚动并固定在动态视口内，仅允许 `.sod-body` 产生内部滚动条；同时正确处理多个 Offcanvas 的滚动锁计数。
 - Offcanvas 現在固定標題與底部操作區，只讓內容區在視口內滾動；長表單的最後一項可透過滑鼠、觸控與鍵盤完整到達，並支援動態視口高度。
+
+### Documentation
+
+- Tooltip、Tags Input 与可调宽 Offcanvas 增加组件指南、完整 API 和可运行示例；新示例加载同次文档构建的本地库产物。
 
 ## 0.3.21 - 2026-08-17
 

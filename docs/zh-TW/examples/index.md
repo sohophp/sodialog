@@ -1,6 +1,6 @@
 # 範例
 
-範例中心改為入口頁。每個可執行 demo 都有獨立頁面，避免單頁載入過多 iframe。
+範例中心為每個可執行 demo 提供獨立頁面。範例預設載入文檔建置時的本地庫產物，讓程式碼與目前文檔一致；加入 `?sodialogVersion=latest` 可切換至已發布的 CDN 版本。
 
 ## 可執行範例
 
@@ -12,6 +12,8 @@
   <a class="sod-doc-tile" href="/zh-TW/examples/toast-basic"><h3>Toast Basic</h3><p>狀態訊息、位置與自動關閉。</p></a>
   <a class="sod-doc-tile" href="/zh-TW/examples/toast-queue"><h3>Toast Queue</h3><p>佇列上限、重複策略與進度。</p></a>
   <a class="sod-doc-tile" href="/zh-TW/examples/context-menu"><h3>Context Menu</h3><p>右鍵選單、圖示與鍵盤路徑。</p></a>
+  <a class="sod-doc-tile" href="/zh-TW/examples/tooltip"><h3>Tooltip</h3><p>懸停、聚焦、長按與動態清單提示。</p></a>
+  <a class="sod-doc-tile" href="/zh-TW/examples/tags-input"><h3>Tags Input</h3><p>輸入、貼上、重置與表單值同步。</p></a>
   <a class="sod-doc-tile" href="/zh-TW/examples/menu-to-dialog"><h3>Menu to Dialog</h3><p>從選單動作開啟 Dialog。</p></a>
 </div>
 

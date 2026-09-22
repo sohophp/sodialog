@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SoDialog Tags Input Demo</title>
+    <style>
+      body { margin: 0; padding: 24px; font-family: system-ui, sans-serif; background: #f6f8fb; color: #172033; }
+      form { max-width: 620px; padding: 20px; border: 1px solid #d8e0ef; border-radius: 12px; background: #fff; }
+      label { display: block; margin-bottom: 10px; font-weight: 600; }
+      textarea { width: 100%; box-sizing: border-box; }
+      .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+      button { min-height: 40px; padding: 8px 12px; border: 1px solid #bcc9d9; border-radius: 8px; background: #fff; cursor: pointer; }
+      button:focus-visible { outline: 3px solid #77a7ff; outline-offset: 2px; }
+      #status { margin-top: 16px; min-height: 20px; color: #475569; font-size: 13px; overflow-wrap: anywhere; }
+    </style>
+  </head>
+  <body>
+    <h2>Tags Input 演示</h2>
+    <p>输入文字后按 Enter、逗号或分号；也可粘贴多项。试试删除、重置和查看表单提交值。</p>
+    <form id="tag-form">
+      <label for="keywords">关键词</label>
+      <textarea id="keywords" name="keywords" rows="2">display,embedded</textarea>
+      <div class="actions">
+        <button type="submit">查看提交值</button>
+        <button type="reset">重置</button>
+        <button id="external-update" type="button">模拟外部更新</button>
+      </div>
+    </form>
+    <p id="status" role="status">正在加载示例脚本...</p>
+    <script type="module">
+      import { loadSoDialog } from './sodialog-loader.js'
+
+      const form = document.querySelector('#tag-form')
+      const source = document.querySelector('#keywords')
+      const status = document.querySelector('#status')
+      const api = await loadSoDialog({ local: true })
+      if (!api?.createTagsInput) {
+        status.textContent = '加载失败：无法访问 Tags Input 示例依赖。'
+      } else {
+        api.createTagsInput(source, {
+          maxTags: 8,
+          inputAriaLabel: '新增关键词',
+          onChange: (values) => { status.textContent = `当前标签：${values.join('、') || '无'}` },
+        })
+        form.addEventListener('submit', (event) => {
+          event.preventDefault()
+          status.textContent = `提交值：${new FormData(form).get('keywords')}`
+        })
+        document.querySelector('#external-update').addEventListener('click', () => {
+          source.value = 'screen,industrial,HDMI'
+          source.dispatchEvent(new Event('input', { bubbles: true }))
+          status.textContent = '已从原字段同步：screen,industrial,HDMI'
+        })
+        status.textContent = '已就绪：原字段仍参与表单提交。'
+      }
+    </script>
+  </body>
+</html>

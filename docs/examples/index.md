@@ -1,6 +1,6 @@
 # 示例
 
-示例中心按任务拆分为独立页面。每个页面只加载一个可运行 demo，默认使用当前文档版本的 CDN，也支持通过 URL 参数临时切换版本，例如 `?sodialogVersion=latest` 或 `?sodialogVersion=0.3.10`。
+示例中心按任务拆分为独立页面。示例默认加载文档构建时的本地库产物，确保展示的代码与当前文档一致；可通过 URL 参数临时改用已发布的 CDN 版本，例如 `?sodialogVersion=latest` 或 `?sodialogVersion=0.3.21`。
 
 ## 可运行示例
 
@@ -12,6 +12,8 @@
   <a class="sod-doc-tile" href="/examples/toast-basic"><h3>Toast Basic</h3><p>状态消息、位置和自动关闭。</p></a>
   <a class="sod-doc-tile" href="/examples/toast-queue"><h3>Toast Queue</h3><p>队列上限、重复策略和倒计时。</p></a>
   <a class="sod-doc-tile" href="/examples/context-menu"><h3>Context Menu</h3><p>右键菜单、图标、键盘路径。</p></a>
+  <a class="sod-doc-tile" href="/examples/tooltip"><h3>Tooltip</h3><p>悬停、聚焦、长按与动态列表提示。</p></a>
+  <a class="sod-doc-tile" href="/examples/tags-input"><h3>Tags Input</h3><p>输入、粘贴、重置与表单值同步。</p></a>
   <a class="sod-doc-tile" href="/examples/menu-to-dialog"><h3>Menu to Dialog</h3><p>从菜单动作打开 Dialog 的组合流程。</p></a>
 </div>
 

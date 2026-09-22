@@ -7,6 +7,7 @@ export default tseslint.config(
       'dist/**',
       'dist-pages/**',
       'docs/public/legacy-demo/**',
+      'docs/public/components/runtime/**',
       'docs/.vitepress/cache/**',
       'docs/.vitepress/.temp/**',
       'docs/.vitepress/dist/**',

@@ -1,6 +1,6 @@
 # Examples
 
-The examples hub now links to focused pages. Each page loads one runnable demo, which keeps scrolling and iframe behavior predictable.
+Each example page loads one runnable demo. By default, demos use the library built with this documentation, so the behavior matches the current code. Add `?sodialogVersion=latest` to use a published CDN version instead.
 
 ## Runnable Examples
 
@@ -12,6 +12,8 @@ The examples hub now links to focused pages. Each page loads one runnable demo, 
   <a class="sod-doc-tile" href="/en/examples/toast-basic"><h3>Toast Basic</h3><p>Status messages, placement, and auto close.</p></a>
   <a class="sod-doc-tile" href="/en/examples/toast-queue"><h3>Toast Queue</h3><p>Queue limit, duplicate strategy, and progress.</p></a>
   <a class="sod-doc-tile" href="/en/examples/context-menu"><h3>Context Menu</h3><p>Right-click menu, icons, and keyboard paths.</p></a>
+  <a class="sod-doc-tile" href="/en/examples/tooltip"><h3>Tooltip</h3><p>Hover, focus, long press, and dynamic list hints.</p></a>
+  <a class="sod-doc-tile" href="/en/examples/tags-input"><h3>Tags Input</h3><p>Editing, paste, reset, and form value synchronization.</p></a>
   <a class="sod-doc-tile" href="/en/examples/menu-to-dialog"><h3>Menu to Dialog</h3><p>Open dialogs from menu actions.</p></a>
 </div>
 

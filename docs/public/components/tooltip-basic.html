@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SoDialog Tooltip Demo</title>
+    <style>
+      body { margin: 0; padding: 24px; font-family: system-ui, sans-serif; background: #f6f8fb; color: #172033; }
+      .row { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin: 20px 0; }
+      button { min-height: 42px; padding: 8px 14px; border: 1px solid #bcc9d9; border-radius: 8px; background: #fff; cursor: pointer; }
+      button:focus-visible { outline: 3px solid #77a7ff; outline-offset: 2px; }
+      #status { min-height: 20px; color: #475569; font-size: 13px; }
+    </style>
+  </head>
+  <body>
+    <h2>Tooltip 演示</h2>
+    <p>悬停、Tab 聚焦或在触摸屏上长按按钮。按 Escape 关闭。</p>
+    <div class="row">
+      <button id="save" type="button" aria-label="保存设置">保存</button>
+      <button type="button" data-sod-tooltip="查看操作帮助">帮助</button>
+      <button id="add" type="button">添加动态按钮</button>
+      <button id="open-panel" type="button">在 Offcanvas 中查看</button>
+    </div>
+    <div id="dynamic" class="row"></div>
+    <p id="status">正在加载示例脚本...</p>
+    <script type="module">
+      import { loadSoDialog } from './sodialog-loader.js'
+      const status = document.querySelector('#status')
+      const api = await loadSoDialog({ local: true })
+      if (!api?.bindTooltip) {
+        status.textContent = '加载失败：无法访问 Tooltip 示例依赖。'
+      } else {
+        api.bindTooltip({ target: '#save', content: '保存当前设置' })
+        api.bindTooltip({ target: '[data-sod-tooltip]', placement: 'bottom' })
+        document.querySelector('#add').addEventListener('click', () => {
+          const button = document.createElement('button')
+          button.type = 'button'
+          button.dataset.sodTooltip = '动态加入的按钮也有提示'
+          button.textContent = '新按钮'
+          document.querySelector('#dynamic').append(button)
+        })
+        document.querySelector('#open-panel').addEventListener('click', () => {
+          api.openOffcanvas({
+            title: '面板中的 Tooltip',
+            placement: 'end',
+            content: '<p>在面板内聚焦下方按钮。</p><button type="button" data-sod-tooltip="面板内的提示也保持可见">面板操作</button>',
+          })
+        })
+        status.textContent = '已就绪。'
+      }
+    </script>
+  </body>
+</html>

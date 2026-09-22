@@ -22,6 +22,8 @@ description: SoDialog API 总览：Dialog、Toast、Context Menu、Adapter 的�
 3. [Toast API](/en/api/toast)
 4. [Context Menu API](/en/api/context-menu)
 5. [Adapter API](/en/api/adapter)
+6. [Tooltip API](/en/api/tooltip)
+7. [Tags Input API](/en/api/tags-input)
 
 ## 方法索引
 
@@ -32,18 +34,22 @@ description: SoDialog API 总览：Dialog、Toast、Context Menu、Adapter 的�
 | Image Preview | `openImagePreview`, `bindImagePreview` |
 | Toast | `toast`, `pushMessage`, `SoToast.configure`, `SoToast.clear`, `SoToast.closeAll` |
 | Context Menu | `bindContextMenu`, `configureContextMenu`, `openDialogFromContextMenu` |
+| Tooltip | `bindTooltip`, `configureTooltip`, `SoTooltip.bind`, `SoTooltip.configure` |
+| Tags Input | `createTagsInput` |
 | Adapter | `configureAdapter`, `openDialog`, `bindDialogContextMenu`, `pushMessage` |
 
 ## 类型速查
 
 | Domain | Key Types |
 | --- | --- |
-| Dialog | `SoDialogModalOptions`, `SoDialogOffcanvasOptions`, `SoDialogHandle` |
+| Dialog | `SoDialogModalOptions`, `SoDialogOffcanvasOptions`, `SoOffcanvasResizeOptions`, `SoDialogHandle` |
 | Theme | `SoThemePreset` (`classic` \| `modern` \| `minimal`) |
 | Promise Dialog | `SoDialogConfirmOptions`, `SoDialogPromptOptions`, `SoDialogFormOptions`, `SoDialogFormValue` |
 | Image Preview | `SoImagePreviewOptions`, `SoImagePreviewBindingOptions`, `SoImagePreviewHandle` |
 | Toast | `SoToastOptions`, `SoToastHandle`, `SoToastPlacement`, `SoToastDuplicateStrategy` |
 | Context Menu | `SoContextMenuOptions`, `SoContextMenuHandle`, `SoContextMenuItem` |
+| Tooltip | `SoTooltipOptions`, `SoTooltipDefaults`, `SoTooltipHandle`, `SoTooltipTarget`, `SoTooltipContent`, `SoTooltipPlacement` |
+| Tags Input | `SoTagsInputOptions`, `SoTagsInputHandle` |
 | Adapter | `SoAdapterConfig`, `SoAdapterLogEvent`, `SoPushMessageOptions`, `SoMessageLevel` |
 
 ## Adapter 示例

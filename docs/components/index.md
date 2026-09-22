@@ -1,5 +1,5 @@
 ---
-description: SoDialog 组件总览：Modal、Offcanvas、Toast 与 Context Menu 的入口与定位。
+description: SoDialog 组件总览：Dialog、Toast、Context Menu、Tooltip 与 Tags Input。
 ---
 
 # 组件
@@ -25,8 +25,10 @@ SoDialog 的组件都基于浏览器原生 DOM 能力实现，保持零运行时
     <h3>Context Menu</h3>
     <p>用于右键菜单、键盘导航、typeahead 和菜单触发 Dialog。</p>
   </a>
+  <a class="sod-doc-tile" href="/components/tooltip"><h3>Tooltip</h3><p>简短文本提示，支持鼠标、键盘、触摸与动态列表。</p></a>
+  <a class="sod-doc-tile" href="/components/tags-input"><h3>Tags Input</h3><p>渐进增强原表单字段，支持键盘、粘贴与双向同步。</p></a>
 </div>
 
 ## 其它组件 {#other-components}
 
-当前公开包以 Modal、Offcanvas、Toast 和 Context Menu 为核心组件。新的框架适配器会作为薄封装独立规划，不进入核心运行时依赖。
+当前公开包包含 Modal、Offcanvas、Toast、Context Menu、Tooltip 和 Tags Input。框架适配器会作为薄封装独立规划，不进入核心运行时依赖。

@@ -47,6 +47,8 @@ openOffcanvas({
 
 <OffcanvasPlayground />
 
+<DemoPreview src="/components/offcanvas-demo.html" title="Offcanvas 位置、调宽与长表单" :height="440" />
+
 ## 位置与动画
 
 ```ts
@@ -66,7 +68,29 @@ const openPanel = (placement: 'start' | 'end' | 'top' | 'bottom') => {
 
 `width` 和 `height` 接受数字或 CSS 尺寸字符串。数字按像素处理，例如 `width: 480`；字符串可使用 `40vw`、`75vh` 或 `calc(...)`。
 
-Offcanvas 面板始终受当前动态视口高度约束。标题和底部操作区保持可见，内容超过可用高度时仅 `.sod-body` 滚动，因此长表单的最后一个控件仍可通过滚轮、触控、方向键、Page Down 或 End 到达。宿主页面无需启用全局滚动条。
+## 可调整宽度
+
+左右面板设置 `resizable: true` 后会显示内侧拖动柄，也可聚焦拖动柄后使用方向键调整。对象配置支持 `minWidth`、`maxWidth`、`step`、`largeStep`、`handleLabel` 与 `storageKey`；设置记忆键后，重新打开会恢复用户上次宽度。窄屏手机会隐藏拖动柄，面板仍保持视口宽度约束。
+
+```ts
+const form = document.querySelector<HTMLFormElement>('#profile-form')!
+const panel = openOffcanvas({
+  title: '编辑资料',
+  placement: 'end',
+  width: 640,
+  resizable: {
+    minWidth: 360,
+    maxWidth: 1280,
+    storageKey: 'profile-editor-width',
+  },
+  content: form,
+})
+
+panel.setWidth(720)
+console.log(panel.getWidth())
+```
+
+Offcanvas 面板始终受当前动态视口高度约束，并默认锁定 `window/body` 滚动。标题和底部操作区保持可见，内容超过可用高度时仅 `.sod-body` 显示内部滚动条，因此长表单的最后一个控件仍可通过滚轮、触控、方向键、Page Down 或 End 到达。关闭最后一个 Offcanvas 后自动恢复页面滚动。
 
 ## 生命周期通知
 

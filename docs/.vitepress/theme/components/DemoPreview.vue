@@ -18,6 +18,7 @@ const props = withDefaults(
 const sourceCode = ref('')
 const copied = ref(false)
 const loading = ref(false)
+const demoSrc = ref(props.src)
 
 const resolvedCodeSrc = computed(() => {
   if (props.codeSrc) return props.codeSrc
@@ -38,6 +39,15 @@ const copyCode = async () => {
 }
 
 onMounted(async () => {
+  const params = new URLSearchParams(window.location.search)
+  const version = params.get('sodialogVersion') || params.get('cdnVersion') || params.get('version')
+  if (version) {
+    const url = new URL(props.src, window.location.origin)
+    if (url.origin === window.location.origin) {
+      url.searchParams.set('sodialogVersion', version)
+      demoSrc.value = `${url.pathname}${url.search}`
+    }
+  }
   loading.value = true
   try {
     const response = await fetch(resolvedCodeSrc.value)
@@ -52,11 +62,11 @@ onMounted(async () => {
   <section class="demo-preview">
     <header class="demo-preview__header">
       <h3>{{ title }}</h3>
-      <a :href="src" target="_blank" rel="noreferrer">Open in New Tab</a>
+      <a :href="demoSrc" target="_blank" rel="noreferrer">Open in New Tab</a>
     </header>
 
     <iframe
-      :src="src"
+      :src="demoSrc"
       :title="title"
       class="demo-preview__frame"
       :style="{ minHeight: `${height}px` }"

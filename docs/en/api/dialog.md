@@ -64,6 +64,9 @@ Providing `width` or `height` disables automatic modal sizing so the explicit di
 | `animation` | `'slide' \| 'fade' \| 'zoom'` | `slide` | Offcanvas animation. |
 | `width` | `number \| string` | placement default | Panel width. Numbers are interpreted as pixels; strings accept CSS sizes. |
 | `height` | `number \| string` | placement default | Panel height. Numbers are interpreted as pixels; strings accept CSS sizes. |
+| `resizable` | `boolean \| SoOffcanvasResizeOptions` | `false` | Enable pointer and keyboard width resizing for start/end panels. |
+
+`SoOffcanvasResizeOptions`: `minWidth` defaults to `320` px (minimum accepted value `160`); `maxWidth` defaults to no configured limit and is restricted by the viewport; `step` defaults to `10` px; `largeStep` defaults to `50` px with Shift; `handleLabel` defaults to `Resize panel`; `storageKey` is unset by default. Arrow keys, Home, and End adjust width. Pointer and keyboard changes persist when a storage key is set. The handle is hidden on narrow screens. Offcanvas locks page scrolling while its body remains scrollable.
 
 ## Return Handle (`SoDialogHandle`)
 
@@ -74,6 +77,8 @@ Providing `width` or `height` disables automatic modal sizing so the explicit di
 | `dialog` | `HTMLDialogElement` | Native dialog element. |
 | `close` | `() => void` | Close dialog. |
 | `refit` | `() => void` | Trigger layout refit manually. |
+| `setWidth` | `(width: number \| string) => void` | Set panel width; numeric widths on resizable panels use configured limits. |
+| `getWidth` | `() => number` | Read the current rendered width in pixels. |
 | `setFooterButtons` | `(buttons) => void` | Replace footer button set. |
 | `updateFooterButton` | `(id, updates) => boolean` | Patch one button by id. |
 | `onAction` | `(listener) => () => void` | Subscribe footer actions and return unsubscribe. |

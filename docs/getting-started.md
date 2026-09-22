@@ -52,9 +52,9 @@ toast({
 
 ### CDN 说明（源码复制友好）
 
-文档中的组件示例通过 `/components/sodialog-loader.js` 统一解析 CDN 版本，避免每个 HTML 示例重复硬编码版本号。
+文档中的组件示例默认使用同次构建的本地库产物。`/components/sodialog-loader.js` 负责加载，并支持临时切换到指定 CDN 版本。
 
-- 默认版本集中维护在 loader 中。
+- 指定版本时，loader 使用 CDN；未指定版本时使用本站构建产物。
 - 示例 URL 支持临时覆盖版本：`?sodialogVersion=latest`、`?sodialogVersion=0.3.10`。
 - 生产页面仍建议固定 patch 版本，不建议长期依赖 `@latest`。
 

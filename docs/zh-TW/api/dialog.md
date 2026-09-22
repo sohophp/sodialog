@@ -64,6 +64,9 @@ Providing `width` or `height` disables automatic modal sizing so the explicit di
 | `animation` | `'slide' \| 'fade' \| 'zoom'` | `slide` | Offcanvas animation. |
 | `width` | `number \| string` | placement default | Panel width. Numbers are interpreted as pixels; strings accept CSS sizes. |
 | `height` | `number \| string` | placement default | Panel height. Numbers are interpreted as pixels; strings accept CSS sizes. |
+| `resizable` | `boolean \| SoOffcanvasResizeOptions` | `false` | Enables pointer and keyboard width resizing for start/end panels. |
+
+`SoOffcanvasResizeOptions`：`minWidth` 預設 `320` px（最低可設 `160`）；`maxWidth` 預設無設定上限，並受視窗限制；`step` 預設 `10` px；按住 Shift 的 `largeStep` 預設 `50` px；`handleLabel` 預設 `Resize panel`；`storageKey` 預設不設定。方向鍵、Home 與 End 可調寬；指定記憶鍵後，滑鼠或鍵盤調整的寬度會在下次開啟時恢復。窄螢幕隱藏手柄。Offcanvas 會鎖定頁面捲動，內容區仍可捲動。
 
 ## Return Handle (`SoDialogHandle`)
 
@@ -74,6 +77,8 @@ Providing `width` or `height` disables automatic modal sizing so the explicit di
 | `dialog` | `HTMLDialogElement` | Native dialog element. |
 | `close` | `() => void` | Close dialog. |
 | `refit` | `() => void` | Trigger layout refit manually. |
+| `setWidth` | `(width: number \| string) => void` | Set the panel width. |
+| `getWidth` | `() => number` | Read the rendered width in pixels. |
 | `setFooterButtons` | `(buttons) => void` | Replace footer button set. |
 | `updateFooterButton` | `(id, updates) => boolean` | Patch one button by id. |
 | `onAction` | `(listener) => () => void` | Subscribe footer actions and return unsubscribe. |

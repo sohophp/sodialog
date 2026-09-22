@@ -52,9 +52,9 @@ toast({
 
 ### CDN Notes
 
-Docs examples resolve their CDN version through `/components/sodialog-loader.js`, so every standalone HTML example does not need to hardcode the same version.
+Docs examples use the library built with this site by default. `/components/sodialog-loader.js` loads it and can temporarily switch to a specific CDN version.
 
-- The default version is maintained in the shared loader.
+- With a version override, the loader uses the CDN; otherwise it uses the local build.
 - Example URLs can temporarily override the version: `?sodialogVersion=latest`, `?sodialogVersion=0.3.10`.
 - Production pages should still pin a patch version instead of relying on `@latest`.
 
