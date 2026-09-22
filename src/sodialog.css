@@ -1478,6 +1478,7 @@ html.sod-offcanvas-open body {
   box-shadow: var(--sod-tooltip-shadow);
   font: 500 0.78rem/1.4 system-ui, sans-serif;
   overflow-wrap: anywhere;
+  overflow: visible;
   pointer-events: none;
 }
 
