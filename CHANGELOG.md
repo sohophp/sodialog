@@ -4,6 +4,8 @@
 
 ## Unreleased
 
+## 0.3.22 - 2026-09-22
+
 ### Added
 
 - 新增零依赖 Tooltip：支持选择器委托、纯文本内容、四向定位与视口避让、鼠标和键盘触发、触摸长按、ARIA 描述关联及完整清理 API。
@@ -19,7 +21,7 @@
 
 ### Documentation
 
-- Tooltip、Tags Input 与可调宽 Offcanvas 增加组件指南、完整 API 和可运行示例；新示例加载同次文档构建的本地库产物。
+- Tooltip、Tags Input 与可调宽 Offcanvas 增加组件指南、完整 API 和可运行示例。
 
 ## 0.3.21 - 2026-08-17
 
