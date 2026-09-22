@@ -2,7 +2,7 @@
 
 // Keep examples on the latest verified npm release. Query-string overrides
 // select another published version for compatibility checks.
-const defaultVersion = '0.3.22'
+const defaultVersion = '0.3.23'
 
 const versionPattern = /^(latest|\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?)$/
 

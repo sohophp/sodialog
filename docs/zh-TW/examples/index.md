@@ -1,6 +1,6 @@
 # 範例
 
-範例中心為每個可執行 demo 提供獨立頁面。範例預設載入已發布的 `sodialog@0.3.22` CDN 版本；加入 `?sodialogVersion=latest` 可暫時切換至其他已發布版本。
+範例中心為每個可執行 demo 提供獨立頁面。範例預設載入已發布的 `sodialog@0.3.23` CDN 版本；加入 `?sodialogVersion=latest` 可暫時切換至其他已發布版本。
 
 ## 可執行範例
 

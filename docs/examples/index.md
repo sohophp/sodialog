@@ -1,6 +1,6 @@
 # 示例
 
-示例中心按任务拆分为独立页面。示例默认加载已发布的 `sodialog@0.3.22` CDN 版本；可通过 URL 参数临时切换版本，例如 `?sodialogVersion=latest` 或 `?sodialogVersion=0.3.21`。
+示例中心按任务拆分为独立页面。示例默认加载已发布的 `sodialog@0.3.23` CDN 版本；可通过 URL 参数临时切换版本，例如 `?sodialogVersion=latest` 或 `?sodialogVersion=0.3.21`。
 
 ## 可运行示例
 

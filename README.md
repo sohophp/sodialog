@@ -980,7 +980,7 @@ npm run docs:test:smoke:ci
 ## 文档体系
 
 - VitePress 文档站：`docs/`
-- 本地开发：`npm run docs:dev`（组件示例默认加载已发布的 `sodialog@0.3.22` CDN 文件）
+- 本地开发：`npm run docs:dev`（组件示例默认加载已发布的 `sodialog@0.3.23` CDN 文件）
 - 构建产物：`npm run docs:build`（输出 `docs/.vitepress/dist`；示例版本统一由 loader 固定）
 - `README.md`：使用方式、API、发布流程总览
 - `CHANGELOG.md`：人工维护的用户可见变更记录

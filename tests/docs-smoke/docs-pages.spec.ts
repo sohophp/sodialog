@@ -254,14 +254,14 @@ test('image preview demo loads the published CDN version and opens a preview', a
   expect(response?.ok()).toBeTruthy()
 
   const loader = await page.request.get('/components/sodialog-loader.js')
-  expect(await loader.text()).toContain("const defaultVersion = '0.3.22'")
+  expect(await loader.text()).toContain("const defaultVersion = '0.3.23'")
 
   const previewFrame = page.frameLocator('iframe[src="/components/image-preview.html"]').first()
   const status = previewFrame.locator('#status')
   await expect(status).not.toHaveText('正在加载示例脚本...', { timeout: 15_000 })
   await expect(status).toHaveText('已就绪，点击图片查看预览。')
-  expect(cdnRequests).toContain('https://unpkg.com/sodialog@0.3.22/dist/sodialog.es.js')
-  expect(cdnRequests).toContain('https://unpkg.com/sodialog@0.3.22/dist/sodialog.css')
+  expect(cdnRequests).toContain('https://unpkg.com/sodialog@0.3.23/dist/sodialog.es.js')
+  expect(cdnRequests).toContain('https://unpkg.com/sodialog@0.3.23/dist/sodialog.css')
 
   await previewFrame.locator('.preview-source').click()
   await expect(previewFrame.locator('dialog.sod-image-preview[open]')).toBeVisible()
@@ -287,6 +287,7 @@ test('tooltip example works with the published CDN version', async ({ page }) =>
   await frame.locator('#save').focus()
   await expect(frame.locator('.sod-tooltip')).toBeVisible()
   await expect(frame.locator('.sod-tooltip')).toHaveText('保存当前设置')
+  expect(await frame.locator('.sod-tooltip').evaluate((element) => getComputedStyle(element).overflow)).toBe('visible')
   await frame.locator('#save').press('Escape')
   await expect(frame.locator('.sod-tooltip')).toBeHidden()
 

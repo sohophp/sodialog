@@ -52,9 +52,9 @@ toast({
 
 ### CDN Notes
 
-Docs examples load the published `sodialog@0.3.22` files through `/components/sodialog-loader.js`. JavaScript and CSS use the same CDN version.
+Docs examples load the published `sodialog@0.3.23` files through `/components/sodialog-loader.js`. JavaScript and CSS use the same CDN version.
 
-- The default is pinned to `0.3.22`; a URL parameter can select another published version temporarily.
+- The default is pinned to `0.3.23`; a URL parameter can select another published version temporarily.
 - Example URLs can temporarily override the version: `?sodialogVersion=latest`, `?sodialogVersion=0.3.10`.
 - Production pages should still pin a patch version instead of relying on `@latest`.
 
