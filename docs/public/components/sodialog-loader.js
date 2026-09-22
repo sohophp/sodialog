@@ -49,7 +49,7 @@ export function loadSoDialogStyle({ local = true } = {}) {
   link.href = useLocal ? '/components/runtime/sodialog.css' : css
   link.dataset.sodialogStyle = 'true'
   link.addEventListener('error', () => {
-    if (link.href !== cssFallback) {
+    if (!useLocal && link.href !== cssFallback) {
       link.href = cssFallback
     }
   })
@@ -62,8 +62,9 @@ export async function loadSoDialog({ local = true } = {}) {
   const useLocal = local && !hasVersionOverride()
   loadSoDialogStyle({ local: useLocal })
 
-  const modules = getSoDialogCdnUrls().modules
-  if (useLocal) modules.unshift('/components/runtime/sodialog.es.js')
+  const modules = useLocal
+    ? ['/components/runtime/sodialog.es.js']
+    : getSoDialogCdnUrls().modules
 
   for (const url of modules) {
     try {

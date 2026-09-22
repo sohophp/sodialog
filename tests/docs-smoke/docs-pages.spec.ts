@@ -302,6 +302,17 @@ test('example version override reaches the preview frame', async ({ page }) => {
   )
 })
 
+test('examples never silently replace a missing local build with a CDN release', async ({ page }) => {
+  const cdnRequests: string[] = []
+  page.on('request', (request) => {
+    if (/cdn\.jsdelivr\.net|unpkg\.com/.test(request.url())) cdnRequests.push(request.url())
+  })
+  await page.route('**/components/runtime/sodialog.es.js', (route) => route.abort())
+  await page.goto('/components/tooltip-basic.html', { waitUntil: 'domcontentloaded' })
+  await expect(page.locator('#status')).toContainText('加载失败')
+  expect(cdnRequests).toEqual([])
+})
+
 test('tags input example preserves form values and reset', async ({ page }) => {
   await page.goto('/examples/tags-input', { waitUntil: 'domcontentloaded' })
   const frame = page.frameLocator('iframe[src="/components/tags-input-basic.html"]').first()
